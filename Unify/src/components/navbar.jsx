@@ -1,5 +1,6 @@
 import React from 'react'
 
+// Top Navigation Bar to hold other buttons, looks fugly, will fix later
 export const Navbar = ({children}) => {
     return (
         <div style={{
