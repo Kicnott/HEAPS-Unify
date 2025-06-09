@@ -2,15 +2,25 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import Calender from './calendar.jsx'
+// import Calender from './calendar.jsx'
 import './import.jsx'
+import {Navbar} from "./components/navbar.jsx"
+
+
 
 function App() {
-  const [count, setCount] = useState(0)
 
+  // return (
+  //   <Calender/>
+  // )
   return (
-    <Calender/>
+    <div>
+      <Navbar />
+    </div>
+
   )
+
+  
 }
 
 export default App

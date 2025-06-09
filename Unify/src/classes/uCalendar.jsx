@@ -33,15 +33,15 @@ class uCalendar{
         this.id = id
         return this.id
     }
-    getName(name){
+    setName(name){
         this.name = name
         return this.name
     }
-    getDescription(description){
+    setDescription(description){
         this.description = description
         return this.description
     }
-    getColour(colour){
+    setColour(colour){
         this.colour = colour
         return this.colour
     }
