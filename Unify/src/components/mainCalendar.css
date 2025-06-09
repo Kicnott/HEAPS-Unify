@@ -1,0 +1,19 @@
+.calendar {
+display: grid;
+grid-template-columns: repeat(7, 1fr);
+grid-template-rows: repeat(5, 1fr);
+gap: 8px;
+height: 600px;
+width: 1000px;
+background: black;
+gap: 3px;
+padding: 8px;
+
+}
+
+
+
+.calendar > div {
+  background: white; /* This is the color of the grid items */
+  min-height: 50px; /* Adjust as needed */
+}

@@ -8,6 +8,7 @@ import './import.jsx'
 import { Navbar } from "./components/navbar.jsx"
 import { Button } from "./components/button.jsx"
 import { RightDrawer} from "./components/rightDrawer.jsx"
+import { MainCalendar } from './components/mainCalendar.jsx'
 
 
 
@@ -29,6 +30,8 @@ function App() {
       <RightDrawer rightDrawerOpen = {isRightDrawerOpen} onClose={() => toggleRightDrawer(!isRightDrawerOpen)}>
         <h2>MORE STUFF</h2> //TODO
       </RightDrawer>
+
+      <MainCalendar />
     </div>
 
   )

@@ -29,11 +29,11 @@ export const RightDrawer = ({ rightDrawerOpen, onClose, children }) => {
           cursor: 'pointer',
           width: '24px',
           height: '24px',
-          // borderRadius: '50%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           color: 'black',
+          outline: 'none'
         }}
       >
         ×
