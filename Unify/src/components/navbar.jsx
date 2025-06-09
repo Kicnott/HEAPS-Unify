@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const Navbar = () => {
+export const Navbar = ({children}) => {
     return (
         <div style={{
             height: '60px',
@@ -18,7 +18,7 @@ export const Navbar = () => {
             zIndex: 1000,
         }}
         >
-            <p>Unify</p>
+        {children}
 
         </div>
     )
