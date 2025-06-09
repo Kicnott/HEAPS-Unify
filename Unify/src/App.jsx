@@ -9,6 +9,7 @@ import { Navbar } from "./components/navbar.jsx"
 import { Button } from "./components/button.jsx"
 import { RightDrawer } from "./components/rightDrawer.jsx"
 import { MainCalendar } from './components/mainCalendar.jsx'
+import { SimpleBlock } from './components/simpleBlock.jsx'
 
 
 
@@ -43,6 +44,7 @@ function App() {
       </RightDrawer>
 
       <MainCalendar />
+
     </div>
 
   )
