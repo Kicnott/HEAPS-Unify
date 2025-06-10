@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { Routes, Route } from 'react-router-dom'
 import './App.css'
 import './import.jsx'
 
@@ -11,44 +10,17 @@ import { RightDrawer } from "./components/rightDrawer.jsx"
 import { MainCalendar } from './components/mainCalendar.jsx'
 import { SimpleBlock } from './components/simpleBlock.jsx'
 
-
+// Pages
+import HomePage from "./pages/home.jsx"
+import LoginPage from "./pages/login.jsx"
 
 function App() {
-
-  const [isRightDrawerOpen, toggleRightDrawer] = useState(false) // Defining Right Drawer Open State
-
-  const rightDrawerButton = {
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
-    padding: 0
-  }
-
   return (
-    <div>
-      <Navbar>
-        <h1 style={{ margin: 0, marginRight: 'auto' }}>Unify</h1>
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <Button onClick={() => toggleRightDrawer(!isRightDrawerOpen)}>Stuff</Button>
-        </div>
-      </Navbar>
-
-      <RightDrawer rightDrawerOpen={isRightDrawerOpen} onClose={() => toggleRightDrawer(!isRightDrawerOpen)}>
-        <div style = {rightDrawerButton}>
-          <br></br>
-          <br></br>
-          <Button>Account (TODO)</Button>
-          <Button>Settings (TODO)</Button>
-        </div>
-
-      </RightDrawer>
-
-      <MainCalendar />
-
-    </div>
-
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/login" element={<LoginPage />} />
+    </Routes>
   )
-
 
 }
 
