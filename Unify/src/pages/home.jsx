@@ -46,7 +46,11 @@ function HomePage() {
                     <br></br>
                     <Button>Account (TODO)</Button>
                     <br></br>
+                    <br></br>
                     <Button>Settings (TODO)</Button>
+                    <br></br>
+                    <br></br>
+                    <Button>Events (TODO)</Button>
                 </div>
 
                 <div style={rightDrawerButtonBottom}>
@@ -55,7 +59,9 @@ function HomePage() {
                 </div>
             </RightDrawer>
 
-            <MainCalendar />
+            <MainCalendar>
+                
+            </MainCalendar>
 
         </div>
 
