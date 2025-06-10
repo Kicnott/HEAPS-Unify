@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import '../App.css'
 import '../import.jsx'
 
@@ -10,41 +11,55 @@ import { MainCalendar } from '../components/mainCalendar.jsx'
 import { SimpleBlock } from '../components/simpleBlock.jsx'
 
 
-function HomePage(){
+function HomePage() {
 
-  const [isRightDrawerOpen, toggleRightDrawer] = useState(false) // Defining Right Drawer Open State
+    const [isRightDrawerOpen, toggleRightDrawer] = useState(false) // Defining Right Drawer Open State
 
-  const rightDrawerButton = {
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
-    padding: 0
-  }
+    const drawerStyle = {
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: 0,
+    }
+    const rightDrawerButtonTop = {
+        padding: 0,
+        flex: 1
+    }
+        const rightDrawerButtonBottom = {
+        marginTop: 'auto',
+        padding: 0
+    }
 
-  return (
-    <div>
-      <Navbar>
-        <h1 style={{ margin: 0, marginRight: 'auto' }}>Unify</h1>
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <Button onClick={() => toggleRightDrawer(!isRightDrawerOpen)}>Stuff</Button>
+    return (
+        <div>
+            <Navbar>
+                <h1 style={{ margin: 0, marginRight: 'auto' }}>Unify</h1>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    <Button onClick={() => toggleRightDrawer(!isRightDrawerOpen)}>Stuff</Button>
+                </div>
+            </Navbar>
+
+            <RightDrawer rightDrawerOpen={isRightDrawerOpen} onClose={() => toggleRightDrawer(!isRightDrawerOpen)}>
+                <div style={drawerStyle}>
+                <div style={rightDrawerButtonTop}>
+                    <br></br>
+                    <br></br>
+                    <Button>Account (TODO)</Button>
+                    <br></br>
+                    <Button>Settings (TODO)</Button>
+                </div>
+
+                <div style={rightDrawerButtonBottom}>
+                    <Button><Link to="/">Sign Out</Link></Button>
+                </div>
+                </div>
+            </RightDrawer>
+
+            <MainCalendar />
+
         </div>
-      </Navbar>
 
-      <RightDrawer rightDrawerOpen={isRightDrawerOpen} onClose={() => toggleRightDrawer(!isRightDrawerOpen)}>
-        <div style = {rightDrawerButton}>
-          <br></br>
-          <br></br>
-          <Button>Account (TODO)</Button>
-          <Button>Settings (TODO)</Button>
-        </div>
-
-      </RightDrawer>
-
-      <MainCalendar />
-
-    </div>
-
-  )
+    )
 
 }
 
