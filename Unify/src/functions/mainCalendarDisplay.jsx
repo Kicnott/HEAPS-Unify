@@ -1,4 +1,4 @@
-export default function displayBase(uCalendarDisplay){
+export default function getBaseDate(uCalendarDisplay){
     let displayMonth = String(uCalendarDisplay.getDisplayMonth())
     let displayYear = String(uCalendarDisplay.getDisplayYear())
 
@@ -14,8 +14,11 @@ export default function displayBase(uCalendarDisplay){
 
     let monthStart = firstDate.getDay()
 
-    console.log(monthStart, firstDate)
-
+    while (monthStart > 0){
+        firstDate.setDate(firstDate.getDate() - 1)
+        monthStart -= 1
+    }
+    return firstDate
 }
 
 

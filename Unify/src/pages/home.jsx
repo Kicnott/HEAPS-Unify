@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import '../App.css'
-import displayBase from '../functions/mainCalendarDisplay.jsx'
+import getBaseDate from '../functions/mainCalendarDisplay.jsx'
 import  {uAccount, uCalendar, uCalendarDisplay, uEvent, uTimeslot} from '/src/classes/'
 
 // Components
@@ -14,6 +14,7 @@ import { SimpleBlock } from '../components/simpleBlock.jsx'
 
 function HomePage() {
 
+    // Dummy Data
     var T1 = new uTimeslot("2025-07-12T02:00:00Z", "2025-07-14T12:00:00Z")
 
     var E1 = new uEvent([T1], 1, "Event 1", "Fun and cool event", "Marina Bay Sands")
@@ -23,7 +24,10 @@ function HomePage() {
     var A1 = new uAccount(1, "Me", "This is my Account", [C1], [])
 
     var CD1 = new uCalendarDisplay(7, 2025, C1, A1)
-    displayBase(CD1)
+
+    let baseDate = getBaseDate(CD1)
+
+    // console.log(baseDate)
 
 
     const [isRightDrawerOpen, toggleRightDrawer] = useState(false) // Defining Right Drawer Open State
@@ -72,7 +76,7 @@ function HomePage() {
                 </div>
             </RightDrawer>
 
-            <MainCalendar>
+            <MainCalendar baseDate={baseDate}>
 
             </MainCalendar>
 
