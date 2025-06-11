@@ -1,4 +1,4 @@
-class uCalendar{
+export class uCalendar{
     constructor(events, id, name, description, colour){
         this.events = events //Array of events in the calendar
         this.id = id //Calendar ID

@@ -1,4 +1,4 @@
-class uEvent{
+export class uEvent{
     constructor(timeslots, id, name, description, location){
         this.timeslots = timeslots //Array of timeslots to indicate when the eventis held
         this.id = id //Event ID

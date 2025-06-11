@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import '../App.css'
-import '../import.jsx'
+import '../classes/index.jsx'
 
 // Components
 import { Navbar } from "../components/navbar.jsx"

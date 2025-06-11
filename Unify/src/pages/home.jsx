@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import '../App.css'
-import '../import.jsx'
+import displayBase from '../functions/mainCalendarDisplay.jsx'
+import  {uAccount, uCalendar, uCalendarDisplay, uEvent, uTimeslot} from '/src/classes/'
 
 // Components
 import { Navbar } from "../components/navbar.jsx"
@@ -12,6 +13,18 @@ import { SimpleBlock } from '../components/simpleBlock.jsx'
 
 
 function HomePage() {
+
+    var T1 = new uTimeslot("2025-07-12T02:00:00Z", "2025-07-14T12:00:00Z")
+
+    var E1 = new uEvent([T1], 1, "Event 1", "Fun and cool event", "Marina Bay Sands")
+
+    var C1 = new uCalendar([E1], 1, "myCalendar", "This is my calendar", "#ff0000")
+
+    var A1 = new uAccount(1, "Me", "This is my Account", [C1], [])
+
+    var CD1 = new uCalendarDisplay(7, 2025, C1, A1)
+    displayBase(CD1)
+
 
     const [isRightDrawerOpen, toggleRightDrawer] = useState(false) // Defining Right Drawer Open State
 
@@ -25,7 +38,7 @@ function HomePage() {
         padding: 0,
         flex: 1
     }
-        const rightDrawerButtonBottom = {
+    const rightDrawerButtonBottom = {
         marginTop: 'auto',
         padding: 0
     }
@@ -41,26 +54,26 @@ function HomePage() {
 
             <RightDrawer rightDrawerOpen={isRightDrawerOpen} onClose={() => toggleRightDrawer(!isRightDrawerOpen)}>
                 <div style={drawerStyle}>
-                <div style={rightDrawerButtonTop}>
-                    <br></br>
-                    <br></br>
-                    <Button>Account (TODO)</Button>
-                    <br></br>
-                    <br></br>
-                    <Button>Settings (TODO)</Button>
-                    <br></br>
-                    <br></br>
-                    <Button>Events (TODO)</Button>
-                </div>
+                    <div style={rightDrawerButtonTop}>
+                        <br></br>
+                        <br></br>
+                        <Button>Account (TODO)</Button>
+                        <br></br>
+                        <br></br>
+                        <Button>Settings (TODO)</Button>
+                        <br></br>
+                        <br></br>
+                        <Button>Events (TODO)</Button>
+                    </div>
 
-                <div style={rightDrawerButtonBottom}>
-                    <Button><Link to="/">Sign Out</Link></Button>
-                </div>
+                    <div style={rightDrawerButtonBottom}>
+                        <Button><Link to="/">Sign Out</Link></Button>
+                    </div>
                 </div>
             </RightDrawer>
 
             <MainCalendar>
-                
+
             </MainCalendar>
 
         </div>

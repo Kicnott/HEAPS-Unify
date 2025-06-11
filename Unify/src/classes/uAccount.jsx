@@ -1,4 +1,4 @@
-class uAccount{
+export class uAccount{
     constructor(id, name, description, myCalendar, followedCalendars){
         this.id = id // AccountID
         this.name = name //Account name/username

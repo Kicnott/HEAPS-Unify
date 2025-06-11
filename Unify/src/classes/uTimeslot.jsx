@@ -1,4 +1,4 @@
-class uTimeslot{
+export class uTimeslot{
     constructor(startDT, endDT){
         this.startDT = startDT //Starting Datetime
         this.endDT = endDT //Ending Datetime
