@@ -1,14 +1,13 @@
 export class uCalendarDisplay{
-    constructor(displayMonth, displayYear, calendars, currentAccount){
-        this.displayMonth = displayMonth //Month to be displayed
+    constructor(displayDate, calendars, currentAccount){
+        this.displayDate = displayDate //Date to be displayed
         this.calendars = calendars //Array of calendar objects to be displayed and overlayed
         this.currentAccount = currentAccount //Current account using display, for authentication
-        this.displayYear = displayYear // Year to be displayed
     }
     
     // Getters
-    getDisplayMonth(){
-        return this.displayMonth
+    getDisplayDate(){
+        return this.displayDate
     }
     getCalendars(){
         return this.calendars
@@ -16,13 +15,11 @@ export class uCalendarDisplay{
     getCurrentAccount(){
         return this.currentAccount
     }
-    getDisplayYear(){
-        return this.displayYear
-    }
+
     // Setters
-    setDisplayMonth(displayMonth){
-        this.displayMonth = displayMonth
-        return this.displayMonth
+    setDisplayMonth(displayDate){
+        this.displayMonth = displayDate
+        return this.displayDate
     }
     setCalendars(calendars){
         this.calendars = calendars
@@ -32,8 +29,5 @@ export class uCalendarDisplay{
         this.currentAccount = currentAccount
         return this.currentAccount
     }
-    setDisplayYear(displayYear){
-        this.displayYear = displayYear
-        return this.displayYear
-    }
+
 }

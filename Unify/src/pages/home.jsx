@@ -23,7 +23,7 @@ function HomePage() {
 
     var A1 = new uAccount(1, "Me", "This is my Account", [C1], [])
 
-    var CD1 = new uCalendarDisplay(7, 2025, C1, A1)
+    var CD1 = new uCalendarDisplay(new Date(), C1, A1)
 
     let baseDate = getBaseDate(CD1)
 
