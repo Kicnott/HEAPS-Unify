@@ -2,17 +2,16 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import Calendar from 'react-calendar';
+import Calendar from './components/calendar.jsx'
 
-
-function MyApp() {
-  const [value, onChange] = useState(new Date());
-
+function App() {
+  const meetings = {
+    '2024-04-05': ["wasting time", "lol", "donating to mr beast"],
+    '2024-04-06': ["drinking", "rah", "fighting mr beast"],
+  }
   return (
-    <div>
-      <Calendar onChange={onChange} value={value} />
-    </div>
+      <Calendar meetings={meetings}/>
   );
 }
 
-export default MyApp
+export default App
