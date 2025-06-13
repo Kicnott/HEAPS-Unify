@@ -57,7 +57,17 @@ function HomePage() {
                     <button onClick={() => toggleRightDrawer(!isRightDrawerOpen)}>Stuff</button>
                 </div>
             </Navbar>
-
+            {isRightDrawerOpen && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: 0, left: 0, right: 0, bottom: 0,
+                        background: 'rgba(0,0,0,0.4)',
+                        zIndex: 1000
+                    }}
+                    onClick={() => toggleRightDrawer(!isRightDrawerOpen)} // Optional: click background to close
+                />
+            )}
             <RightDrawer rightDrawerOpen={isRightDrawerOpen} onClose={() => toggleRightDrawer(!isRightDrawerOpen)}>
                 <div style={drawerStyle}>
                     <div style={rightDrawerButtonTop}>
