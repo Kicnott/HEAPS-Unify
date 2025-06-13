@@ -2,12 +2,13 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import '../styles/App.css'
 import getBaseDate from '../functions/getBaseDate.jsx'
-import  {uAccount, uCalendar, uCalendarDisplay, uEvent, uTimeslot} from '/src/classes/'
+import { uAccount, uCalendar, uCalendarDisplay, uEvent, uTimeslot } from '/src/classes/'
 
 // Components
 import { Navbar } from "../components/top_navbar.jsx"
-import { RightDrawer } from "../components/rightDrawer.jsx"
+import { RightDrawer } from "../components/RightDrawer.jsx"
 import { MainCalendar } from '../components/mainCalendar.jsx'
+import { OverlayBlock } from '../components/overlayBlock.jsx'
 
 
 function HomePage() {
@@ -31,6 +32,7 @@ function HomePage() {
 
 
     const [isRightDrawerOpen, toggleRightDrawer] = useState(false) // Defining Right Drawer Open State
+    const [isEventHidden, toggleEventHidden] = useState(true) // Defining Event Block Open State
 
     const drawerStyle = {
         height: '100%',
@@ -76,9 +78,23 @@ function HomePage() {
                 </div>
             </RightDrawer>
 
-            <MainCalendar baseDate={baseDate}>
+            <MainCalendar baseDate={baseDate} onButtonClick={() => toggleEventHidden(!isEventHidden)}>
 
             </MainCalendar>
+            {!isEventHidden && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: 0, left: 0, right: 0, bottom: 0,
+                        background: 'rgba(0,0,0,0.4)',
+                        zIndex: 1000
+                    }}
+                    onClick={() => toggleEventHidden(!isEventHidden)} // Optional: click background to close
+                />
+            )}
+            <OverlayBlock isHidden={isEventHidden} onClose={() => toggleEventHidden(!isEventHidden)}>
+                Hello!
+            </OverlayBlock>
 
         </div>
 
