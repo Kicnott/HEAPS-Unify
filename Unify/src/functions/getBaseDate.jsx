@@ -1,5 +1,5 @@
 export default function getBaseDate(uCalendarDisplay){
-    let displayDate = String(uCalendarDisplay.getDisplayDate())
+    let displayDate = uCalendarDisplay.getDisplayDate()
 
     // let isLeapYear
     // if ((displayYear % 4 == 0 && displayYear % 100 != 0) || displayYear % 400 == 0){
@@ -9,15 +9,9 @@ export default function getBaseDate(uCalendarDisplay){
     //     isLeapYear = false
     // }
 
-    let firstDate = new Date(displayDate)
+    let basedate = new Date(2025, displayDate.getMonth(), 1) 
 
-    let monthStart = firstDate.getDay()
-
-    while (monthStart > 0){
-        firstDate.setDate(firstDate.getDate() - 1)
-        monthStart -= 1
-    }
-    return firstDate
+    return basedate
 }
 
 

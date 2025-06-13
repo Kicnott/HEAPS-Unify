@@ -1,6 +1,6 @@
 export class uCalendarDisplay{
     constructor(displayDate, calendars, currentAccount){
-        this.displayDate = displayDate //Date to be displayed
+        this.displayDate = new Date(displayDate) //Date to be displayed
         this.calendars = calendars //Array of calendar objects to be displayed and overlayed
         this.currentAccount = currentAccount //Current account using display, for authentication
     }
