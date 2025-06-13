@@ -1,5 +1,5 @@
 
-export const Calender_Date_Box = ({ onClick, children, baseMonth, displayDate }) => {
+export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate }) => {
 
   let date = displayDate.toLocaleDateString()
   // console.log(date)
@@ -25,7 +25,7 @@ export const Calender_Date_Box = ({ onClick, children, baseMonth, displayDate })
   )
 }
 
-export const Calender_Date_Headers = ({ onClick, children }) => {
+export const CalendarDateHeader = ({ onClick, children }) => {
   let button_style = {
     color: 'yellow',
     'background-color': 'brown'

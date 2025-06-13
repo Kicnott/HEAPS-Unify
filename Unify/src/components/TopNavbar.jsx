@@ -1,7 +1,7 @@
 import React from 'react'
 
 // Top Navigation Bar to hold other buttons, looks fugly, will fix later
-export const Navbar = ({children}) => {
+export const TopNavbar = ({children}) => {
     return (
         <div style={{
             height: '60px',

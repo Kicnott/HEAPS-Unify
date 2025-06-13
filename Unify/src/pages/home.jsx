@@ -5,7 +5,7 @@ import getBaseDate from '../functions/getBaseDate.jsx'
 import { uAccount, uCalendar, uCalendarDisplay, uEvent, uTimeslot } from '/src/classes/'
 
 // Components
-import { Navbar } from "../components/top_navbar.jsx"
+import { TopNavbar } from "../components/TopNavbar.jsx"
 import { RightDrawer } from "../components/RightDrawer.jsx"
 import { MainCalendar } from '../components/mainCalendar.jsx'
 import { OverlayBlock } from '../components/overlayBlock.jsx'
@@ -51,12 +51,12 @@ function HomePage() {
 
     return (
         <div>
-            <Navbar>
+            <TopNavbar>
                 <h1 style={{ margin: 0, marginRight: 'auto' }}>Unify</h1>
                 <div style={{ display: 'flex', gap: '10px' }}>
                     <button onClick={() => toggleRightDrawer(!isRightDrawerOpen)}>Stuff</button>
                 </div>
-            </Navbar>
+            </TopNavbar>
             {isRightDrawerOpen && (
                 <div
                     style={{
