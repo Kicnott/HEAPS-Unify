@@ -23,7 +23,7 @@ function HomePage() {
     // uAccount(id, name, description, myCalendar, followedCalendars)
     var A1 = new uAccount(1, "Me", "This is my Account", [C1], [])
     // uCalenderDisplay (displayDate, calendars, currentAccount) 
-    var CD1 = new uCalendarDisplay(new Date(), C1, A1)
+    var CD1 = new uCalendarDisplay(new Date(2025, 7, 7), C1, A1)
 
     let baseDate = getBaseDate(CD1)
 

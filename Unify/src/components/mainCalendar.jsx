@@ -13,9 +13,9 @@ export const MainCalendar = ({children, baseDate}) => {
         calendarBoxes.push(<Calender_Date_Headers key={days[i]}>{days[i]}</Calender_Date_Headers>) // Add Day Names on the top row
     }
 
-    for (let i = 0; i < 35; i++){
+    for (let i = 0; i < 42; i++){
         let date = dateIndex.toLocaleDateString()
-        calendarBoxes.push(<Calender_Date_Box key={date}>{children}{date}</Calender_Date_Box>) // Button functionality to be added
+        calendarBoxes.push(<Calender_Date_Box key={date} baseMonth={baseDate.getMonth()} displayDate={new Date(dateIndex)}>{children}</Calender_Date_Box>) // Button functionality to be added
         dateIndex.setDate(dateIndex.getDate() + 1)
     }
     console.log(calendarBoxes)
