@@ -1,5 +1,5 @@
 import React from 'react'
-import './mainCalendar.css'
+import '../styles/mainCalendar.css'
 
 export const MainCalendar = ({children, baseDate}) => {
     let dateIndex = new Date(baseDate)

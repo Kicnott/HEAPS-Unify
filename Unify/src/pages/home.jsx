@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import '../App.css'
-import getBaseDate from '../functions/mainCalendarDisplay.jsx'
+import '../styles/App.css'
+import getBaseDate from '../functions/getBaseDate.jsx'
 import  {uAccount, uCalendar, uCalendarDisplay, uEvent, uTimeslot} from '/src/classes/'
 
 // Components
-import { Navbar } from "../components/navbar.jsx"
+import { Navbar } from "../components/top_navbar.jsx"
 import { Button } from "../components/button.jsx"
 import { RightDrawer } from "../components/rightDrawer.jsx"
 import { MainCalendar } from '../components/mainCalendar.jsx'
@@ -15,14 +15,16 @@ import { SimpleBlock } from '../components/simpleBlock.jsx'
 function HomePage() {
 
     // Dummy Data
+
+    // uTimeslot(startDT, endDT)
     var T1 = new uTimeslot("2025-07-12T02:00:00Z", "2025-07-14T12:00:00Z")
-
+    // uEvent(timeslots, id, name, description, location)
     var E1 = new uEvent([T1], 1, "Event 1", "Fun and cool event", "Marina Bay Sands")
-
+    // uCalender(events, id, name, description, colour)
     var C1 = new uCalendar([E1], 1, "myCalendar", "This is my calendar", "#ff0000")
-
+    // uAccount(id, name, description, myCalendar, followedCalendars)
     var A1 = new uAccount(1, "Me", "This is my Account", [C1], [])
-
+    // uCalenderDisplay (displayDate, calendars, currentAccount) 
     var CD1 = new uCalendarDisplay(new Date(), C1, A1)
 
     let baseDate = getBaseDate(CD1)
