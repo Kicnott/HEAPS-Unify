@@ -1,4 +1,5 @@
 import { Calender_Date_Box } from './Calender_Date_Box.jsx'
+import { Calender_Date_Headers } from './Calender_Date_Box.jsx'
 import '../styles/mainCalendar.css'
 
 export const MainCalendar = ({children, baseDate}) => {
@@ -9,7 +10,7 @@ export const MainCalendar = ({children, baseDate}) => {
     let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
     for (let i = 0; i < 7; i++){
-        calendarBoxes.push(<Calender_Date_Box key={days[i]}>{days[i]}</Calender_Date_Box>) // Add Day Names on the top row
+        calendarBoxes.push(<Calender_Date_Headers key={days[i]}>{days[i]}</Calender_Date_Headers>) // Add Day Names on the top row
     }
 
     for (let i = 0; i < 35; i++){
