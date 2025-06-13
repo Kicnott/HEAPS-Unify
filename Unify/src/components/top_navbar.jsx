@@ -16,7 +16,7 @@ export const Navbar = ({children}) => {
             top: 0,
             left: 0,
             right: 0,
-            zIndex: 1000,
+            zIndex: 1000,   
         }}
         >
         {children}

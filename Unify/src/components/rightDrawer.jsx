@@ -4,7 +4,7 @@ import React from 'react'
 export const RightDrawer = ({ rightDrawerOpen, onClose, children }) => {
   return (
     <div
-      style={{
+      style={{ // right drawer transition
         position: 'fixed',
         top: 0,
         right: rightDrawerOpen ? 0 : '-400px',
@@ -16,7 +16,7 @@ export const RightDrawer = ({ rightDrawerOpen, onClose, children }) => {
         zIndex: 1000,
       }}
     >
-      <button
+      <button // 'x' sign to exit right drawer
         onClick={onClose}
         style={{
           position: 'absolute',

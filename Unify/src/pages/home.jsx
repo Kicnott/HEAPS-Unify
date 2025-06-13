@@ -6,10 +6,8 @@ import  {uAccount, uCalendar, uCalendarDisplay, uEvent, uTimeslot} from '/src/cl
 
 // Components
 import { Navbar } from "../components/top_navbar.jsx"
-import { Button } from "../components/button.jsx"
 import { RightDrawer } from "../components/rightDrawer.jsx"
 import { MainCalendar } from '../components/mainCalendar.jsx'
-import { SimpleBlock } from '../components/simpleBlock.jsx'
 
 
 function HomePage() {
@@ -54,7 +52,7 @@ function HomePage() {
             <Navbar>
                 <h1 style={{ margin: 0, marginRight: 'auto' }}>Unify</h1>
                 <div style={{ display: 'flex', gap: '10px' }}>
-                    <Button onClick={() => toggleRightDrawer(!isRightDrawerOpen)}>Stuff</Button>
+                    <button onClick={() => toggleRightDrawer(!isRightDrawerOpen)}>Stuff</button>
                 </div>
             </Navbar>
 
@@ -63,17 +61,17 @@ function HomePage() {
                     <div style={rightDrawerButtonTop}>
                         <br></br>
                         <br></br>
-                        <Button>Account (TODO)</Button>
+                        <button>Account (TODO)</button>
                         <br></br>
                         <br></br>
-                        <Button>Settings (TODO)</Button>
+                        <button>Settings (TODO)</button>
                         <br></br>
                         <br></br>
-                        <Button>Events (TODO)</Button>
+                        <button>Events (TODO)</button>
                     </div>
 
                     <div style={rightDrawerButtonBottom}>
-                        <Button><Link to="/">Sign Out</Link></Button>
+                        <button><Link to="/">Sign Out</Link></button>
                     </div>
                 </div>
             </RightDrawer>

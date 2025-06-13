@@ -4,10 +4,6 @@ import '../styles/App.css'
 import '../classes/index.jsx'
 
 // Components
-import { Navbar } from "../components/top_navbar.jsx"
-import { Button } from "../components/button.jsx"
-import { RightDrawer } from "../components/rightDrawer.jsx"
-import { MainCalendar } from '../components/mainCalendar.jsx'
 import { SimpleBlock } from '../components/simpleBlock.jsx'
 
 function LoginPage() {

@@ -1,4 +1,4 @@
-import React from 'react'
+import { Calender_Date_Box } from './Calender_Date_Box.jsx'
 import '../styles/mainCalendar.css'
 
 export const MainCalendar = ({children, baseDate}) => {
@@ -9,13 +9,15 @@ export const MainCalendar = ({children, baseDate}) => {
     let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
     for (let i = 0; i < 7; i++){
-        calendarBoxes.push(<button key={days[1]}>{days[i]}</button>) // Add Day Names on the top row
+        calendarBoxes.push(<Calender_Date_Box key={days[i]}>{days[i]}</Calender_Date_Box>) // Add Day Names on the top row
     }
 
     for (let i = 0; i < 35; i++){
-        calendarBoxes.push(<button key={i}>{children}{dateIndex.toLocaleDateString()}</button>) // Button functionality to be added
+        let date = dateIndex.toLocaleDateString()
+        calendarBoxes.push(<Calender_Date_Box key={date}>{children}{date}</Calender_Date_Box>) // Button functionality to be added
         dateIndex.setDate(dateIndex.getDate() + 1)
     }
+    console.log(calendarBoxes)
     return (
         <div className='calendar'>
             {calendarBoxes}
