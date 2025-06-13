@@ -7,7 +7,7 @@ import Calendar from './components/calendar.jsx'
 function App() {
   const meetings = {
     '2024-04-05': ["wasting time", "lol", "donating to mr beast"],
-    '2024-04-06': ["drinking", "rah", "fighting mr beast"],
+    '2025-06-13': ["drinking", "rah", "fighting mr beast"],
   }
   return (
       <Calendar meetings={meetings}/>

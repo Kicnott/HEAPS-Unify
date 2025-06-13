@@ -91,16 +91,22 @@ const Calendar = ({meetings}) => {
             </div>
             <div className="schedule">
                 <div className="schedule-headline">
+                    {/* if activeday is null, then select a day */}
                     {activeDay === null && <div>Please select a day</div>}
+
+                    {/* if day is selected, show selected date in readable format */}
                     {activeDay && <div>{activeDay.toLocaleString(DateTime.DATE_MED)}</div>}
                 </div>
                 <div>
+                    {/* if day is selected but no meetings */}
                     {activeDay && activeDayMeetings.length === 0 && (
                         <div>No Planned Meetings Today</div>
                     )}
 
+                    {/* if day is selected and there is a meeting */}
                     {activeDay && activeDayMeetings.length > 0 && (
                         <>
+                        {/* loop over meeting details of that day */}
                         {activeDayMeetings.map((meeting, meetingIndex) => (
                             <div key={meetingIndex}>{meeting}</div>
                         ))}
