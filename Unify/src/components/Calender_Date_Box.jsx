@@ -1,37 +1,39 @@
 
-export const Calender_Date_Box = ({onClick, children, currentMonth, displayDate}) => {
+export const Calender_Date_Box = ({ onClick, children, baseMonth, displayDate }) => {
 
   let date = displayDate.toLocaleDateString()
-  console.log(date)
+  // console.log(date)
 
-  let isCurrentMonth
-  if (currentMonth === displayDate.getMonth()){
-    isCurrentMonth = true
+  let isBaseMonth
+  if (baseMonth === (displayDate.getMonth()-1)) {
+    isBaseMonth = true
   }
-  else{
-    isCurrentMonth = false
+  else {
+    isBaseMonth = false
   }
-    let calendarStyle = {
-    color: isCurrentMonth ? 'black' : 'grey'
+  console.log(baseMonth)
+
+  let calendarStyle = {
+    color: isBaseMonth ? 'black' : 'grey'
   }
 
   return (
     <button onClick={onClick} style={calendarStyle}>
-        {children}
-        {date}
+      {children}
+      {date}
     </button>
   )
 }
 
-export const Calender_Date_Headers = ({onClick, children}) => {
+export const Calender_Date_Headers = ({ onClick, children }) => {
   let button_style = {
-    color : 'yellow',
+    color: 'yellow',
     'background-color': 'brown'
   }
 
   return (
     <button onClick={onClick} style={button_style}>
-        {children}
+      {children}
     </button>
   )
 }
