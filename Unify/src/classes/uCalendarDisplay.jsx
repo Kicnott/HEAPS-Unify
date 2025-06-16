@@ -17,8 +17,8 @@ export class uCalendarDisplay{
     }
 
     // Setters
-    setDisplayMonth(displayDate){
-        this.displayMonth = displayDate
+    setDisplayDate(displayDate){
+        this.displayDate = displayDate
         return this.displayDate
     }
     setCalendars(calendars){

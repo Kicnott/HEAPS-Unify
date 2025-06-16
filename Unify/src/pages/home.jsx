@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import '../styles/App.css'
-import getBaseDate from '../functions/getBaseDate.jsx'
+// import getBaseDate from '../functions/getBaseDate.jsx'
 import { uAccount, uCalendar, uCalendarDisplay, uEvent, uTimeslot } from '/src/classes/'
 
 // Components
@@ -9,6 +9,7 @@ import { TopNavbar } from "../components/TopNavbar.jsx"
 import { RightDrawer } from "../components/RightDrawer.jsx"
 import { MainCalendar } from '../components/mainCalendar.jsx'
 import { OverlayBlock } from '../components/overlayBlock.jsx'
+import { DropdownList } from '../components/DropdownList.jsx'
 
 
 function HomePage() {
@@ -24,15 +25,15 @@ function HomePage() {
     // uAccount(id, name, description, myCalendar, followedCalendars)
     var A1 = new uAccount(1, "Me", "This is my Account", [C1], [])
     // uCalenderDisplay (displayDate, calendars, currentAccount) 
-    var CD1 = new uCalendarDisplay(new Date(2025, 7, 7), C1, A1)
-
-    let baseDate = getBaseDate(CD1)
+    // var CD1 = new uCalendarDisplay(new Date(2025, 7, 7), C1, A1)
 
     // console.log(baseDate)
 
 
     const [isRightDrawerOpen, toggleRightDrawer] = useState(false) // Defining Right Drawer Open State
     const [isEventHidden, toggleEventHidden] = useState(true) // Defining Event Block Open State
+    const [calendarDisplay, changeCalendarDisplay] = useState(new uCalendarDisplay(new Date(), C1, A1))
+    // const [baseDate, changeBaseDate] = useState(new Date())
 
     const drawerStyle = {
         height: '100%',
@@ -48,6 +49,21 @@ function HomePage() {
         marginTop: 'auto',
         padding: 0
     }
+
+    const monthOptionsArray = [
+        { value: "0", label: "January" },
+        { value: "1", label: "February" },
+        { value: "2", label: "March" },
+        { value: "3", label: "April" },
+        { value: "4", label: "May" },
+        { value: "5", label: "June" },
+        { value: "6", label: "July" },
+        { value: "7", label: "August" },
+        { value: "8", label: "September" },
+        { value: "9", label: "October" },
+        { value: "10", label: "November" },
+        { value: "11", label: "December" }
+    ]
 
     return (
         <div>
@@ -88,7 +104,21 @@ function HomePage() {
                 </div>
             </RightDrawer>
 
-            <MainCalendar baseDate={baseDate} onButtonClick={() => toggleEventHidden(!isEventHidden)}>
+            <DropdownList
+                optionArray={monthOptionsArray}
+                onChange={(event) => {
+                    changeCalendarDisplay(new uCalendarDisplay(
+                        new Date(
+                            calendarDisplay.getDisplayDate().getFullYear(),
+                            event.target.value,
+                            calendarDisplay.getDisplayDate().getDate()
+                        )
+                    )
+                    )
+                }}
+            />
+
+            <MainCalendar displayDate={calendarDisplay.getDisplayDate()} onButtonClick={() => toggleEventHidden(!isEventHidden)}>
 
             </MainCalendar>
             {!isEventHidden && (

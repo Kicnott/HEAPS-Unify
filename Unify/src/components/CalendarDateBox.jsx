@@ -5,7 +5,7 @@ export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate }) =
   // console.log(date)
 
   let isBaseMonth
-  if (baseMonth === (displayDate.getMonth()-1)) {
+  if (baseMonth === (displayDate.getMonth())) {
     isBaseMonth = true
   }
   else {

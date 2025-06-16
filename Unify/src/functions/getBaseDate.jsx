@@ -1,5 +1,5 @@
-export default function getBaseDate(uCalendarDisplay){
-    let displayDate = uCalendarDisplay.getDisplayDate()
+export default function getBaseDate(displayDate){
+    // let displayDate = uCalendarDisplay.getDisplayDate()
 
     // let isLeapYear
     // if ((displayYear % 4 == 0 && displayYear % 100 != 0) || displayYear % 400 == 0){
