@@ -9,7 +9,7 @@ export default function getBaseDate(displayDate){
     //     isLeapYear = false
     // }
 
-    let firstDate = new Date(2025, displayDate.getMonth(), 1) 
+    let firstDate = new Date(displayDate.getFullYear(), displayDate.getMonth(), 1) 
     let monthStart = firstDate.getDay()
 
     while (monthStart > 0){

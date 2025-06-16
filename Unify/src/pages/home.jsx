@@ -27,13 +27,10 @@ function HomePage() {
     // uCalenderDisplay (displayDate, calendars, currentAccount) 
     // var CD1 = new uCalendarDisplay(new Date(2025, 7, 7), C1, A1)
 
-    // console.log(baseDate)
-
 
     const [isRightDrawerOpen, toggleRightDrawer] = useState(false) // Defining Right Drawer Open State
     const [isEventHidden, toggleEventHidden] = useState(true) // Defining Event Block Open State
     const [calendarDisplay, changeCalendarDisplay] = useState(new uCalendarDisplay(new Date(), C1, A1))
-    // const [baseDate, changeBaseDate] = useState(new Date())
 
     const drawerStyle = {
         height: '100%',
@@ -64,7 +61,12 @@ function HomePage() {
         { value: "10", label: "November" },
         { value: "11", label: "December" }
     ]
-
+    const yearOptionsArray = []
+    for (let i = 1970; i < 2051; i++){
+        yearOptionsArray.push({ value: String(i), label: String(i)}) // Button functionality to be added
+    }
+    // console.log(yearOptionsArray)
+    // console.log(monthOptionsArray)
     return (
         <div>
             <TopNavbar>
@@ -106,12 +108,26 @@ function HomePage() {
 
             <DropdownList
                 optionArray={monthOptionsArray}
-                defaultValue={calendarDisplay.getDisplayDate().getMonth()}
+                value={calendarDisplay.getDisplayDate().getMonth()}
                 onChange={(event) => {
                     changeCalendarDisplay(new uCalendarDisplay(
                         new Date(
                             calendarDisplay.getDisplayDate().getFullYear(),
-                            event.target.value,
+                            Number(event.target.value),
+                            calendarDisplay.getDisplayDate().getDate()
+                        )
+                    )
+                    )
+                }}
+            />
+            <DropdownList
+                optionArray={yearOptionsArray}
+                value={calendarDisplay.getDisplayDate().getFullYear()}
+                onChange={(event) => {
+                    changeCalendarDisplay(new uCalendarDisplay(
+                        new Date(
+                            Number(event.target.value),
+                            calendarDisplay.getDisplayDate().getMonth(),
                             calendarDisplay.getDisplayDate().getDate()
                         )
                     )

@@ -1,9 +1,9 @@
 import React from 'react'
 
-export const DropdownList = ({optionArray, onChange, defaultValue}) => {
+export const DropdownList = ({optionArray, onChange, value}) => {
   return (
     <div>
-      <select value={defaultValue} onChange={onChange}>
+      <select value={value} onChange={onChange}>
         {optionArray.map(option=> (
           <option key={option.value} value={option.value}>
             {option.label}
