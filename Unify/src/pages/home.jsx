@@ -106,6 +106,7 @@ function HomePage() {
 
             <DropdownList
                 optionArray={monthOptionsArray}
+                defaultValue={calendarDisplay.getDisplayDate().getMonth()}
                 onChange={(event) => {
                     changeCalendarDisplay(new uCalendarDisplay(
                         new Date(
