@@ -11,7 +11,7 @@ export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate }) =
   else {
     isBaseMonth = false
   }
-  console.log(baseMonth)
+  // console.log(baseMonth)
 
   let calendarStyle = {
     color: isBaseMonth ? 'black' : 'grey'
@@ -28,7 +28,7 @@ export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate }) =
 export const CalendarDateHeader = ({ onClick, children }) => {
   let button_style = {
     color: 'yellow',
-    'background-color': 'brown'
+    'backgroundColor': 'brown'
   }
 
   return (

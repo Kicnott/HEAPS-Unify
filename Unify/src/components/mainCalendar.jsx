@@ -18,7 +18,7 @@ export const MainCalendar = ({children, baseDate, onButtonClick}) => {
         calendarBoxes.push(<CalendarDateBox key={date} baseMonth={baseDate.getMonth()} displayDate={new Date(dateIndex)} onClick={onButtonClick}>{children}</CalendarDateBox>) // Button functionality to be added
         dateIndex.setDate(dateIndex.getDate() + 1)
     }
-    console.log(calendarBoxes)
+    // console.log(calendarBoxes)
     return (
         <div className='calendar'>
             {calendarBoxes}

@@ -16,7 +16,7 @@ export default function getBaseDate(uCalendarDisplay){
         firstDate.setDate(firstDate.getDate() - 1)
         monthStart -= 1
     }
-    console.log(firstDate)
+    // console.log(firstDate)
     return firstDate
 }
 

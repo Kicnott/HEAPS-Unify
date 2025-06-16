@@ -26,12 +26,12 @@ function LoginPage() {
                 <SimpleBlock>
                     <form onSubmit={handleSubmit}>
                         <h4>
-                            <label for='username'>
+                            <label htmlFor='username'>
                                 Username:&nbsp;&nbsp;&nbsp;
                             </label>
                             <input type='text' placeholder='Username' id='username' value={username} onChange={(change) => setUsername(change.target.value)}></input>
                             <br></br>
-                            <label for='password'>
+                            <label htmlFor='password'>
                                 Password:&nbsp;&nbsp;&nbsp;
                             </label>
                             <input type='password' placeholder='Password' id='password' value={password} onChange={(change) => setPassword(change.target.value)}></input>
