@@ -1,3 +1,5 @@
+// Class for all Calendar objects. 
+// As of now, Calendars are an array of Event objects to be displayed in CalendarDisplay. 
 export class uCalendar{
     constructor(events, id, name, description, colour){
         this.events = events //Array of events in the calendar

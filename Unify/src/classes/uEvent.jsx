@@ -1,3 +1,5 @@
+// Class for individual Events.
+// As of now, Events are an array of Timeslot objects.
 export class uEvent{
     constructor(timeslots, id, name, description, location){
         this.timeslots = timeslots //Array of timeslots to indicate when the eventis held

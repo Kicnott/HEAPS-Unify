@@ -30,8 +30,9 @@ function HomePage() {
 
     const [isRightDrawerOpen, toggleRightDrawer] = useState(false) // Defining Right Drawer Open State
     const [isEventHidden, toggleEventHidden] = useState(true) // Defining Event Block Open State
-    const [calendarDisplay, changeCalendarDisplay] = useState(new uCalendarDisplay(new Date(), C1, A1))
+    const [calendarDisplay, changeCalendarDisplay] = useState(new uCalendarDisplay(new Date(), C1, A1)) // Defining the uCalendarDisplay object that the page will use to update the Main Calendar.
 
+    // These are all styles for the contents of the right drawer. It's not really what I want but I am too lazy to do more css.
     const drawerStyle = {
         height: '100%',
         display: 'flex',
@@ -45,7 +46,7 @@ function HomePage() {
     const rightDrawerButtonBottom = {
         marginTop: 'auto',
         padding: 0
-    }
+    } 
 
     const monthOptionsArray = [
         { value: "0", label: "January" },
@@ -60,13 +61,13 @@ function HomePage() {
         { value: "9", label: "October" },
         { value: "10", label: "November" },
         { value: "11", label: "December" }
-    ]
-    const yearOptionsArray = []
+    ] // The options to be stored in the month drop down list.
+
+    const yearOptionsArray = [] // Defining an empty options array for the year drop down list.
     for (let i = 1970; i < 2051; i++){
-        yearOptionsArray.push({ value: String(i), label: String(i)}) // Button functionality to be added
-    }
-    // console.log(yearOptionsArray)
-    // console.log(monthOptionsArray)
+        yearOptionsArray.push({ value: String(i), label: String(i)})
+    } // The options to be stored in the year drop down list. It is too long so using a for loop to push the values in from 1970 to 2050.
+
     return (
         <div>
             <TopNavbar>
@@ -135,7 +136,7 @@ function HomePage() {
                 }}
             />
 
-            <MainCalendar displayDate={calendarDisplay.getDisplayDate()} onButtonClick={() => toggleEventHidden(!isEventHidden)}>
+            <MainCalendar displayDate={calendarDisplay.getDisplayDate()} onDateBoxClick={() => toggleEventHidden(!isEventHidden)}>
 
             </MainCalendar>
             {!isEventHidden && (

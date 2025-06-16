@@ -1,22 +1,15 @@
+// This function takes in any display date and calculates the first date that should be displayed in the calendar for the month of the display date
 export default function getBaseDate(displayDate){
-    // let displayDate = uCalendarDisplay.getDisplayDate()
+    // displayDate: Any date as a Date object. For all dates within the same month (and year), the return result is the same
 
-    // let isLeapYear
-    // if ((displayYear % 4 == 0 && displayYear % 100 != 0) || displayYear % 400 == 0){
-    //     isLeapYear = true
-    // }
-    // else{
-    //     isLeapYear = false
-    // }
-
-    let firstDate = new Date(displayDate.getFullYear(), displayDate.getMonth(), 1) 
-    let monthStart = firstDate.getDay()
+    let firstDate = new Date(displayDate.getFullYear(), displayDate.getMonth(), 1) // Stores the first date of the month of the display date.
+    let monthStart = firstDate.getDay() // Stores the day of the week for the first date of the month (0 - 6).
 
     while (monthStart > 0){
         firstDate.setDate(firstDate.getDate() - 1)
         monthStart -= 1
-    }
-    // console.log(firstDate)
+    } // Reduces the Date by 1 until the starting date is Sunday (6).
+
     return firstDate
 }
 

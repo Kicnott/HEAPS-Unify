@@ -1,3 +1,5 @@
+// Class for Timeslots, that will be used by Event objects.
+// Timeslots are a continuous time from StartDT to EndDT.
 export class uTimeslot{
     constructor(startDT, endDT){
         this.startDT = startDT //Starting Datetime
