@@ -1,3 +1,6 @@
+// Class for displaying Calendar in the website.
+// As of now, this is the object the website will use to read what should be displayed.
+// Should be configurable for different dates and calendars.
 export class uCalendarDisplay{
     constructor(displayDate, calendars, currentAccount){
         this.displayDate = new Date(displayDate) //Date to be displayed
@@ -17,8 +20,8 @@ export class uCalendarDisplay{
     }
 
     // Setters
-    setDisplayMonth(displayDate){
-        this.displayMonth = displayDate
+    setDisplayDate(displayDate){
+        this.displayDate = displayDate
         return this.displayDate
     }
     setCalendars(calendars){
