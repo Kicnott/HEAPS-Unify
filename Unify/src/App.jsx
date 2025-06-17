@@ -13,7 +13,8 @@ function App() {
       <Route path="/home" element={<HomePage />} />
       <Route path="/" element={<LoginPage />} />
     </Routes>
-  )
+  ) // Creates routes to navigate through the web page.
+  // A route is like a url to go to, where the function will be loaded
 }
 
 export default App
