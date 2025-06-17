@@ -10,6 +10,7 @@ import { RightDrawer } from "../components/rightDrawer.jsx"
 import { MainCalendar } from '../components/mainCalendar.jsx'
 import { OverlayBlock } from '../components/overlayBlock.jsx'
 import { DropdownList } from '../components/DropdownList.jsx'
+import { TimeTable } from '../components/timeTable.jsx'
 
 
 function HomePage() {
@@ -31,7 +32,9 @@ function HomePage() {
     // [variable, function to change variable] is the format
     const [isRightDrawerOpen, toggleRightDrawer] = useState(false) // Defining Right Drawer Open State
     const [isEventHidden, toggleEventHidden] = useState(true) // Defining Event Block Open State
-    const [calendarDisplay, changeCalendarDisplay] = useState(new uCalendarDisplay(new Date(), C1, A1)) // Defining the uCalendarDisplay object that the page will use to update the Main Calendar.
+    const [calendarDisplay, changeCalendarDisplay] = useState(new uCalendarDisplay(new Date(), C1, A1)) 
+    // Defining the uCalendarDisplay object that the page will use to update the Main Calendar.
+    // the date object is the current time
 
     // These are all styles for the contents of the right drawer. It's not really what I want but I am too lazy to do more css.
     const drawerStyle = {
@@ -144,8 +147,10 @@ function HomePage() {
                 displayDate={calendarDisplay.getDisplayDate()} // Assigns the date to display (in month format) as the date in the calendarDisplay state
                 onDateBoxClick={() => toggleEventHidden(!isEventHidden)} // Gives the dateboxes some functionality to open an Overlay block
             >
-
             </MainCalendar>
+
+
+{/* My section TODO */}
             {!isEventHidden && (
                 <div
                     style={{
@@ -161,7 +166,10 @@ function HomePage() {
                 isHidden={isEventHidden} // Assigns isEventHidden function
                 onClose={() => toggleEventHidden(!isEventHidden)} // Assigns toggleEventHidden function
             >
-                Hello!
+                
+            < TimeTable >
+            </TimeTable>
+
             </OverlayBlock>
 
         </div>
