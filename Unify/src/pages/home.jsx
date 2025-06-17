@@ -6,7 +6,7 @@ import { uAccount, uCalendar, uCalendarDisplay, uEvent, uTimeslot } from '/src/c
 
 // Components
 import { TopNavbar } from "../components/TopNavbar.jsx"
-import { RightDrawer } from "../components/RightDrawer.jsx"
+import { RightDrawer } from "../components/rightDrawer.jsx"
 import { MainCalendar } from '../components/mainCalendar.jsx'
 import { OverlayBlock } from '../components/overlayBlock.jsx'
 import { DropdownList } from '../components/DropdownList.jsx'
