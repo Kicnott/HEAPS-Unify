@@ -167,8 +167,8 @@ function HomePage() {
                 onClose={() => toggleEventHidden(!isEventHidden)} // Assigns toggleEventHidden function
             >
                 
-            < TimeTable >
-            </TimeTable>
+                < TimeTable >
+                </TimeTable>
 
             </OverlayBlock>
 
