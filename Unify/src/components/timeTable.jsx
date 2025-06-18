@@ -2,7 +2,7 @@ import React from 'react'
 import { DateTime } from 'luxon'
 
 
-export const TimeTable = ({children}) => {
+export const TimeTable = ({children, chosenDate}) => {
 
     const hoursCreator = () => {
         const hours = [];
@@ -23,26 +23,37 @@ export const TimeTable = ({children}) => {
     }
 
     const cellstyle = {
-        border: '1px solid black'
+        border: '1px solid black',
+
+        // for last box with no value to appear
+        minHeight: '60px'
     }
 
+    
+    const hourgridstyle = {
+        display: 'grid',
+        gridTemplateColumns: '50px 300px',
+        border: '1px solid black'
+    }
+    
+    
     const hourgrids = hoursCreator().map((hour, i) => (
         <React.Fragment key={i}>
             <div style={cellstyle}>{hour}</div><div style={cellstyle}></div>
         </React.Fragment>
     ));
+    
 
-    const hourgridstyle = {
-        display: 'grid',
-        gridTemplateColumns: '50px auto',
-        border: '1px solid black'
-    }
-
-
+    const luxonDate = DateTime.fromJSDate(chosenDate);
+    const formattedDate = luxonDate.toFormat("cccc - d LLLL");
 
     return (
-        <div style={hourgridstyle}>
-            {hourgrids}
+        <div>
+            <div>{formattedDate}</div>
+            <div style={hourgridstyle}>
+                {hourgrids}
+            </div>
         </div>
+        
     )
 }

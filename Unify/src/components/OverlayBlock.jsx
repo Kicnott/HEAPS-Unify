@@ -24,23 +24,28 @@ export const OverlayBlock = ({ children, isHidden, onClose }) => {
     zIndex: 1001 // Makes the block transcend all other components
   }
 
+  const rowStyle = {
+    display: 'flex',
+    alignItems: 'flex-start', // Aligns items at the top
+    gap: '16px' // Optional: space between button and grid
+  };
 
   return (
     <div style={blockStyle}>
 
-      {onClose && (
-        <button onClick={onClose} style={{
-          position: 'absolute', 
-          top: 10, // Moves the button 10 pixels down
-          left: 10, // Moves the button 10 pixels to the left
-          background: 'transparent', // No background, so it follows the background of the block
-          border: 'none', // Removes the border from the button so it fits just like an x into the block
-          fontSize: 20,
-          cursor: 'pointer' // Makes the cursor change from the normal cursor to the clicky hand cursor (I think)
-        }}>×</button>
-      )}
-      
-      {children}
+      <div style={rowStyle}>
+
+        {onClose && (
+          <button onClick={onClose} style={{
+            background: 'transparent', // No background, so it follows the background of the block
+            border: 'none', // Removes the border from the button so it fits just like an x into the block
+            fontSize: 20,
+            cursor: 'pointer' // Makes the cursor change from the normal cursor to the clicky hand cursor (I think)
+          }}>×</button>
+        )}
+        
+        {children}
+      </div>
     </div>
     // Creates the x button that closes the Overlay Block
     // The onClose && ... means that if onClose is not defined, the button will not appear since it is not relevant.

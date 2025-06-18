@@ -4,7 +4,7 @@ import getBaseDate from '../functions/getBaseDate.jsx'
 import '../styles/MainCalendar.css'
 
 // MainCalendar component used to display the big calendar in the Home page.
-export const MainCalendar = ({children, displayDate, onDateBoxClick, onDateHeaderClick}) => {
+export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDate, onDateHeaderClick}) => {
     // children: Any additional labels to be stored on each DateBox. To be passed to the children variable in CalendarDateBox
     // displayDate: The date the user wants to display. As of now, the month of that date will be displayed by the calendar.
     // onDateBoxClick: The function to be run when a DateBox is clicked. To be passed to the onClick variable in CalendarDateBox.
@@ -24,7 +24,7 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, onDateHeade
 
     for (let i = 0; i < 42; i++){
         let date = dateIndex.toLocaleDateString()
-        calendarBoxes.push(<CalendarDateBox key={date} baseMonth={displayDate.getMonth()} displayDate={new Date(dateIndex)} onClick={onDateBoxClick}>{children}</CalendarDateBox>) // Button functionality to be added
+        calendarBoxes.push(<CalendarDateBox key={date} baseMonth={displayDate.getMonth()} displayDate={new Date(dateIndex)} onClick={onDateBoxClick} setChosenDate={setChosenDate}>{children}</CalendarDateBox>) // Button functionality to be added
         dateIndex.setDate(dateIndex.getDate() + 1)
     } // Next, the CalendarDateBoxes, each displaying the date from the baseDate and incrementally increasing until all 6 rows are filled, are pushed into the calendarBoxes array.
     // According to AI, the key specified here is to uniquely identify the CalendarDateHeaders, so that they can be updated efficiently. Code **should** still work without defining the keys.

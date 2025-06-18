@@ -32,7 +32,8 @@ function HomePage() {
     // [variable, function to change variable] is the format
     const [isRightDrawerOpen, toggleRightDrawer] = useState(false) // Defining Right Drawer Open State
     const [isEventHidden, toggleEventHidden] = useState(true) // Defining Event Block Open State
-    const [calendarDisplay, changeCalendarDisplay] = useState(new uCalendarDisplay(new Date(), C1, A1)) 
+    const [calendarDisplay, changeCalendarDisplay] = useState( new uCalendarDisplay(new Date(), C1, A1) ) 
+    const [chosenDate, setChosenDate] = useState('')
     // Defining the uCalendarDisplay object that the page will use to update the Main Calendar.
     // the date object is the current time
 
@@ -146,6 +147,7 @@ function HomePage() {
             <MainCalendar
                 displayDate={calendarDisplay.getDisplayDate()} // Assigns the date to display (in month format) as the date in the calendarDisplay state
                 onDateBoxClick={() => toggleEventHidden(!isEventHidden)} // Gives the dateboxes some functionality to open an Overlay block
+                setChosenDate = {setChosenDate}
             >
             </MainCalendar>
 
@@ -167,7 +169,7 @@ function HomePage() {
                 onClose={() => toggleEventHidden(!isEventHidden)} // Assigns toggleEventHidden function
             >
                 
-                < TimeTable >
+                < TimeTable chosenDate={chosenDate}>
                 </TimeTable>
 
             </OverlayBlock>
