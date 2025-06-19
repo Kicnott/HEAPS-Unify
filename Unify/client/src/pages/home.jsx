@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import '../styles/App.css'
 // import getBaseDate from '../functions/getBaseDate.jsx'
-import { uAccount, uCalendar, uCalendarDisplay, uEvent, uTimeslot } from '/src/classes/'
+import { uAccount, uCalendar, uCalendarDisplay, uEvent, uTimeslot } from '../classes/'
 
 // Components
 import { TopNavbar } from "../components/TopNavbar.jsx"
