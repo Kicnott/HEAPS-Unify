@@ -18,14 +18,18 @@ function HomePage() {
     // Dummy Data
 
     // uTimeslot(startDT, endDT)
-    var T2 = new uTimeslot("2025-06-18T02:00:00Z", "2025-06-18T05:00:00Z"); // 2am–5am UTC
-    var T3 = new uTimeslot("2025-06-18T07:00:00Z", "2025-06-18T10:00:00Z"); // 7am–10am UTC
-    var T4 = new uTimeslot("2025-06-19T13:00:00Z", "2025-06-19T20:00:00Z"); // 1pm–8pm UTC
+    var T2 = new uTimeslot("2025-06-18T02:00:00Z", "2025-06-18T05:00:00Z"); // 2am–5am UTC  10:00 AM – 1:00 PM
+    var T3 = new uTimeslot("2025-06-18T07:00:00Z", "2025-06-18T10:00:00Z"); // 7am–10am UTC 3:00 PM – 6:00 PM
+    var T4 = new uTimeslot("2025-06-19T13:00:00Z", "2025-06-19T20:00:00Z"); // 1pm–8pm UTC 9:00 PM - 4:00 AM
+    var T5 = new uTimeslot("2025-06-18T16:00:00Z", "2025-06-18T21:00:00Z"); // 12am–5am SGT on June 19
+
 
     // uEvent(timeslots, id, name, description, location)
     var E2 = new uEvent(T2, 2, "Event 2", "Fun and cool event", "Marina Bay Sands");
     var E3 = new uEvent(T3, 3, "Event 3", "Fun and cool event", "Marina Bay Sands");
     var E4 = new uEvent(T4, 4, "Event 4", "Fun and cool event", "Marina Bay Sands");
+    var E5 = new uEvent(T5, 5, "Event 5", "Fun and cool event", "Marina Bay Sands");
+
 
     // uCalender(events, id, name, description, colour)
     var C1 = new uCalendar([E2], 1, "myCalendar", "This is my calendar", "#ff0000")
@@ -40,7 +44,7 @@ function HomePage() {
     const [isEventHidden, toggleEventHidden] = useState(true) // Defining Event Block Open State
     const [calendarDisplay, changeCalendarDisplay] = useState( new uCalendarDisplay(new Date(), C1, A1) ) 
     const [chosenDate, setChosenDate] = useState(new Date())
-    const [events, setEvents] = useState([E2,E3,E4])
+    const [events, setEvents] = useState([E2,E3,E4,E5])
     // Defining the uCalendarDisplay object that the page will use to update the Main Calendar.
     // the date object is the current time
 

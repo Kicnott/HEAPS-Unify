@@ -19,7 +19,6 @@ export const TimeTable = ({children, chosenDate, events}) => {
             // hour is formatted to e.g. 12am because 'ha' is 'h' hours in 12 hour formatDate, 'a' is am/pm marker
             hours.push(hour.toFormat('ha').toLowerCase());
         }
-        hours.push('');
         return hours;
     }
 
@@ -52,13 +51,37 @@ export const TimeTable = ({children, chosenDate, events}) => {
         gridTemplateColumns: '50px 300px',
         border: '1px solid black'
     }
+
+    const hourWithEvent = Array(24).fill(false);
+
+    eventsInTheDay().forEach(event => {
+        const startObj = event.getTimeslots().getStartObject();
+        const endObj = event.getTimeslots().getEndObject();
+        const startHr = startObj.toLocal().hour;
+        const endHr = endObj.toLocal().hour;
+
+        for (let hour=startHr; hour < endHr; hour++) {
+            if (hour >= 0 && hour < 24) {
+                hourWithEvent[hour] = true;
+            }
+        }
+    })
+
+
     
     //individual cell assignment
-    const hourgrids = hoursCreator().map((hour, i) => (
-        <React.Fragment key={i}>
-            <div style={cellstyle}>{hour}</div><div style={cellstyle}></div>
-        </React.Fragment>
-    ));
+    const hourgrids = hoursCreator().map((hour, i) => {
+        const contentCellStyle = {
+            ...cellstyle,
+            backgroundColor: hourWithEvent[i] ? 'lightblue' : 'transparent'
+        };
+
+        return (
+            <React.Fragment key={i}>
+                <div style={cellstyle}>{hour}</div><div style={contentCellStyle}></div>
+            </React.Fragment>
+        )
+});
     
     //get the formatted date at head of overlayblock
     const luxonDate = DateTime.fromJSDate(chosenDate);
@@ -70,20 +93,6 @@ export const TimeTable = ({children, chosenDate, events}) => {
             <div style={hourgridstyle}>
                 {hourgrids}
             </div>
-
-
-<ul>
-  {eventsInTheDay().map((event, idx) => (
-    <li key={event.id || idx}>
-      <div>Event: {event.getName()}</div>
-      <div>
-        Start: {event.getTimeslots().getStartObject().toISO()}
-      </div>
-      {/* Add more properties as needed */}
-    </li>
-  ))}
-</ul>
-
 
         </div>
         
