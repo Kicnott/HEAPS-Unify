@@ -6,10 +6,11 @@ import { uAccount, uCalendar, uCalendarDisplay, uEvent, uTimeslot } from '../cla
 
 // Components
 import { TopNavbar } from "../components/TopNavbar.jsx"
-import { RightDrawer } from "../components/RightDrawer.jsx"
+import { RightDrawer } from "../components/rightDrawer.jsx"
 import { MainCalendar } from '../components/mainCalendar.jsx'
 import { OverlayBlock } from '../components/overlayBlock.jsx'
 import { DropdownList } from '../components/DropdownList.jsx'
+import { TimeTable } from '../components/timeTable.jsx'
 
 
 function HomePage() {
@@ -17,11 +18,21 @@ function HomePage() {
     // Dummy Data
 
     // uTimeslot(startDT, endDT)
-    var T1 = new uTimeslot("2025-07-12T02:00:00Z", "2025-07-14T12:00:00Z")
+    var T2 = new uTimeslot("2025-06-18T02:00:00Z", "2025-06-18T05:00:00Z"); // 2am–5am UTC  10:00 AM – 1:00 PM
+    var T3 = new uTimeslot("2025-06-18T07:00:00Z", "2025-06-18T10:00:00Z"); // 7am–10am UTC 3:00 PM – 6:00 PM
+    var T4 = new uTimeslot("2025-06-19T13:00:00Z", "2025-06-19T20:00:00Z"); // 1pm–8pm UTC 9:00 PM - 4:00 AM
+    var T5 = new uTimeslot("2025-06-18T16:00:00Z", "2025-06-18T21:00:00Z"); // 12am–5am SGT on June 19
+
+
     // uEvent(timeslots, id, name, description, location)
-    var E1 = new uEvent([T1], 1, "Event 1", "Fun and cool event", "Marina Bay Sands")
+    var E2 = new uEvent(T2, 2, "Event 2", "Fun and cool event", "Marina Bay Sands");
+    var E3 = new uEvent(T3, 3, "Event 3", "Fun and cool event", "Marina Bay Sands");
+    var E4 = new uEvent(T4, 4, "Event 4", "Fun and cool event", "Marina Bay Sands");
+    var E5 = new uEvent(T5, 5, "Event 5", "Fun and cool event", "Marina Bay Sands");
+
+
     // uCalender(events, id, name, description, colour)
-    var C1 = new uCalendar([E1], 1, "myCalendar", "This is my calendar", "#ff0000")
+    var C1 = new uCalendar([E2], 1, "myCalendar", "This is my calendar", "#ff0000")
     // uAccount(id, name, description, myCalendar, followedCalendars)
     var A1 = new uAccount(1, "Me", "This is my Account", [C1], [])
     // uCalenderDisplay (displayDate, calendars, currentAccount) 
@@ -31,7 +42,11 @@ function HomePage() {
     // [variable, function to change variable] is the format
     const [isRightDrawerOpen, toggleRightDrawer] = useState(false) // Defining Right Drawer Open State
     const [isEventHidden, toggleEventHidden] = useState(true) // Defining Event Block Open State
-    const [calendarDisplay, changeCalendarDisplay] = useState(new uCalendarDisplay(new Date(), C1, A1)) // Defining the uCalendarDisplay object that the page will use to update the Main Calendar.
+    const [calendarDisplay, changeCalendarDisplay] = useState( new uCalendarDisplay(new Date(), C1, A1) ) 
+    const [chosenDate, setChosenDate] = useState(new Date())
+    const [events, setEvents] = useState([E2,E3,E4,E5])
+    // Defining the uCalendarDisplay object that the page will use to update the Main Calendar.
+    // the date object is the current time
 
     // These are all styles for the contents of the right drawer. It's not really what I want but I am too lazy to do more css.
     const drawerStyle = {
@@ -143,9 +158,12 @@ function HomePage() {
             <MainCalendar
                 displayDate={calendarDisplay.getDisplayDate()} // Assigns the date to display (in month format) as the date in the calendarDisplay state
                 onDateBoxClick={() => toggleEventHidden(!isEventHidden)} // Gives the dateboxes some functionality to open an Overlay block
+                setChosenDate = {setChosenDate}
             >
-
             </MainCalendar>
+
+
+{/* My section TODO */}
             {!isEventHidden && (
                 <div
                     style={{
@@ -161,7 +179,10 @@ function HomePage() {
                 isHidden={isEventHidden} // Assigns isEventHidden function
                 onClose={() => toggleEventHidden(!isEventHidden)} // Assigns toggleEventHidden function
             >
-                Hello!
+                
+                < TimeTable chosenDate={chosenDate} events={events}>
+                </TimeTable>
+
             </OverlayBlock>
 
         </div>

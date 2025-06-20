@@ -27,4 +27,4 @@ app.listen(port, () => {
 app.get('/api/message', (req, res) => {
     res.json({ message: 'Hello the server is working'})
     console.log('A request hath been made')
-})
+}) // Tests connection with front-end; Go to test-server page
