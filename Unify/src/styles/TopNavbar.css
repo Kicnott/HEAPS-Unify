@@ -1,0 +1,15 @@
+.topnavbar{
+
+    height: 60px;
+    background: light-dark(#ddd, #292929);
+    display: flex;
+    padding: 0 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    border-bottom: 1px solid light-dark(#ddd, #292929);
+}
