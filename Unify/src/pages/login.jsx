@@ -20,7 +20,7 @@ function LoginPage() {
     return (
         <div>
             <h1>
-                Sign in to Unify
+                Welcome to Unify!
             </h1>
             <h2>
                 <SimpleBlock>

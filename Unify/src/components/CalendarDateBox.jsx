@@ -27,8 +27,8 @@ export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate }) =
 
 export const CalendarDateHeader = ({ onClick, children }) => {
   let button_style = {
-    color: 'yellow',
-    'background-color': 'brown'
+    color: 'white',
+    'background-color': '#1d6b94'
   }
 
   return (
