@@ -27,7 +27,7 @@ export const OverlayBlock = ({ children, isHidden, onClose }) => {
   const rowStyle = {
     display: 'flex',
     alignItems: 'flex-start', // Aligns items at the top
-    gap: '16px' // Optional: space between button and grid
+    gap: '8px' // Optional: space between button and grid
   };
 
   return (

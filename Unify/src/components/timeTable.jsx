@@ -87,9 +87,35 @@ export const TimeTable = ({children, chosenDate, events}) => {
     const luxonDate = DateTime.fromJSDate(chosenDate);
     const formattedDate = luxonDate.toFormat("cccc - d LLLL");
 
+    const newEventStyle = {
+        position: 'absolute',
+        top: 16,
+        right: 16,
+        border: '1px solid black',
+        background: 'white',
+        padding: '4px 12px',
+        fontSize: 14,
+        borderRadius: '8px',
+        cursor: 'pointer',
+        zIndex: 2,
+        pointerEvents: 'auto'
+    }
+
     return (
         <div>
-            <div>{formattedDate}</div>
+            <div style={{
+                fontSize: '1rem',           // Bigger text (adjust as needed)
+                fontWeight: 'bold',         // Makes it stand out
+                fontFamily: 'Quicksand, Arial, sans-serif',        
+                color: '#222',              // Optional: a slightly softer black
+            }}>{formattedDate}</div>
+
+            <div>
+                <button style={newEventStyle}>+ New Event</button>
+            </div>
+
+            <div style={{ marginTop: '48px' }}></div> {/* Push timetable down */}
+
             <div style={hourgridstyle}>
                 {hourgrids}
             </div>
