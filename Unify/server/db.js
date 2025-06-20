@@ -1,10 +1,10 @@
-const { Pool } = require('pg')
+import { Pool } from 'pg'
 const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
+    user: 'postgres.jcozwjesouhvqxgbdijp',
+    host: 'aws-0-ap-southeast-1.pooler.supabase.com',
     database: 'Unify',
-    password: 'password',
+    password: 'UnifyHeap2025',
     port: 5432
 })
 
-module.exports = pool
+export default pool

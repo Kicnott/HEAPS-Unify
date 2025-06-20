@@ -43,9 +43,9 @@ export const CalendarDateHeader = ({ onClick, children }) => {
   // onClick: A function that runs when the DateHeader is clicked.
   // children: Any additional labels to be stored on each DateHeader.
   let button_style = {
-    color: 'yellow',
-    backgroundColor: 'brown'
-  } // Creates a yellow font with a brown background on the button
+    color: 'white',
+    'background-color': '#1d6b94'
+  }
 
   return (
     // A button is used to represent a date header
