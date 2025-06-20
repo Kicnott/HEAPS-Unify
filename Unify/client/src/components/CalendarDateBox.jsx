@@ -1,12 +1,16 @@
 
 // CalendarDateBox is a component used by MainCalendar to create the boxes in the Calendar.
-export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate }) => {
+export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, setChosenDate }) => {
   // onClick: A function that runs when the DateBox is clicked.
   // children: Any additional labels to be stored on each DateBox.
   // baseMonth: The current month being displayed - to determine the font color
   // displayDate: The date to be displayed in the DateBox.
-
   let date = displayDate.toLocaleDateString() // Converts the displayDate to a string so it can be displayed.
+
+  const eventDate = () => {
+    setChosenDate(displayDate);
+  }
+
 
   let isBaseMonth // Stores true or false on whether the current date displayed in part of the base month.
   if (baseMonth === (displayDate.getMonth())) {
@@ -24,7 +28,10 @@ export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate }) =
     // A button is used to represent a date box.
     // When clicked, the function stored in onClick is run.
     // The date is displayed by default. Additional information can be displayed by using the children variable.
-    <button onClick={onClick} style={calendarStyle}>
+    <button onClick={() => {
+      onClick();
+      eventDate();
+    }} style={calendarStyle}>
       {children}
       {date}
     </button>

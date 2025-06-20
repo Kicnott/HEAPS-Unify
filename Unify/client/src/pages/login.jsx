@@ -4,7 +4,7 @@ import '../styles/App.css'
 import '../classes/index.jsx'
 
 // Components
-import { SimpleBlock } from '../components/SimpleBlock.jsx'
+import { SimpleBlock } from '../components/simpleBlock.jsx'
 
 function LoginPage() {
 
