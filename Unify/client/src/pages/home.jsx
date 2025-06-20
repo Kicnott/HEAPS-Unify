@@ -8,10 +8,10 @@ import { uAccount, uCalendar, uCalendarDisplay, uEvent, uTimeslot } from '../cla
 import { TopNavbar } from "../components/TopNavbar.jsx"
 import { RightDrawer } from "../components/rightDrawer.jsx"
 import { MainCalendar } from '../components/mainCalendar.jsx'
-import { OverlayBlock } from '../components/overlayBlock.jsx'
+import { OverlayBlock } from '../components/OverlayBlock.jsx'
 import { DropdownList } from '../components/DropdownList.jsx'
 import { TimeTable } from '../components/timeTable.jsx'
-
+import { CreateEvent } from '../components/newCreateEvent.jsx'
 
 function HomePage() {
 
@@ -42,6 +42,7 @@ function HomePage() {
     // [variable, function to change variable] is the format
     const [isRightDrawerOpen, toggleRightDrawer] = useState(false) // Defining Right Drawer Open State
     const [isEventHidden, toggleEventHidden] = useState(true) // Defining Event Block Open State
+    const [isEventFormOpen, setEventFormOpen] = useState(false)
     const [calendarDisplay, changeCalendarDisplay] = useState( new uCalendarDisplay(new Date(), C1, A1) ) 
     const [chosenDate, setChosenDate] = useState(new Date())
     const [events, setEvents] = useState([E2,E3,E4,E5])
@@ -182,7 +183,18 @@ function HomePage() {
                 
                 < TimeTable chosenDate={chosenDate} events={events}>
                 </TimeTable>
+                <button onClick={() => {
+                    console.log("Button clicked!")
+                    setEventFormOpen(true)
+                    }}>+ Add Event</button>
 
+            </OverlayBlock>
+
+{/* bev's event making thing 2nd overlay */}
+            <OverlayBlock
+                isHidden={!isEventFormOpen}
+                onClose={() => setEventFormOpen(false)}>
+                <CreateEvent onClose={() => setEventFormOpen(false)} />
             </OverlayBlock>
 
         </div>
