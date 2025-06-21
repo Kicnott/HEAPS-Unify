@@ -13,3 +13,13 @@
     z-index: 1000;
     border-bottom: 1px solid light-dark(#ddd, #292929);
 }
+
+h1 {
+    margin: 0;
+    margin-right: auto;
+}
+
+#button {
+    display: flex;
+    gap: 10px;
+}
