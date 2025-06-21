@@ -6,8 +6,6 @@ import pool from './db.js' // Defines the connection pool for the database
 import sequelize from './sequelize.js'
 
 
-
-
 app.use(cors()) // Makes the Express app use cors
 app.use(express.json()) // Makes the Express app read incoming json data, which is (probably??) what we will use
 
