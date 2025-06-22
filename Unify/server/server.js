@@ -11,12 +11,12 @@ app.get('/', (req, res) => {
   res.send('Hey ho server is up')
 }) // For testing. Run the server and go to localhost:8888 to see message
 
-app.post("/login", async (req, res) => {
+app.post("/login", async (req, res) => { // Login authentification
     const { username, password } = req.body;
 
     console.log(req.body);
 
-    const result = await pool.query(
+    const result = await pool.query( // searches for user in the database
       'SELECT * FROM username_data WHERE username = $1',
       [username]
     );
@@ -25,10 +25,10 @@ app.post("/login", async (req, res) => {
 
     if (user && user.password === password) {
       console.log("Data matches!");
-      res.json({ status: true });
+      res.json({ status: true }); // Return true if username and password matches database
     } else {
       console.log("Data does not match");
-      res.json({ status: false });
+      res.json({ status: false }); // Return false if username and password does not match database
     }
 })
 

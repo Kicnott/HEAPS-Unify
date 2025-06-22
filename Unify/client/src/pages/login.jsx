@@ -13,6 +13,7 @@ function LoginPage() {
     const navigate = useNavigate() // Assigns the function to navigate to different routes. Idk why useNavigate() raw does not work
     const [username, setUsername] = useState('') // Assigns a string state for username
     const [password, setPassword] = useState('') // Assigns a string state for password
+    const [errorMessage, setErrorMessage] = useState(''); // String state for errorMessage
 
     const handleSubmit = async (submitAction) => {
         submitAction.preventDefault() // Prevents the form from being submitted through GET or POST normally
@@ -34,6 +35,7 @@ function LoginPage() {
             navigate('/home')
         } else {
             console.log("Log in failed.")
+            setErrorMessage("Log in failed."); // Displays error message when user fails to log in
         }
     }
     return (
@@ -63,10 +65,11 @@ function LoginPage() {
                             >
                             </input>
                             <br></br>
-                            <input type='submit' name='login' value="Login">
+                            <input type='submit' name='login' value="Login"> {/* Displays Error Messgae on failed login*/}
                             </input>
                         </h4>
                     </form>
+                    <h5 style ={{color: 'red'}}>{errorMessage}</h5> 
                 </SimpleBlock>
             </h2>
         </div>
