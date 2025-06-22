@@ -11,6 +11,27 @@ app.get('/', (req, res) => {
   res.send('Hey ho server is up')
 }) // For testing. Run the server and go to localhost:8888 to see message
 
+app.post("/login", async (req, res) => {
+    const { username, password } = req.body;
+
+    console.log(req.body);
+
+    const result = await pool.query(
+      'SELECT * FROM username_data WHERE username = $1',
+      [username]
+    );
+
+    const user = result.rows[0];
+
+    if (user && user.password === password) {
+      console.log("Data matches!");
+      res.json({ status: true });
+    } else {
+      console.log("Data does not match");
+      res.json({ status: false });
+    }
+})
+
 app.get('/api/test-db', async (req, res) => {
   try {
     const result = await pool.query('SELECT NOW()');

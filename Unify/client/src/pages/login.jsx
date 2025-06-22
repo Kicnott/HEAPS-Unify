@@ -17,7 +17,24 @@ function LoginPage() {
     const handleSubmit = async (submitAction) => {
         submitAction.preventDefault() // Prevents the form from being submitted through GET or POST normally
         // TODO, send data to server, authentication, all that jazz
-        navigate('/home') // Right now, the button always send you to home page
+        const status = await fetch("http://localhost:8888/login", {
+            method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username,
+                password,
+            })
+        })
+
+        const data = await status.json();
+
+        if (data.status===true){
+            navigate('/home')
+        } else {
+            console.log("Log in failed.")
+        }
     }
     return (
         <div>
