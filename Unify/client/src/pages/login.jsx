@@ -65,11 +65,11 @@ function LoginPage() {
                             >
                             </input>
                             <br></br>
-                            <input type='submit' name='login' value="Login"> {/* Displays Error Messgae on failed login*/}
+                            <input type='submit' name='login' value="Login">
                             </input>
                         </h4>
                     </form>
-                    <h5 style ={{color: 'red'}}>{errorMessage}</h5> 
+                    <h5 style ={{color: 'red'}}>{errorMessage}</h5> {/*Displays errorMessage*/}
                 </SimpleBlock>
             </h2>
         </div>
