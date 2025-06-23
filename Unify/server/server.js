@@ -11,7 +11,26 @@ app.get('/', (req, res) => {
   res.send('Hey ho server is up')
 }) // For testing. Run the server and go to localhost:8888 to see message
 
-app.post("/login", async (req, res) => { // Login authentification
+//Display Accounts
+app.get('/home', async (req, res) => {
+  try {
+    console.log("GetAllAccounts: Connected!")
+
+    const result = await pool.query( // searches for all accounts in the database
+      'SELECT * FROM AccountsTable'
+    );
+    
+    console.log("result: ", result)
+    res.json(result)
+  } catch (e){
+    console.log("All Accounts retrieval failed!")
+    console.log(e)
+    res.json(e)
+  }
+})
+
+// Login authentification
+app.post("/login", async (req, res) => {
     const { username, password } = req.body;
 
     console.log(req.body);
@@ -45,6 +64,7 @@ app.get('/api/message', (req, res) => {
   res.json({ message: 'Hello the server is working' })
   console.log('A request hath been made')
 }) // Tests connection with front-end; Go to test-server page
+
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`)

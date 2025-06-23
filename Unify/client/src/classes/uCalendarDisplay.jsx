@@ -32,5 +32,4 @@ export class uCalendarDisplay{
         this.currentAccount = currentAccount
         return this.currentAccount
     }
-
 }

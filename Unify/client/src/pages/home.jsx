@@ -11,8 +11,9 @@ import { MainCalendar } from '../components/mainCalendar.jsx'
 import { OverlayBlock } from '../components/OverlayBlock.jsx'
 import { DropdownList } from '../components/DropdownList.jsx'
 import { TimeTable } from '../components/timeTable.jsx'
-import { CreateEvent } from '../components/newCreateEvent.jsx'
+import { CreateEvent } from '../components/CreateNewEvent.jsx'
 import { RightDrawerCloseBackground } from '../functions/rightDrawerCloseBackground'
+import { EditAccountForm } from '../components/EditAccounts.jsx'
 
 function HomePage() {
 
@@ -44,6 +45,7 @@ function HomePage() {
     const [isRightDrawerOpen, toggleRightDrawer] = useState(false) // Defining Right Drawer Open State
     const [isEventHidden, toggleEventHidden] = useState(true) // Defining Event Block Open State
     const [isEventFormOpen, setEventFormOpen] = useState(false)
+    const [isEditAccountsFormOpen, setEditAccountsFormOpen] = useState(false)
     const [calendarDisplay, changeCalendarDisplay] = useState( new uCalendarDisplay(new Date(), C1, A1) ) 
     const [chosenDate, setChosenDate] = useState(new Date())
     const [events, setEvents] = useState([E2,E3,E4,E5])
@@ -107,6 +109,9 @@ function HomePage() {
                         <br></br>
                         <br></br>
                         <button>Events (TODO)</button>
+                        <br></br>
+                        <br></br>
+                        <button onClick={()=>setEditAccountsFormOpen(!isEditAccountsFormOpen)}>Edit Account (Admin use)</button>
                     </div> {/* TODO all these buttons */}
 
                     <div style={rightDrawerButtonBottom}>
@@ -184,11 +189,14 @@ function HomePage() {
                 onClose={() => setEventFormOpen(false)}>
                 <CreateEvent onClose={() => setEventFormOpen(false)} />
             </OverlayBlock>
-
+            
+{/* nic's edit accounts form */}
+            <OverlayBlock
+                isHidden={!isEditAccountsFormOpen}>
+                <EditAccountForm onClose={() => setEditAccountsFormOpen(false)} />
+            </OverlayBlock>
         </div>
-
     )
-
 }
 
 export default HomePage // Means that home.jsx only exports HomePage
