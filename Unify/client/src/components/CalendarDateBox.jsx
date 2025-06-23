@@ -44,7 +44,7 @@ export const CalendarDateHeader = ({ onClick, children }) => {
   // children: Any additional labels to be stored on each DateHeader.
   let button_style = {
     color: 'white',
-    'background-color': '#1d6b94'
+    'backgroundColor': '#1d6b94'
   }
 
   return (

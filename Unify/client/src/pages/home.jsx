@@ -12,6 +12,7 @@ import { OverlayBlock } from '../components/OverlayBlock.jsx'
 import { DropdownList } from '../components/DropdownList.jsx'
 import { TimeTable } from '../components/timeTable.jsx'
 import { CreateEvent } from '../components/newCreateEvent.jsx'
+import { RightDrawerCloseBackground } from '../functions/rightDrawerCloseBackground'
 
 function HomePage() {
 
@@ -87,23 +88,10 @@ function HomePage() {
 
     return (
         <div>
-            <TopNavbar>
-                <h1 style={{ margin: 0, marginRight: 'auto' }}>Unify</h1> {/* Unify logo / title for Top Nav Bar */}
-                <div style={{ display: 'flex', gap: '10px' }}>
-                    <button onClick={() => toggleRightDrawer(!isRightDrawerOpen)}>Stuff</button> {/* Creates the 'stuff' butto to open the right drawer by toggling the isRightDrawerOpen state */}
-                </div>
-            </TopNavbar>
-            {isRightDrawerOpen && (
-                <div
-                    style={{
-                        position: 'fixed',
-                        top: 0, left: 0, right: 0, bottom: 0,
-                        background: 'rgba(0,0,0,0.4)',
-                        zIndex: 1000
-                    }}
-                    onClick={() => toggleRightDrawer(!isRightDrawerOpen)} // Lets you click background to close right drawer
-                /> // When isRightDrawer is true, this creates an overlay over the rest of the screen
-            )}
+            <TopNavbar isRightDrawerOpen = {isRightDrawerOpen} toggleRightDrawer= {toggleRightDrawer}></TopNavbar> 
+
+            <RightDrawerCloseBackground isRightDrawerOpen = {isRightDrawerOpen} toggleRightDrawer= {toggleRightDrawer}></RightDrawerCloseBackground>
+
             <RightDrawer
                 rightDrawerOpen={isRightDrawerOpen} // assigns isRightDrawer state
                 onClose={() => toggleRightDrawer(!isRightDrawerOpen)} // assigns toggleRightDrawer function
