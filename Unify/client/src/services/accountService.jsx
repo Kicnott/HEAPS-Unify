@@ -15,8 +15,8 @@ const createAccount = (data) => {
     return http.post(`/home/createAccount`, data)
 }
 
-const deleteAccount = (id) => {
-    return http.delete(`/home/${id}`)
+const deleteAccount = (data) => {
+    return http.delete(`/home/deleteAccount`, {data})
 }
 
 export default {
