@@ -8,11 +8,11 @@ const http = axios.create({
 })
 
 const showAllAccounts = () => {
-    return http.get('/home')
+    return http.get('/home/showAllAccounts')
 }
 
 const createAccount = (data) => {
-    return http.put(`/home/${id}`, data)
+    return http.post(`/home/createAccount`, data)
 }
 
 const deleteAccount = (id) => {

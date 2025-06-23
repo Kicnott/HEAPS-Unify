@@ -1,39 +1,12 @@
 import { useState, useEffect} from 'react'
 import accountService from '../services/accountService.jsx'
 
-const displayAccounts = () => {
-  const [response, setResponse] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await accountService.showAllAccounts();
-        setResponse(res.data.rows); 
-        console.log("response insideUseEffect: ", response)
-      } catch (err) {
-        console.error('Error fetching accounts:', err);
-      }
-    }
-    fetchData()
-  }, [])
-
-  return (
-    <div>
-      <h4>Username : Password</h4>
-        {response.map((row, index) => {
-          return (
-            <div key='index'>
-              {row.accountid} : {row.accountpassword}
-            </div>
-          )
-        })}
-    </div>
-  );
-}
-
 export const EditAccountForm = ({ onClose }) => {
-  const [accountName, setAccountName] = useState("")
-  const [accountPw, setAccountPw] = useState("")
+  const [inputUsername, setinputUsername] = useState("")
+  const [inputPassword, setinputPassword] = useState("")
+  const [ErrMsg, setErrMsg] = useState("")
+  const [refreshDisplayTrigger, setRefreshDisplayTrigger] = useState(1)
+
 
   return (
     <div style={{ width: '100%' }}>
@@ -41,23 +14,72 @@ export const EditAccountForm = ({ onClose }) => {
 
       <div style={{ marginTop: '12px' }}>
         <label>Account Name</label>
-        <input type="text" value={accountName} onChange={e => setAccountName(e.target.value)} style={inputStyle} />
+        <input type="text" value={inputUsername} onChange={e => setinputUsername(e.target.value)} style={inputStyle} />
       </div>
 
       <div style={{ marginTop: '12px' }}>
         <label>Account Password</label>
-        <input type="text" value={accountPw} onChange={e => setAccountPw(e.target.value)} style={inputStyle} />
+        <input type="text" value={inputPassword} onChange={e => setinputPassword(e.target.value)} style={inputStyle} />
       </div>
 
       <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
-        <button style={addBtnStyle}>Add</button>
+        <button style={addBtnStyle} onClick={createAccount(inputUsername, inputPassword, setErrMsg, refreshDisplayTrigger, setRefreshDisplayTrigger)}>Add</button>
         <button style={deleteBtnStyle}>Delete</button>
         <button style={deleteBtnStyle} onClick = {onClose}>Close form</button>
       </div>
-      <div>{displayAccounts()}</div>
+      <DisplayAccounts ErrMsg = {ErrMsg} refreshDisplayTrigger={refreshDisplayTrigger}></DisplayAccounts>
     </div>
   )
 }
+
+//Display all active accounts inside form
+const DisplayAccounts = ({ErrMsg, refreshDisplayTrigger}) => {
+  const [response, setResponse] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await accountService.showAllAccounts();
+        setResponse(res.data.rows); 
+      } catch (err) {
+        console.error('Error fetching accounts:', err);
+      }
+    }
+    fetchData()
+  }, [refreshDisplayTrigger])
+
+  return (
+    <div>
+      <h6 style = {{color: 'red'}}>{ErrMsg}</h6>
+      <h4>ID : Username : Password</h4>
+        {response.map((row, index) => {
+          return (
+            <div key={index}>
+              {row.accountid} : {row.accountusername} : {row.accountpassword}
+            </div>
+          )
+        })}
+    </div>
+  );
+}
+
+//Create a new account and add it to the database
+const createAccount = (inputUsername, inputPassword, setErrMsg,refreshDisplayTrigger, setRefreshDisplayTrigger) => async (event) => {
+  event.preventDefault();
+
+  try {
+    const res = await accountService.createAccount({
+      username: inputUsername,
+      password: inputPassword,
+    });
+    console.log('Account status:', res.data.status);
+    setErrMsg(res.data.status);
+    setRefreshDisplayTrigger(refreshDisplayTrigger + 1)
+  } catch (err) {
+    console.error('Error creating account:', err);
+    setErrMsg(err);
+  }
+};
 
 const inputStyle = {
   display: 'block',

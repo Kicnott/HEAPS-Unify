@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
 }) // For testing. Run the server and go to localhost:8888 to see message
 
 //Display Accounts
-app.get('/home', async (req, res) => {
+app.get('/home/showAllAccounts', async (req, res) => {
   try {
     console.log("GetAllAccounts: Connected!")
 
@@ -20,20 +20,54 @@ app.get('/home', async (req, res) => {
       'SELECT * FROM AccountsTable'
     );
     
-    console.log("result: ", result)
-    res.json(result)
+    return res.json(result)
   } catch (e){
-    console.log("All Accounts retrieval failed!")
+    console.log("GetAllAccounts: Server Error")
+    return res.json(e)
+  }
+})
+
+//Create Accounts
+app.post('/home/createAccount', async (req, res) => {
+  try {
+    console.log("createAccount: Connected!")
+
+    const inputUsername = req.body.username
+    const inputPassword = req.body.password
+
+    if (inputUsername == '' || inputPassword == ''){
+      return res.json({ status : "Input Something!"})
+    }
+    const usernamePasswordMatch = await pool.query( 
+      'SELECT accountid FROM AccountsTable where accountusername = ($1) and accountpassword = ($2)', [inputUsername, inputPassword]
+    );
+
+    if (usernamePasswordMatch.rows.length > 0){
+      return res.json({ status : "Account already exists"})
+    }
+
+    const latestResult = await pool.query( // searches for all accounts in the database
+      'SELECT accountid FROM AccountsTable ORDER BY accountid::int DESC LIMIT 1'
+    );
+
+    const latestId = latestResult.rows.length > 0 ? parseInt(latestResult.rows[0].accountid) : 0;
+    const newId = latestId + 1;
+
+    const result = await pool.query( // searches for all accounts in the database
+      'INSERT INTO AccountsTable (accountid,accountusername,accountpassword) VALUES ($1, $2, $3)', [newId, req.body.username, req.body.password]
+    );
+    
+    return res.json({ status: 'Account created' })
+  } catch (e){
+    console.log("createAccount: Server Error")
     console.log(e)
-    res.json(e)
+    return res.json({ status: 'Failed to create account' })
   }
 })
 
 // Login authentification
 app.post("/login", async (req, res) => {
     const { username, password } = req.body;
-
-    console.log(req.body);
 
     const result = await pool.query( // searches for user in the database
       'SELECT * FROM username_data WHERE username = $1',
