@@ -12,16 +12,19 @@ app.get('/', (req, res) => {
 }) // For testing. Run the server and go to localhost:8888 to see message
 
 //Display Accounts
-app.get('/home/showAllAccounts', async (req, res) => {
+//async tells js that function will take time and return a promise 
+//await pauses the function until promise finishes 
+app.get('/home/showAllAccounts', async (req, res) => { // 1. url parameter 2. function handling req & res
   try {
     console.log("GetAllAccounts: Connected!")
-
-    const result = await pool.query( // searches for all accounts in the database
+    
+    // use await when function returns a promise. pauses execution until promise settles
+    const result = await pool.query( // searches for all accounts in the database. query sends sql commands to database
       'SELECT * FROM AccountsTable'
     );
     
-    return res.json(result)
-  } catch (e){
+    return res.json(result) //send json formatted data back to client
+  } catch (e){ //if there is an error
     console.log("GetAllAccounts: Server Error")
     console.log(e)
     return res.json(e)
