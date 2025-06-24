@@ -17,6 +17,8 @@ import { EditAccountForm } from '../components/EditAccounts.jsx'
 
 function HomePage() {
 
+    const currentUser = sessionStorage.getItem("currentUser"); //Gets Username in sessionStorage from login
+
     // Dummy Data
 
     // uTimeslot(startDT, endDT)
@@ -90,6 +92,8 @@ function HomePage() {
 
     return (
         <div>
+            <h3>Current User: {currentUser}</h3>
+
             <TopNavbar isRightDrawerOpen = {isRightDrawerOpen} toggleRightDrawer= {toggleRightDrawer}></TopNavbar> 
 
             <RightDrawerCloseBackground isRightDrawerOpen = {isRightDrawerOpen} toggleRightDrawer= {toggleRightDrawer}></RightDrawerCloseBackground>
