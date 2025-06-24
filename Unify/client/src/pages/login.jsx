@@ -32,6 +32,7 @@ function LoginPage() {
         const data = await status.json();
 
         if (data.status===true){
+            sessionStorage.setItem("currentUser", username)
             navigate('/home')
         } else {
             console.log("Log in failed.")
