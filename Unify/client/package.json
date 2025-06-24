@@ -13,6 +13,7 @@
     "@fullcalendar/core": "^6.1.17",
     "@fullcalendar/daygrid": "^6.1.17",
     "@fullcalendar/react": "^6.1.17",
+    "axios": "^1.10.0",
     "express": "^5.1.0",
     "fullcalendar": "^6.1.17",
     "luxon": "^3.6.1",

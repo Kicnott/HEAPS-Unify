@@ -11,9 +11,13 @@ import { MainCalendar } from '../components/mainCalendar.jsx'
 import { OverlayBlock } from '../components/OverlayBlock.jsx'
 import { DropdownList } from '../components/DropdownList.jsx'
 import { TimeTable } from '../components/timeTable.jsx'
-import { CreateEvent } from '../components/newCreateEvent.jsx'
+import { CreateEvent } from '../components/CreateNewEvent.jsx'
+import { RightDrawerCloseBackground } from '../functions/rightDrawerCloseBackground'
+import { EditAccountForm } from '../components/EditAccounts.jsx'
 
 function HomePage() {
+
+    const currentUser = sessionStorage.getItem("currentUser"); //Gets Username in sessionStorage from login
 
     // Dummy Data
 
@@ -43,6 +47,7 @@ function HomePage() {
     const [isRightDrawerOpen, toggleRightDrawer] = useState(false) // Defining Right Drawer Open State
     const [isEventHidden, toggleEventHidden] = useState(true) // Defining Event Block Open State
     const [isEventFormOpen, setEventFormOpen] = useState(false)
+    const [isEditAccountsFormOpen, setEditAccountsFormOpen] = useState(false)
     const [calendarDisplay, changeCalendarDisplay] = useState( new uCalendarDisplay(new Date(), C1, A1) ) 
     const [chosenDate, setChosenDate] = useState(new Date())
     const [events, setEvents] = useState([E2,E3,E4,E5])
@@ -87,23 +92,12 @@ function HomePage() {
 
     return (
         <div>
-            <TopNavbar>
-                <h1 style={{ margin: 0, marginRight: 'auto' }}>Unify</h1> {/* Unify logo / title for Top Nav Bar */}
-                <div style={{ display: 'flex', gap: '10px' }}>
-                    <button onClick={() => toggleRightDrawer(!isRightDrawerOpen)}>Stuff</button> {/* Creates the 'stuff' butto to open the right drawer by toggling the isRightDrawerOpen state */}
-                </div>
-            </TopNavbar>
-            {isRightDrawerOpen && (
-                <div
-                    style={{
-                        position: 'fixed',
-                        top: 0, left: 0, right: 0, bottom: 0,
-                        background: 'rgba(0,0,0,0.4)',
-                        zIndex: 1000
-                    }}
-                    onClick={() => toggleRightDrawer(!isRightDrawerOpen)} // Lets you click background to close right drawer
-                /> // When isRightDrawer is true, this creates an overlay over the rest of the screen
-            )}
+            <h3>Current User: {currentUser}</h3>
+
+            <TopNavbar isRightDrawerOpen = {isRightDrawerOpen} toggleRightDrawer= {toggleRightDrawer}></TopNavbar> 
+
+            <RightDrawerCloseBackground isRightDrawerOpen = {isRightDrawerOpen} toggleRightDrawer= {toggleRightDrawer}></RightDrawerCloseBackground>
+
             <RightDrawer
                 rightDrawerOpen={isRightDrawerOpen} // assigns isRightDrawer state
                 onClose={() => toggleRightDrawer(!isRightDrawerOpen)} // assigns toggleRightDrawer function
@@ -119,6 +113,9 @@ function HomePage() {
                         <br></br>
                         <br></br>
                         <button>Events (TODO)</button>
+                        <br></br>
+                        <br></br>
+                        <button onClick={()=>setEditAccountsFormOpen(!isEditAccountsFormOpen)}>Edit Account (Admin use)</button>
                     </div> {/* TODO all these buttons */}
 
                     <div style={rightDrawerButtonBottom}>
@@ -196,11 +193,14 @@ function HomePage() {
                 onClose={() => setEventFormOpen(false)}>
                 <CreateEvent onClose={() => setEventFormOpen(false)} />
             </OverlayBlock>
-
+            
+{/* nic's edit accounts form */}
+            <OverlayBlock
+                isHidden={!isEditAccountsFormOpen}>
+                <EditAccountForm onClose={() => setEditAccountsFormOpen(false)} />
+            </OverlayBlock>
         </div>
-
     )
-
 }
 
 export default HomePage // Means that home.jsx only exports HomePage
