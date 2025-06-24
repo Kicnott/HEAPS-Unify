@@ -1,9 +1,9 @@
 import { Pool } from 'pg'
 const pool = new Pool({
-    user: 'postgres.jcozwjesouhvqxgbdijp',
-    host: 'aws-0-ap-southeast-1.pooler.supabase.com',
+    user: 'nicholas',
+    host: 'localhost',
     database: 'Unify',
-    password: 'UnifyHeap2025',
+    password: 'root',
     port: 5432
 })
 

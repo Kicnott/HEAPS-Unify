@@ -5,7 +5,7 @@ export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, set
   // children: Any additional labels to be stored on each DateBox.
   // baseMonth: The current month being displayed - to determine the font color
   // displayDate: The date to be displayed in the DateBox.
-  let date = displayDate.toLocaleDateString() // Converts the displayDate to a string so it can be displayed.
+  let date = displayDate.getDate() // Converts the displayDate to a string so it can be displayed.
 
   const eventDate = () => {
     setChosenDate(displayDate);

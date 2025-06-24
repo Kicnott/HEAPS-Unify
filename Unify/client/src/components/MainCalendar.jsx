@@ -24,7 +24,7 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
 
     for (let i = 0; i < 42; i++){
         let date = dateIndex.toLocaleDateString()
-        calendarBoxes.push(<CalendarDateBox key={date} baseMonth={displayDate.getMonth()} displayDate={new Date(dateIndex)} onClick={onDateBoxClick} setChosenDate={setChosenDate}>{children}</CalendarDateBox>) // Button functionality to be added
+        calendarBoxes.push(<CalendarDateBox key={date} baseMonth={displayDate.getMonth()} displayDate={new Date     (dateIndex)} onClick={onDateBoxClick} setChosenDate={setChosenDate}>{children}</CalendarDateBox>) // Button functionality to be added
         dateIndex.setDate(dateIndex.getDate() + 1)
     } // Next, the CalendarDateBoxes, each displaying the date from the baseDate and incrementally increasing until all 6 rows are filled, are pushed into the calendarBoxes array.
     // According to AI, the key specified here is to uniquely identify the CalendarDateHeaders, so that they can be updated efficiently. Code **should** still work without defining the keys.
