@@ -2,7 +2,7 @@ import { Pool } from 'pg'
 const pool = new Pool({
     user: 'nicholas',
     host: 'localhost',
-    database: 'Unify',
+    database: 'Unify-Test',
     password: 'root',
     port: 5432
 })
