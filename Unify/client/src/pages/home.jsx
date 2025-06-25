@@ -10,7 +10,7 @@ import { RightDrawer } from "../components/rightDrawer.jsx"
 import { MainCalendar } from '../components/mainCalendar.jsx'
 import { OverlayBlock } from '../components/OverlayBlock.jsx'
 import { DropdownList } from '../components/DropdownList.jsx'
-import { TimeTable } from '../components/timeTable.jsx'
+import { TimeTable } from '../components/TimeTable.jsx'
 import { CreateEvent } from '../components/newCreateEvent.jsx'
 import { RightDrawerCloseBackground } from '../functions/rightDrawerCloseBackground'
 

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import '../styles/App.css'
 import '../classes/index.jsx'
+import { Link } from 'react-router-dom'
 
 // Components
 import { SimpleBlock } from '../components/simpleBlock.jsx'
@@ -14,30 +15,34 @@ function LoginPage() {
     const [username, setUsername] = useState('') // Assigns a string state for username
     const [password, setPassword] = useState('') // Assigns a string state for password
     const [errorMessage, setErrorMessage] = useState(''); // String state for errorMessage
+    const [action, setAction] = useState('')
 
     const handleSubmit = async (submitAction) => {
         submitAction.preventDefault() // Prevents the form from being submitted through GET or POST normally
         // TODO, send data to server, authentication, all that jazz
-        const status = await fetch("http://localhost:8888/login", {
-            method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username,
-                password,
+        if (action === "login") {
+            const status = await fetch("http://localhost:8888/login", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username,
+                    password,
+                })
             })
-        })
+            const data = await status.json();
 
-        const data = await status.json();
-
-        if (data.status===true){
-            navigate('/home')
-        } else {
-            console.log("Log in failed.")
-            setErrorMessage("Log in failed."); // Displays error message when user fails to log in
+            if (data.status === true) {
+                navigate('/home')
+            } else {
+                console.log("Log in failed.")
+                setErrorMessage("Log in failed."); // Displays error message when user fails to log in
+            }
         }
     }
+
+
     return (
         <div>
             <h1>
@@ -65,11 +70,16 @@ function LoginPage() {
                             >
                             </input>
                             <br></br>
-                            <input type='submit' name='login' value="Login">
-                            </input>
+                            <br></br>
+                            <button type='login' onClick={() => setAction("login")}>
+                                Login
+                            </button>
+                            <button type='register' onClick={() => navigate('/register')}>
+                                Register
+                            </button>
                         </h4>
                     </form>
-                    <h5 style ={{color: 'red'}}>{errorMessage}</h5> {/*Displays errorMessage*/}
+                    <h5 style={{ color: 'red' }}>{errorMessage}</h5> {/*Displays errorMessage*/}
                 </SimpleBlock>
             </h2>
         </div>
