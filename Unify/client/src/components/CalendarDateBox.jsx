@@ -21,7 +21,10 @@ export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, set
   }
 
   let calendarStyle = {
-    color: isBaseMonth ? 'black' : 'grey' // If the date is part of the base month, the font color is black; otherwise, it is grey.
+    color: isBaseMonth ? 'black' : 'grey', // If the date is part of the base month, the font color is black; otherwise, it is grey.
+    height: '6rem', 
+    width: '100%',
+    position: 'relative'
   }
 
   return (
@@ -33,7 +36,14 @@ export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, set
       eventDate();
     }} style={calendarStyle}>
       {children}
-      {date}
+      
+      <span style={{
+      position: 'absolute',
+      top: '0.5rem',
+      left: '0.5rem',
+    }}>
+        {date}
+      </span>
     </button>
   )
 }
@@ -44,7 +54,9 @@ export const CalendarDateHeader = ({ onClick, children }) => {
   // children: Any additional labels to be stored on each DateHeader.
   let button_style = {
     color: 'white',
-    'backgroundColor': '#1d6b94'
+    backgroundColor: '#1d6b94',
+    height: '6rem', 
+    width: '100%'
   }
 
   return (
