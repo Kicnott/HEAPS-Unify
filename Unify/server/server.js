@@ -183,13 +183,14 @@ app.post("/login", async (req, res) => {
     const { username, password } = req.body;
 
     const result = await pool.query( // searches for user in the database
-      'SELECT * FROM username_data WHERE username = $1',
+      'SELECT * FROM accountsTable WHERE accountusername = $1',
       [username]
     );
 
     const user = result.rows[0]; //gets the username from the db, if username does not exists it returns undefined
+    console.log(user)
 
-    if (user && user.password === password) {
+    if (user && user.accountpassword === password) {
       console.log("Data matches!");
       const userid = user.accountid;
       res.json({ status: true, userid: userid}); // Return true if username and password matches database
