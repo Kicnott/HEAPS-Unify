@@ -14,10 +14,12 @@ import { TimeTable } from '../components/timeTable.jsx'
 import { CreateEvent } from '../components/CreateNewEvent.jsx'
 import { RightDrawerCloseBackground } from '../functions/rightDrawerCloseBackground'
 import { EditAccountForm } from '../components/EditAccounts.jsx'
+import { EditCalendersForm } from '../components/EditCalenders.jsx'
 
 function HomePage() {
 
     const currentUser = sessionStorage.getItem("currentUser"); //Gets Username in sessionStorage from login
+    const currentUserAccountId = sessionStorage.getItem("currentUserAccountId"); //Gets Username in sessionStorage from login
 
     // Dummy Data
 
@@ -48,6 +50,7 @@ function HomePage() {
     const [isEventHidden, toggleEventHidden] = useState(true) // Defining Event Block Open State
     const [isEventFormOpen, setEventFormOpen] = useState(false)
     const [isEditAccountsFormOpen, setEditAccountsFormOpen] = useState(false)
+    const [isEditCalendersFormOpen, setEditCalendersFormOpen] = useState(false)
     const [calendarDisplay, changeCalendarDisplay] = useState( new uCalendarDisplay(new Date(), C1, A1) ) 
     const [chosenDate, setChosenDate] = useState(new Date())
     const [events, setEvents] = useState([E2,E3,E4,E5])
@@ -92,7 +95,7 @@ function HomePage() {
 
     return (
         <div>
-            <h3>Current User: {currentUser}</h3>
+            <h3>Current User: {currentUser} &nbsp; Account ID: {currentUserAccountId}</h3>
 
             <TopNavbar isRightDrawerOpen = {isRightDrawerOpen} toggleRightDrawer= {toggleRightDrawer}></TopNavbar> 
 
@@ -198,6 +201,15 @@ function HomePage() {
             <OverlayBlock
                 isHidden={!isEditAccountsFormOpen}>
                 <EditAccountForm onClose={() => setEditAccountsFormOpen(false)} />
+            </OverlayBlock>
+
+{/* nic's edit accounts form */}
+            <button onClick={()=>setEditCalendersFormOpen(!isEditCalendersFormOpen)}>Edit Calender</button>
+
+{/* nic's edit accounts form */}
+            <OverlayBlock
+                isHidden={!isEditCalendersFormOpen}>
+                <EditCalendersForm onClose={() => setEditCalendersFormOpen(false)} currentAccountId ={currentUserAccountId} />
             </OverlayBlock>
         </div>
     )

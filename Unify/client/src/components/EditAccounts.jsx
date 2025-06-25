@@ -78,7 +78,7 @@ const createAccount = (inputUsername, inputPassword, setErrMsg, refreshDisplayTr
     setRefreshDisplayTrigger(refreshDisplayTrigger + 1)
   } catch (err) {
     console.error('Error creating account:', err);
-    setErrMsg(JSON.stringify(err));
+    setErrMsg('Error creating account');
   }
 };
 
@@ -96,7 +96,7 @@ const deleteAccount = (inputUsername, inputPassword, setErrMsg, refreshDisplayTr
     setRefreshDisplayTrigger(refreshDisplayTrigger + 1)
   } catch (err) {
     console.error('Error deleting account:', err);
-    setErrMsg(JSON.stringify(err));
+    setErrMsg('Error deleting account');
   }
 };
 
