@@ -194,7 +194,7 @@ function HomePage() {
             <OverlayBlock
                 isHidden={!isEventFormOpen}
                 onClose={() => setEventFormOpen(false)}>
-                <CreateEvent onClose={() => setEventFormOpen(false)} />
+                <CreateEvent onClose={() => setEventFormOpen(false)} chosenDate={chosenDate} />
             </OverlayBlock>
             
 {/* nic's edit accounts form */}

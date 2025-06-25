@@ -7,6 +7,13 @@ const pool = new Pool({
     port: 5432
 })
 
+// my local database
+    // user: 'postgres',
+    // host: 'localhost',
+    // database: 'Unify',
+    // password: 'password',
+    // port: 5432
+
 /*  Main db details
     user: 'postgres.jcozwjesouhvqxgbdijp',
     host: 'aws-0-ap-southeast-1.pooler.supabase.com',

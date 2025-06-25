@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
+import eventService from '../services/eventService.jsx'
 
-export const CreateEvent = ({ onClose, onSave }) => {
+export const CreateEvent = ({ onClose, chosenDate }) => {
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
   const [location, setLocation] = useState("")
@@ -8,22 +9,58 @@ export const CreateEvent = ({ onClose, onSave }) => {
   const [endTime, setEndTime] = useState("")
   const [repeat, setRepeat] = useState("None")
 
-  const handleSave = () => {
-    const eventData = {
-      name,
-      description,
-      location,
-      startTime,
-      endTime,
-      repeat
+  const handleSave = async (e) => {
+    // get the chosenDate and change its hours and minutes according to input start/end time
+    const startDateTime = new Date(chosenDate);
+    const endDateTime = new Date(chosenDate);
+    const [startHours, startMinutes] = startTime.split(':').map(Number);
+    const [endHours, endMinutes] = endTime.split(':').map(Number);
+    startDateTime.setHours(startHours, startMinutes);
+    endDateTime.setHours(endHours, endMinutes);
+
+    // error handling here
+    // make sure endtime always after starttime
+
+ 
+    try {
+      const res = await eventService.createEvent({
+        name,
+        description,
+        location,
+        startdt: startDateTime.toISOString(),  // UTC format
+        enddt: endDateTime.toISOString(),      // UTC format     
+      })
+      console.log('Event insertion status:', res.data.status)
+    } catch (err) {
+      console.error("Error creating event", err);
     }
-    if (onSave) onSave(eventData)
-    onClose()
+
+    alert('inserted');
+    return;
+  }
+
+  // round minute options to 15 minutes intervals
+  const round15Minute = setter => e => {
+    const value = e.target.value;
+    // value is in "HH:MM" format
+    const [hour, minute] = value.split(':').map(Number);
+    if ([0, 15, 30, 45].includes(minute)) {
+      setter(value);
+    } else {
+      // Optionally, round to nearest 15 or reject
+      const roundedMinute = Math.round(minute / 15) * 15;
+      const newValue = `${String(hour).padStart(2, '0')}:${String(roundedMinute % 60).padStart(2, '0')}`;
+      setter(newValue);
+    }
   }
 
   return (
     <div style={{ width: '100%' }}>
-      <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>Event Name</h2>
+
+      <div style={{ marginTop: '12px' }}>
+        <label>Event Name</label>
+        <input type='text' value={name} onChange={e => setName(e.target.value)} style={inputStyle} />
+      </div>
 
       <div style={{ marginTop: '12px' }}>
         <label>Description</label>
@@ -37,12 +74,12 @@ export const CreateEvent = ({ onClose, onSave }) => {
 
       <div style={{ marginTop: '12px' }}>
         <label>Start Time</label>
-        <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} style={inputStyle} />
+        <input type="time" step="900" value={startTime} onChange={round15Minute(setStartTime)} style={inputStyle} />
       </div>
 
       <div style={{ marginTop: '12px' }}>
         <label>End Time</label>
-        <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} style={inputStyle} />
+        <input type="time" step='900' value={endTime} onChange={round15Minute(setEndTime)} style={inputStyle} />
       </div>
 
       <div style={{ marginTop: '12px' }}>
