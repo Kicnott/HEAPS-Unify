@@ -24,15 +24,15 @@ export const EditCalendersForm = ({ onClose, currentAccountId }) => {
 
       <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
         <button style={addBtnStyle} onClick={createCalender(inputCalenderName, inputCalenderDescription, setErrMsg, refreshDisplayTrigger, setRefreshDisplayTrigger, currentAccountId)}>Add</button>
-        <button style={deleteBtnStyle} onClick = {onClose}>Close form</button>
+        <button style={closeBtnStyle} onClick = {onClose}>Close form</button>
       </div>
-      <DisplayCalenders ErrMsg = {ErrMsg} refreshDisplayTrigger={refreshDisplayTrigger}></DisplayCalenders>
+      <DisplayCalenders ErrMsg = {ErrMsg} setErrMsg = {setErrMsg} refreshDisplayTrigger={refreshDisplayTrigger} setRefreshDisplayTrigger={setRefreshDisplayTrigger}></DisplayCalenders>
     </div>
   )
 }
 
 //Display all active accounts inside form
-const DisplayCalenders = ({ErrMsg, refreshDisplayTrigger}) => {
+const DisplayCalenders = ({ErrMsg, setErrMsg, setRefreshDisplayTrigger, refreshDisplayTrigger}) => {
   const [response, setResponse] = useState([]);
 
   useEffect(() => {
@@ -51,11 +51,25 @@ const DisplayCalenders = ({ErrMsg, refreshDisplayTrigger}) => {
   return (
     <div>
       <h6 style = {{color: 'red'}}>{ErrMsg}</h6>
-      <h4>ID : My Calender : Description : Account Id</h4>
+      <h4>Calender ID : My Calender : Description : Account ID</h4>
         {response.map((row, index) => {
+            const isRoot = row.mycalenderid === '1'; // isRoot checks Root's calender (ID:1)
           return (
             <div key={index}>
-              {row.mycalenderid} : {row.mycalendername} : {row.mycalenderdescription} : {row.accountid}
+              {row.mycalenderid} : {row.mycalendername} : {row.mycalenderdescription} : {row.accountid} 
+              &nbsp; 
+              &nbsp;
+              { !isRoot ? ( // Outputs a red 'X' that deletes the calender, does not display for root
+                <b 
+                    style={{cursor: 'pointer', color: 'red'}} 
+                    onClick={ (e) => 
+                        deleteCalender(
+                            row.mycalenderid, 
+                            setErrMsg, 
+                            refreshDisplayTrigger, 
+                            setRefreshDisplayTrigger
+                        )(e)}
+                        >X</b>) : <></>}
             </div>
           )
         })}
@@ -83,20 +97,19 @@ const createCalender = (inputCalenderName, inputCalenderDescription, setErrMsg, 
 };
 
 //Create an account in the database
-const deleteCalender = (inputCalenderName, inputCalenderDescription, setErrMsg, refreshDisplayTrigger, setRefreshDisplayTrigger) => async (event) => {
+const deleteCalender = (mycalenderid, setErrMsg, refreshDisplayTrigger, setRefreshDisplayTrigger) => async (event) => {
   event.preventDefault();
 
   try {
-    const res = await accountService.deleteCalender({
-      calenderName: inputCalenderName,
-      calenderDescription: inputCalenderDescription,
+    const res = await calenderService.deleteCalender({
+      calenderid: mycalenderid,
     });
-    console.log('Account status:', res.data.status);
+    console.log('Calender status:', res.data.status);
     setErrMsg(res.data.status);
     setRefreshDisplayTrigger(refreshDisplayTrigger + 1)
   } catch (err) {
-    console.error('Error deleting account:', err);
-    setErrMsg('Error deleting account');
+    console.error('Error deleting Calender:', err);
+    setErrMsg('Error deleting Calender');
   }
 };
 
@@ -110,7 +123,7 @@ const inputStyle = {
   marginTop: '4px'
 }
 
-const deleteBtnStyle = {
+const closeBtnStyle = {
   background: 'white',
   color: 'red',
   border: '2px solid red',

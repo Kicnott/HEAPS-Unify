@@ -15,12 +15,12 @@ const createCalender = (data) => {
     return http.post(`/home/createCalender`, data)
 }
 
-const deleteCalenders = (data) => {
-    return http.delete(`/home/deleteCalenders`, {data})
+const deleteCalender = (data) => {
+    return http.delete(`/home/deleteCalender`, {data})
 }
 
 export default {
     showAllCalenders,
     createCalender,
-    deleteCalenders
+    deleteCalender
 }

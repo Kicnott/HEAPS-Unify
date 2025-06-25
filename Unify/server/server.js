@@ -72,6 +72,10 @@ app.delete('/home/deleteAccount', async (req, res) => {
       return res.json({ status : "Input Something!"})
     }
 
+    if (inputUsername == 'root'){
+      return res.json({ status : "You cannot remove root"}) //prevents user from removing root's account
+    }
+
     const result = await pool.query( // result constant contains db object of any rows that are deleted
       'DELETE FROM AccountsTable WHERE accountusername = ($1) and accountpassword = ($2)', [req.body.username, req.body.password]
     );
@@ -91,8 +95,6 @@ app.delete('/home/deleteAccount', async (req, res) => {
 //Display Calenders
 app.get('/home/showAllCalenders', async (req, res) => {
   try {
-    console.log("ShowAllAccounts: Connected!")
-
     const result = await pool.query( // searches for all calenders in the database
       'SELECT * FROM mycalenderstable'
     );
@@ -108,7 +110,6 @@ app.get('/home/showAllCalenders', async (req, res) => {
 //Create Calenders
 app.post('/home/createCalender', async (req, res) => {
   try {
-    console.log("createAccount: Connected!")
 
     const calenderName = req.body.calenderName
     const calenderDescription = req.body.calenderDescription
@@ -147,29 +148,27 @@ app.post('/home/createCalender', async (req, res) => {
   }
 })
 
-//Delete Accounts
-app.delete('/home/deleteCalenders', async (req, res) => {
+//Delete Calender
+app.delete('/home/deleteCalender', async (req, res) => {
   try {
-    console.log("deleteAccount: Connected!")
 
-    const inputUsername = req.body.username
-    const inputPassword = req.body.password
+    const mycalenderid = req.body.calenderid
 
-    if (inputUsername == '' || inputPassword == ''){ // returns error message if username or password is empty
-      return res.json({ status : "Input Something!"})
+    if (mycalenderid == '' ){ // returns error message if mycalenderid from req is empty
+      return res.json({ status : "mycalenderid contains nothing!"})
     }
 
     const result = await pool.query( // result constant contains db object of any rows that are deleted
-      'DELETE FROM AccountsTable WHERE accountusername = ($1) and accountpassword = ($2)', [req.body.username, req.body.password]
+      'DELETE FROM mycalendersTable WHERE mycalenderid = ($1)', [mycalenderid]
     );
 
     if (result.rowCount === 0){ // if result constant has no rows, it means no rows are deleted
-      return res.json({ status : "No such account in Databse"})
+      return res.json({ status : "No such calender in Databse"})
     } else {
-      return res.json({ status : "Account Deleted"})
+      return res.json({ status : "Calender Deleted"})
     }
   } catch (e){
-    console.log("deleteAccount: Server Error")
+    console.log("deleteCalenders: Server Error")
     console.log(e)
     return res.json(e)
   }
