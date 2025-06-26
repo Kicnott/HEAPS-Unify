@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import '../styles/App.css'
 import '../classes/index.jsx'
 import { Link } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 // Components
 import { SimpleBlock } from '../components/simpleBlock.jsx'
@@ -16,6 +17,8 @@ function LoginPage() {
     const [password, setPassword] = useState('') // Assigns a string state for password
     const [errorMessage, setErrorMessage] = useState(''); // String state for errorMessage
     const [action, setAction] = useState('')
+    const location = useLocation()
+    const message = location.state?.message
 
     const handleSubmit = async (submitAction) => {
         submitAction.preventDefault() // Prevents the form from being submitted through GET or POST normally
@@ -80,6 +83,7 @@ function LoginPage() {
                         </h4>
                     </form>
                     <h5 style={{ color: 'red' }}>{errorMessage}</h5> {/*Displays errorMessage*/}
+                    <h5 style={{ color: 'green'}}>{message}</h5>
                 </SimpleBlock>
             </h2>
         </div>

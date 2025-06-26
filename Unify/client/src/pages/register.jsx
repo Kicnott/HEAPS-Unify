@@ -34,7 +34,7 @@ function RegisterPage() {
             const data = await status.json()
 
             if (data.status === true) {
-                navigate('/')
+                navigate('/', {state: {message: "Registration successful!"}})
             }
             else {
                 setError(data.error)
