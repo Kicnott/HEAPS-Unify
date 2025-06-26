@@ -67,17 +67,6 @@ app.listen(port, () => {
 
 // JR's REGISTRATION STUFF
 
-app.post("/profile", async (req, res) => {
-if (req.session.username){
-  res.json({ login: true, username: req.session.username})
-}
-else{
-  res.json({login: false})
-}
-}
-)
-
-
 
 app.post("/register", async (req, res) => {
   const { yourName, username, password } = req.body;
