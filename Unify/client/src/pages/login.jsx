@@ -83,7 +83,7 @@ function LoginPage() {
                         </h4>
                     </form>
                     <h5 style={{ color: 'red' }}>{errorMessage}</h5> {/*Displays errorMessage*/}
-                    <h5 style={{ color: 'green'}}>{message}</h5>
+                    <h5 style={{ color: 'green' }}>{message}</h5>
                 </SimpleBlock>
             </h2>
         </div>

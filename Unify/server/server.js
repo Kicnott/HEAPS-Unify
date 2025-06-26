@@ -3,9 +3,17 @@ import cors from 'cors' // Cross-Origin Resource Sharing: To configure requests 
 const app = express() // Creates a variable of the Express app
 const port = 8888 // Defines the port number as 8888 for the huat
 import pool from './db.js' // Defines the connection pool for the database
+import session from 'express-session'
 
 app.use(cors()) // Makes the Express app use cors
 app.use(express.json()) // Makes the Express app read incoming json data, which is (probably??) what we will use
+
+app.use(session({
+  secret: 'HeapUnify',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 }
+})) // Made using AI to initialise sessions
 
 app.get('/', (req, res) => {
   res.send('Hey ho server is up')
@@ -19,12 +27,13 @@ app.post("/login", async (req, res) => { // Login authentification
   const result = await pool.query( // searches for user in the database
     'SELECT * FROM username_data WHERE username = $1',
     [username]
-  );
+  )
 
   const user = result.rows[0];
 
   if (user && user.password === password) {
     console.log("Data matches!");
+    req.session.username = req.body.username
     res.json({ status: true }); // Return true if username and password matches database
   } else {
     console.log("Data does not match");
@@ -58,6 +67,18 @@ app.listen(port, () => {
 
 // JR's REGISTRATION STUFF
 
+app.post("/profile", async (req, res) => {
+if (req.session.username){
+  res.json({ login: true, username: req.session.username})
+}
+else{
+  res.json({login: false})
+}
+}
+)
+
+
+
 app.post("/register", async (req, res) => {
   const { yourName, username, password } = req.body;
 
@@ -90,7 +111,7 @@ app.post("/register", async (req, res) => {
     }
 
 
-  } catch(err) {
+  } catch (err) {
     console.log("Registration error:", err)
     res.json({ status: false, error: "Server error!" })
   }
