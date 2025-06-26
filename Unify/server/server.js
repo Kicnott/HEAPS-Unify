@@ -12,24 +12,24 @@ app.get('/', (req, res) => {
 }) // For testing. Run the server and go to localhost:8888 to see message
 
 app.post("/login", async (req, res) => { // Login authentification
-    const { username, password } = req.body;
+  const { username, password } = req.body;
 
-    console.log(req.body);
+  console.log(req.body);
 
-    const result = await pool.query( // searches for user in the database
-      'SELECT * FROM username_data WHERE username = $1',
-      [username]
-    );
+  const result = await pool.query( // searches for user in the database
+    'SELECT * FROM username_data WHERE username = $1',
+    [username]
+  );
 
-    const user = result.rows[0];
+  const user = result.rows[0];
 
-    if (user && user.password === password) {
-      console.log("Data matches!");
-      res.json({ status: true }); // Return true if username and password matches database
-    } else {
-      console.log("Data does not match");
-      res.json({ status: false }); // Return false if username and password does not match database
-    }
+  if (user && user.password === password) {
+    console.log("Data matches!");
+    res.json({ status: true }); // Return true if username and password matches database
+  } else {
+    console.log("Data does not match");
+    res.json({ status: false }); // Return false if username and password does not match database
+  }
 })
 
 app.get('/api/test-db', async (req, res) => {
@@ -49,3 +49,49 @@ app.get('/api/message', (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on port ${port}`)
 }) // Starts the server and sends the message when there are any requests from port 8888
+
+
+
+
+
+
+
+// JR's REGISTRATION STUFF
+
+app.post("/register", async (req, res) => {
+  const { yourName, username, password } = req.body;
+
+  console.log(req.body);
+
+  try {
+    const userCheck = await pool.query(
+      'SELECT * FROM username_data WHERE username = $1',
+      [username]
+    );
+
+    if (userCheck.rowCount !== 0) {
+      return res.json({ status: false, error: "Username has already been taken!" });
+    }
+
+    if (userCheck.rowCount != 0) {
+      res.json({ status: false, error: "Username has already been taken!" })
+    }
+    else {
+      const insertion = await pool.query(
+        'INSERT INTO username_data (username, password) VALUES ($1, $2)',
+        [username, password]
+      )
+      if (insertion.rowCount != 1) {
+        res.json({ status: false, error: "Database insertion failed" })
+      }
+      else {
+        res.json({ status: true, name: yourName })
+      }
+    }
+
+
+  } catch(err) {
+    console.log("Registration error:", err)
+    res.json({ status: false, error: "Server error!" })
+  }
+})

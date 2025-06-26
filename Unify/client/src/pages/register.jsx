@@ -14,9 +14,33 @@ function RegisterPage() {
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [action, setAction] = useState('')
+    const [error, setError] = useState('')
 
     const handleSubmit = async (submitAction) => {
         submitAction.preventDefault()
+        if (action === 'register') {
+            const status = await fetch("http://localhost:8888/register", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    yourName,
+                    username,
+                    password,
+                })
+            })
+            const data = await status.json()
+
+            if (data.status === true) {
+                navigate('/')
+            }
+            else {
+                setError(data.error)
+            }
+        }
+
+
     }
 
 
@@ -48,7 +72,7 @@ function RegisterPage() {
                         &lt;
                     </button>
                 </div>
-                <h4>
+                    {error && <h5 style={{ color: 'red' }}>{error}</h5>}
                     <form onSubmit={handleSubmit}>
                         <div className='form-group'>
                             <label htmlFor='yourName'>
@@ -107,7 +131,6 @@ function RegisterPage() {
                         </div>
 
                     </form>
-                </h4>
 
             </SimpleBlock>
         </div>
