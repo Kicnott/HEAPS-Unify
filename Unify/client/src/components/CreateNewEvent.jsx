@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
 import eventService from '../services/eventService.jsx'
 
-export const CreateEvent = ({ onClose, chosenDate }) => {
+export const CreateEvent = ({ onClose, chosenDate, onSave }) => {
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
   const [location, setLocation] = useState("")
   const [startTime, setStartTime] = useState("")
   const [endTime, setEndTime] = useState("")
   const [repeat, setRepeat] = useState("None")
+  const [outcome, setOutcome] = useState("")
 
   const handleSave = async (e) => {
     // get the chosenDate and change its hours and minutes according to input start/end time
@@ -20,6 +21,7 @@ export const CreateEvent = ({ onClose, chosenDate }) => {
 
     // error handling here
     // make sure endtime always after starttime
+    // all fields must be written
 
  
     try {
@@ -31,12 +33,10 @@ export const CreateEvent = ({ onClose, chosenDate }) => {
         enddt: endDateTime.toISOString(),      // UTC format     
       })
       console.log('Event insertion status:', res.data.status)
+      if (onSave) onSave();
     } catch (err) {
       console.error("Error creating event", err);
     }
-
-    alert('inserted');
-    return;
   }
 
   // round minute options to 15 minutes intervals

@@ -11,6 +11,11 @@ const createEvent = (data) => {
     return http.post('/home/createEvent', data)
 }
 
+const getEvents = () => {
+    return http.get('/home/showAllEvents')
+}
+
 export default {
     createEvent,
+    getEvents
 }
