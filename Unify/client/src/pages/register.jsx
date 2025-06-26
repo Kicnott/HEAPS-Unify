@@ -19,6 +19,7 @@ function RegisterPage() {
     const handleSubmit = async (submitAction) => {
         submitAction.preventDefault()
         if (action === 'register') {
+            if (password === confirmPassword){
             const status = await fetch("http://localhost:8888/register", {
                 method: 'POST',
                 headers: {
@@ -39,9 +40,13 @@ function RegisterPage() {
                 setError(data.error)
             }
         }
-
-
+    else{
+        setError("Passwords do not match!")
     }
+    }
+     }
+
+
 
 
     return (
