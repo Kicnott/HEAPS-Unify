@@ -1,9 +1,9 @@
 import { useState, useEffect} from 'react'
-import calenderService from '../services/calenderService.jsx'
+import calendarService from '../services/calendarService.jsx'
 
-export const EditCalendersForm = ({ onClose, currentAccountId }) => {
-  const [inputCalenderName, setCalenderName] = useState("") 
-  const [inputCalenderDescription, setCalenderDescription] = useState("") 
+export const EditCalendarsForm = ({ onClose, currentAccountId }) => {
+  const [inputCalendarName, setCalendarName] = useState("") 
+  const [inputCalendarDescription, setCalendarDescription] = useState("") 
   const [ErrMsg, setErrMsg] = useState("") // Error Message to be displayed, error outcomes received from server
   const [refreshDisplayTrigger, setRefreshDisplayTrigger] = useState(1) // After create/delete, refreshes displayed Accounts
 
@@ -13,33 +13,33 @@ export const EditCalendersForm = ({ onClose, currentAccountId }) => {
       <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>Edit Accounts</h2>
 
       <div style={{ marginTop: '12px' }}>
-        <label>Calender Name</label> 
-        <input type="text" value={inputCalenderName} onChange={e => setCalenderName(e.target.value)} style={inputStyle} />
+        <label>Calendar Name</label> 
+        <input type="text" value={inputCalendarName} onChange={e => setCalendarName(e.target.value)} style={inputStyle} />
       </div>
 
       <div style={{ marginTop: '12px' }}>
-        <label>Calender Description</label>
-        <input type="text" value={inputCalenderDescription} onChange={e => setCalenderDescription(e.target.value)} style={inputStyle} />
+        <label>Calendar Description</label>
+        <input type="text" value={inputCalendarDescription} onChange={e => setCalendarDescription(e.target.value)} style={inputStyle} />
       </div>
 
       <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
-        <button style={addBtnStyle} onClick={createCalender(inputCalenderName, inputCalenderDescription, setErrMsg, refreshDisplayTrigger, setRefreshDisplayTrigger, currentAccountId)}>Add</button>
+        <button style={addBtnStyle} onClick={createCalendar(inputCalendarName, inputCalendarDescription, setErrMsg, refreshDisplayTrigger, setRefreshDisplayTrigger, currentAccountId)}>Add</button>
         <button style={closeBtnStyle} onClick = {onClose}>Close form</button>
       </div>
-      <DisplayCalenders ErrMsg = {ErrMsg} setErrMsg = {setErrMsg} refreshDisplayTrigger={refreshDisplayTrigger} setRefreshDisplayTrigger={setRefreshDisplayTrigger}></DisplayCalenders>
+      <DisplayCalendars ErrMsg = {ErrMsg} setErrMsg = {setErrMsg} refreshDisplayTrigger={refreshDisplayTrigger} setRefreshDisplayTrigger={setRefreshDisplayTrigger}></DisplayCalendars>
     </div>
   )
 }
 
 //Display all active accounts inside form
-const DisplayCalenders = ({ErrMsg, setErrMsg, setRefreshDisplayTrigger, refreshDisplayTrigger}) => {
+const DisplayCalendars = ({ErrMsg, setErrMsg, setRefreshDisplayTrigger, refreshDisplayTrigger}) => {
   const [response, setResponse] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await calenderService.showAllCalenders()
-        const sorted = res.data.rows.sort((a, b) => a.mycalenderid - b.mycalenderid);
+        const res = await calendarService.showAllCalendars()
+        const sorted = res.data.rows.sort((a, b) => a.calendarid - b.calendarid);
         setResponse(sorted); 
       } catch (err) {
         console.error('Error fetching accounts:', err);
@@ -51,20 +51,20 @@ const DisplayCalenders = ({ErrMsg, setErrMsg, setRefreshDisplayTrigger, refreshD
   return (
     <div>
       <h6 style = {{color: 'red'}}>{ErrMsg}</h6>
-      <h4>Calender ID : My Calender : Description : Account ID</h4>
+      <h4>Calendar ID : My Calendar : Description : Account ID</h4>
         {response.map((row, index) => {
-            const isRoot = row.mycalenderid === '1'; // isRoot checks Root's calender (ID:1)
+            const isRoot = row.calendarid === '1'; // isRoot checks Root's calendar (ID:1)
           return (
             <div key={index}>
-              {row.mycalenderid} : {row.mycalendername} : {row.mycalenderdescription} : {row.accountid} 
+              {row.calendarid} : {row.calendarname} : {row.calendardescription} : {row.accountid} 
               &nbsp; 
               &nbsp;
-              { !isRoot ? ( // Outputs a red 'X' that deletes the calender, does not display for root
+              { !isRoot ? ( // Outputs a red 'X' that deletes the calendar, does not display for root
                 <b 
                     style={{cursor: 'pointer', color: 'red'}} 
                     onClick={ (e) => 
-                        deleteCalender(
-                            row.mycalenderid, 
+                        deleteCalendar(
+                            row.mycalendarid, 
                             setErrMsg, 
                             refreshDisplayTrigger, 
                             setRefreshDisplayTrigger
@@ -78,38 +78,38 @@ const DisplayCalenders = ({ErrMsg, setErrMsg, setRefreshDisplayTrigger, refreshD
 }
 
 //Create a new account and add it to the database
-const createCalender = (inputCalenderName, inputCalenderDescription, setErrMsg, refreshDisplayTrigger, setRefreshDisplayTrigger, currentAccountId) => async (event) => {
+const createCalendar = (inputCalendarName, inputCalendarDescription, setErrMsg, refreshDisplayTrigger, setRefreshDisplayTrigger, currentAccountId) => async (event) => {
   event.preventDefault();
 
   try {
-    const res = await calenderService.createCalender({
-      calenderName: inputCalenderName,
-      calenderDescription: inputCalenderDescription,
+    const res = await calendarService.createCalendar({
+      calendarName: inputCalendarName,
+      calendarDescription: inputCalendarDescription,
       accountid : currentAccountId
     });
-    console.log('Calender status:', res.data.status);
+    console.log('Calendar status:', res.data.status);
     setErrMsg(res.data.status);
     setRefreshDisplayTrigger(refreshDisplayTrigger + 1)
   } catch (err) {
-    console.error('Error creating calender:', err);
-    setErrMsg('Error creating calender');
+    console.error('Error creating calendar:', err);
+    setErrMsg('Error creating calendar');
   }
 };
 
 //Create an account in the database
-const deleteCalender = (mycalenderid, setErrMsg, refreshDisplayTrigger, setRefreshDisplayTrigger) => async (event) => {
+const deleteCalendar = (mycalendarid, setErrMsg, refreshDisplayTrigger, setRefreshDisplayTrigger) => async (event) => {
   event.preventDefault();
 
   try {
-    const res = await calenderService.deleteCalender({
-      calenderid: mycalenderid,
+    const res = await calendarService.deleteCalendar({
+      calendarid: mycalendarid,
     });
-    console.log('Calender status:', res.data.status);
+    console.log('Calendar status:', res.data.status);
     setErrMsg(res.data.status);
     setRefreshDisplayTrigger(refreshDisplayTrigger + 1)
   } catch (err) {
-    console.error('Error deleting Calender:', err);
-    setErrMsg('Error deleting Calender');
+    console.error('Error deleting Calendar:', err);
+    setErrMsg('Error deleting Calendar');
   }
 };
 
