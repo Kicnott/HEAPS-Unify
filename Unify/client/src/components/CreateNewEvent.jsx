@@ -121,6 +121,16 @@ export const CreateEvent = ({ onClose, chosenDate, onSave }) => {
         </select>
       </div>
 
+      <div style={{ marginTop: '12px' }}>
+        <label>Calendar</label>
+        <select value={calendarid} onChange={e => setRepeat(e.target.value)} style={inputStyle}>
+          <option>None</option>
+          <option>Every day</option>
+          <option>Every week</option>
+          <option>Every month</option>
+        </select>
+      </div>
+
       {errors.length > 0 && (
         <div style={{color: 'red', marginTop: '10px'}}>
           {errors.map((e, i) => (
