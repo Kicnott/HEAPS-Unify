@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import '../styles/App.css'
 // import getBaseDate from '../functions/getBaseDate.jsx'
@@ -54,6 +54,7 @@ function HomePage() {
     const [calendarDisplay, changeCalendarDisplay] = useState( new uCalendarDisplay(new Date(), C1, A1) ) 
     const [chosenDate, setChosenDate] = useState(new Date())
     const [events, setEvents] = useState([E2,E3,E4,E5])
+    const [refreshEvents, setrefreshEvents] = useState(1); //testing moveable events, resfreshes calendar
     // Defining the uCalendarDisplay object that the page will use to update the Main Calendar.
     // the date object is the current time
 
@@ -93,8 +94,17 @@ function HomePage() {
         yearOptionsArray.push({ value: String(i), label: String(i) })
     } // The options to be stored in the year drop down list. It is too long so using a for loop to push the values in from 1970 to 2050.
 
+    const whenDisplayRenders = () => {
+        console.log("Calender is rendered!")
+    }
+
+                useEffect(() => { //Test moveable element, refreshes calender
+                    console.log("refreshes:", refreshEvents)
+                }, [refreshEvents])
     return (
         <div>
+                {whenDisplayRenders()}
+                
             <h3>Current User: {currentUser} &nbsp; Account ID: {currentUserAccountId}</h3>
 
             <TopNavbar isRightDrawerOpen = {isRightDrawerOpen} toggleRightDrawer= {toggleRightDrawer}></TopNavbar> 
@@ -160,6 +170,8 @@ function HomePage() {
                 displayDate={calendarDisplay.getDisplayDate()} // Assigns the date to display (in month format) as the date in the calendarDisplay state
                 onDateBoxClick={() => toggleEventHidden(!isEventHidden)} // Gives the dateboxes some functionality to open an Overlay block
                 setChosenDate = {setChosenDate}
+                refreshEvents = {refreshEvents}
+                setrefreshEvents = {setrefreshEvents}
             >
             </MainCalendar>
 
