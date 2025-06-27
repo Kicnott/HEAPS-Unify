@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import eventService from '../services/eventService.jsx'
+import getMyCalendars from '../functions/getMyCalendars.jsx'
 
-export const CreateEvent = ({ onClose, chosenDate, onSave }) => {
+export const CreateEvent = ({ onClose, chosenDate, onSave, accountID }) => {
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
   const [location, setLocation] = useState("")
@@ -9,6 +10,14 @@ export const CreateEvent = ({ onClose, chosenDate, onSave }) => {
   const [endTime, setEndTime] = useState("")
   const [repeat, setRepeat] = useState("None")
   const [errors, setErrors] = useState([])
+  const [calendarID, setCalendarID] = useState('')
+  const [myCalendars, setMyCalendars] = useState([])
+
+  useEffect(() => {
+    getMyCalendars(accountID).then(setMyCalendars);
+  }, [accountID])
+
+  // console.log("myCalendars State:", myCalendars)
 
   const handleSave = async (e) => {
     setErrors([]);
@@ -29,6 +38,7 @@ export const CreateEvent = ({ onClose, chosenDate, onSave }) => {
     if (!location) errors.push("Location is required");
     if (!startTime) errors.push("Start Time is required");
     if (!endTime) errors.push("End Time is required");
+    if (!calendarID) errors.push("Calendar is required");
 
     if (startTime && endTime) {
       if (startHours === endHours && startMinutes === endMinutes) {
@@ -42,15 +52,16 @@ export const CreateEvent = ({ onClose, chosenDate, onSave }) => {
       setErrors(errors);
       return;
     }
-   
-    
+
+
     try {
       const res = await eventService.createEvent({
         name,
         description,
         location,
         startdt: startDateTime.toISOString(),  // UTC format
-        enddt: endDateTime.toISOString(),      // UTC format     
+        enddt: endDateTime.toISOString(),      // UTC format  
+        calendarID,
       })
 
       setName("");
@@ -58,6 +69,7 @@ export const CreateEvent = ({ onClose, chosenDate, onSave }) => {
       setLocation("");
       setStartTime("");
       setEndTime("");
+      setCalendarID("")
       setErrors([]);
 
       console.log('Event insertion status:', res.data.status)
@@ -123,20 +135,22 @@ export const CreateEvent = ({ onClose, chosenDate, onSave }) => {
 
       <div style={{ marginTop: '12px' }}>
         <label>Calendar</label>
-        <select value={calendarid} onChange={e => setRepeat(e.target.value)} style={inputStyle}>
-          <option>None</option>
-          <option>Every day</option>
-          <option>Every week</option>
-          <option>Every month</option>
+        <select value={calendarID} onChange={e => setCalendarID(e.target.value)} style={inputStyle}>
+          <option value="">Select a calendar</option>
+          {myCalendars.map(calendar => (
+            <option key={calendar.calendarid} value={calendar.calendarid}>
+              {calendar.calendarname}
+            </option>
+          ))}
         </select>
       </div>
 
       {errors.length > 0 && (
-        <div style={{color: 'red', marginTop: '10px'}}>
+        <div style={{ color: 'red', marginTop: '10px' }}>
           {errors.map((e, i) => (
             <div key={i}>{e}</div>
           ))}
-          </div>
+        </div>
       )}
 
       <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
