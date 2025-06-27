@@ -1,9 +1,19 @@
 import { Pool } from 'pg'
-const pool = new Pool({
+
+export const pool = new Pool({
     user: 'postgres.jcozwjesouhvqxgbdijp',
     host: 'aws-0-ap-southeast-1.pooler.supabase.com',
     database: 'Unify',
     password: 'UnifyHeap2025',
+    port: 5432
+})
+
+// my local database
+export const local = new Pool({
+    user: 'postgres',
+    host: 'localhost',
+    database: 'Unify',
+    password: 'password',
     port: 5432
 })
 
@@ -14,4 +24,4 @@ const pool = new Pool({
     password: 'UnifyHeap2025',
     port: 5432 */
 
-export default pool
+// export default pool
