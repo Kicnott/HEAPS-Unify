@@ -7,6 +7,12 @@ import pool from './db.js' // Defines the connection pool for the database
 app.use(cors()) // Makes the Express app use cors
 app.use(express.json()) // Makes the Express app read incoming json data, which is (probably??) what we will use
 
+
+pool.query('SELECT current_database()', (err, res) => {
+  if (err) console.error("Connection error:", err);
+  else console.log("Connected to DB:", res.rows[0].current_database);
+});
+  
 //Display Accounts
 //async tells js that function will take time and return a promise 
 //await pauses the function until promise finishes 
@@ -167,6 +173,42 @@ app.delete('/home/deleteCalendar', async (req, res) => {
     console.log("deleteCalendar: Server Error")
     console.log(e)
     return res.json(e)
+  }
+})
+
+// replace local pool with supabase pool if events table is there
+app.post('/home/createEvent', async(req, res) => {
+  
+  try {
+    const eventname = req.body.name;
+    const eventdescription = req.body.description;
+    const eventlocation = req.body.location;
+    const startdt = req.body.startdt;
+    const enddt = req.body.enddt;
+    
+    const result = await pool.query( 
+      'INSERT INTO public.events (eventname,eventdescription,eventlocation,startdt,enddt) VALUES ($1, $2, $3, $4, $5)', [eventname,eventdescription,eventlocation,startdt,enddt]
+    );   
+
+    return res.json({ status : "event created"});
+  } catch (e) {
+    console.log("createEvent: Server Error");
+    console.log(e);
+    return res.json({ status: 'Failed to create event' });
+  }
+})
+
+app.get('/home/showAllEvents', async (req, res) => {
+  try {
+    console.log("showAllEvents: Connected!");
+    const result = await pool.query( 
+      'SELECT * FROM events'
+    );
+    return res.json(result);
+  } catch (e) {
+    console.log("showAllEvents: Server Error");
+    console.log(e);
+    return res.json(e);
   }
 })
 

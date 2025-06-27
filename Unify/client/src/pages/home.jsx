@@ -53,7 +53,8 @@ function HomePage() {
     const [isEditCalendarsFormOpen, setEditCalendarsFormOpen] = useState(false)
     const [calendarDisplay, changeCalendarDisplay] = useState( new uCalendarDisplay(new Date(), C1, A1) ) 
     const [chosenDate, setChosenDate] = useState(new Date())
-    const [events, setEvents] = useState([E2,E3,E4,E5])
+    const [eventRefreshTrigger, seteventRefreshTrigger] = useState(0)
+    
     // Defining the uCalendarDisplay object that the page will use to update the Main Calendar.
     // the date object is the current time
 
@@ -181,7 +182,7 @@ function HomePage() {
                 onClose={() => toggleEventHidden(!isEventHidden)} // Assigns toggleEventHidden function
             >
                 
-                < TimeTable chosenDate={chosenDate} events={events}>
+                < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger}>
                 </TimeTable>
                 <button onClick={() => {
                     console.log("Button clicked!")
@@ -191,11 +192,18 @@ function HomePage() {
             </OverlayBlock>
 
 {/* bev's event making thing 2nd overlay */}
+        {isEventFormOpen && (
             <OverlayBlock
-                isHidden={!isEventFormOpen}
+                isHidden={false}
                 onClose={() => setEventFormOpen(false)}>
-                <CreateEvent onClose={() => setEventFormOpen(false)} />
+                <CreateEvent onClose={() => setEventFormOpen(false)} 
+                onSave = {() => {
+                    setEventFormOpen(false);
+                    seteventRefreshTrigger(prev => prev + 1);
+                }}
+                chosenDate={chosenDate} />
             </OverlayBlock>
+        )}
             
 {/* nic's edit accounts form */}
             <OverlayBlock
