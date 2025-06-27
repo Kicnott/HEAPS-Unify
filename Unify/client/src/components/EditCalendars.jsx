@@ -53,10 +53,10 @@ const DisplayCalendars = ({ErrMsg, setErrMsg, setRefreshDisplayTrigger, refreshD
       <h6 style = {{color: 'red'}}>{ErrMsg}</h6>
       <h4>Calendar ID : My Calendar : Description : Account ID</h4>
         {response.map((row, index) => {
-            const isRoot = row.mycalendarid === '1'; // isRoot checks Root's calendar (ID:1)
+            const isRoot = row.calendarid === '1'; // isRoot checks Root's calendar (ID:1)
           return (
             <div key={index}>
-              {row.mycalendarid} : {row.mycalendarname} : {row.mycalendardescription} : {row.accountid} 
+              {row.calendarid} : {row.calendarname} : {row.calendardescription} : {row.accountid} 
               &nbsp; 
               &nbsp;
               { !isRoot ? ( // Outputs a red 'X' that deletes the calendar, does not display for root

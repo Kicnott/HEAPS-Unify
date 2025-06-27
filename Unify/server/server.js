@@ -21,8 +21,8 @@ app.get('/home/showAllAccounts', async (req, res) => { // 1. url parameter 2. fu
     console.log("GetAllAccounts: Connected!")
     
     // use await when function returns a promise. pauses execution until promise settles
-    const result = await pool.query( // searches for all accounts in the database. query sends sql commands to database
-      'SELECT * FROM AccountTable'
+    const result = await pool.query( // searches for all accountstable in the database. query sends sql commands to database
+      'SELECT * FROM Accountstable'
     );
     
     return res.json(result) //send json formatted data back to client
@@ -46,7 +46,7 @@ app.post('/home/createAccount', async (req, res) => {
     }
 
     const usernamePasswordMatch = await pool.query( // Gets the db object message of the result of the query
-      'SELECT accountid FROM accountTable where accountusername = ($1) and accountpassword = ($2)', [inputUsername, inputPassword]
+      'SELECT accountid FROM accountstable where accountusername = ($1) and accountpassword = ($2)', [inputUsername, inputPassword]
     )
 
     if (usernamePasswordMatch.rows.length > 0){ // Checks inside the db object if any rows are returned from db
@@ -54,7 +54,7 @@ app.post('/home/createAccount', async (req, res) => {
     }
 
     const result = await pool.query( // Inserts the oncoming created account into db
-      'INSERT INTO AccountTable (accountid,accountusername,accountpassword, accountdescription) VALUES (DEFAULT, $1, $2, $3)', [req.body.username, req.body.password, req.body.description]
+      'INSERT INTO Accountstable (accountid,accountusername,accountpassword, accountdescription) VALUES (DEFAULT, $1, $2, $3)', [req.body.username, req.body.password, req.body.description]
     );
     
     return res.json({ status: 'Account created' })
@@ -82,7 +82,7 @@ app.delete('/home/deleteAccount', async (req, res) => {
     }
 
     const result = await pool.query( // result constant contains db object of any rows that are deleted
-      'DELETE FROM AccountTable WHERE accountusername = ($1) and accountpassword = ($2)', [req.body.username, req.body.password]
+      'DELETE FROM Accountstable WHERE accountusername = ($1) and accountpassword = ($2)', [req.body.username, req.body.password]
     );
 
     if (result.rowCount === 0){ // if result constant has no rows, it means no rows are deleted
@@ -100,8 +100,8 @@ app.delete('/home/deleteAccount', async (req, res) => {
 //Display Calendars
 app.get('/home/showAllCalendars', async (req, res) => {
   try {
-    const result = await pool.query( // searches for all calendars in the database
-      'SELECT * FROM calendartable'
+    const result = await pool.query( // searches for all calendarstable in the database
+      'SELECT * FROM calendarstable'
     );
     
     return res.json(result)
@@ -127,7 +127,7 @@ app.post('/home/createCalendar', async (req, res) => {
     }
 
     const checkCalendarInsideDbResult = await pool.query( // Gets the db object of the calendar name if it's already there
-      'SELECT calendartable FROM calendartable where calendarname = ($1)', [calendarName]
+      'SELECT calendarstable FROM calendarstable where calendarname = ($1)', [calendarName]
     );
 
     if (checkCalendarInsideDbResult.rows.length > 0){ // Checks inside the db object if any rows are returned from db
@@ -135,11 +135,11 @@ app.post('/home/createCalendar', async (req, res) => {
     }
 
     const latestResult = await pool.query( // searches the highest calendar id in the db
-      'SELECT calendarid FROM calendartable ORDER BY calendarid::int DESC LIMIT 1'
+      'SELECT calendarid FROM calendarstable ORDER BY calendarid::int DESC LIMIT 1'
     );
 
     const result = await pool.query( // Inserts the oncoming created calendar into db
-      'INSERT INTO calendartable (calendarid,calendarname,calendardescription, accountid) VALUES ($1, $2, $3, $4)', [DEFAULT, calendarName, calendarDescription, currentAccountId]
+      'INSERT INTO calendarstable (calendarid,calendarname,calendardescription, accountid) VALUES (DEFAULT, $1, $2, $3)', [calendarName, calendarDescription, currentAccountId]
     );
     
     return res.json({ status: 'Calendar created' })
@@ -176,7 +176,7 @@ app.delete('/home/deleteCalendar', async (req, res) => {
   }
 })
 
-// replace local pool with supabase pool if events table is there
+// replace local pool with supabase pool if eventstable table is there
 app.post('/home/createEvent', async(req, res) => {
   
   try {
@@ -185,9 +185,10 @@ app.post('/home/createEvent', async(req, res) => {
     const eventlocation = req.body.location;
     const startdt = req.body.startdt;
     const enddt = req.body.enddt;
+    const calendarid = 1
     
     const result = await pool.query( 
-      'INSERT INTO public.events (eventname,eventdescription,eventlocation,startdt,enddt) VALUES ($1, $2, $3, $4, $5)', [eventname,eventdescription,eventlocation,startdt,enddt]
+      'INSERT INTO public.eventstable (eventname,eventdescription,eventlocation,startdt,enddt, calendarid) VALUES ($1, $2, $3, $4, $5, $6)', [eventname,eventdescription,eventlocation,startdt,enddt, calendarid]
     );   
 
     return res.json({ status : "event created"});
@@ -202,7 +203,7 @@ app.get('/home/showAllEvents', async (req, res) => {
   try {
     console.log("showAllEvents: Connected!");
     const result = await pool.query( 
-      'SELECT * FROM events'
+      'SELECT * FROM eventstable'
     );
     return res.json(result);
   } catch (e) {
@@ -217,7 +218,7 @@ app.post("/login", async (req, res) => {
     const { username, password } = req.body;
 
     const result = await pool.query( // searches for user in the database
-      'SELECT * FROM accountTable WHERE accountusername = $1',
+      'SELECT * FROM accountsTable WHERE accountusername = $1',
       [username]
     );
 
@@ -237,16 +238,9 @@ app.post("/login", async (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on port ${port}`)
 }) // Starts the server and sends the message when there are any requests from port 8888
+ 
 
-
-
-
-
-
-
-// JR's REGISTRATION STUFF
-
-
+// Registration stuff
 app.post("/register", async (req, res) => {
   const { yourName, username, password, accountDescription } = req.body;
 
@@ -254,7 +248,7 @@ app.post("/register", async (req, res) => {
 
   try {
     const userCheck = await pool.query(
-      'SELECT * FROM accounttable WHERE accountusername = $1',
+      'SELECT * FROM accountstable WHERE accountusername = $1',
       [username]
     );
 
@@ -267,7 +261,7 @@ app.post("/register", async (req, res) => {
     }
     else {
       const insertion = await pool.query(
-        'INSERT INTO accounttable (accountid, accountusername, accountpassword, accountdescription) VALUES (DEFAULT, $1, $2, $3)',
+        'INSERT INTO accountstable (accountid, accountusername, accountpassword, accountdescription) VALUES (DEFAULT, $1, $2, $3)',
         [username, password, accountDescription]
       )
       if (insertion.rowCount != 1) {
