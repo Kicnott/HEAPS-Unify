@@ -8,9 +8,10 @@ export const CreateEvent = ({ onClose, chosenDate, onSave }) => {
   const [startTime, setStartTime] = useState("")
   const [endTime, setEndTime] = useState("")
   const [repeat, setRepeat] = useState("None")
-  const [outcome, setOutcome] = useState("")
+  const [errors, setErrors] = useState([])
 
   const handleSave = async (e) => {
+    setErrors([]);
     // get the chosenDate and change its hours and minutes according to input start/end time
     const startDateTime = new Date(chosenDate);
     const endDateTime = new Date(chosenDate);
@@ -22,8 +23,27 @@ export const CreateEvent = ({ onClose, chosenDate, onSave }) => {
     // error handling here
     // make sure endtime always after starttime
     // all fields must be written
+    const errors = [];
+    if (!name) errors.push("Event name is required");
+    if (!description) errors.push("Description is required");
+    if (!location) errors.push("Location is required");
+    if (!startTime) errors.push("Start Time is required");
+    if (!endTime) errors.push("End Time is required");
 
- 
+    if (startTime && endTime) {
+      if (startHours === endHours && startMinutes === endMinutes) {
+        errors.push("Events must be at least 15 minutes long");
+      } else if (startDateTime >= endDateTime) {
+        errors.push("End Time must be after Start Time");
+      }
+    }
+
+    if (errors.length > 0) {
+      setErrors(errors);
+      return;
+    }
+   
+    
     try {
       const res = await eventService.createEvent({
         name,
@@ -32,10 +52,19 @@ export const CreateEvent = ({ onClose, chosenDate, onSave }) => {
         startdt: startDateTime.toISOString(),  // UTC format
         enddt: endDateTime.toISOString(),      // UTC format     
       })
+
+      setName("");
+      setDescription("");
+      setLocation("");
+      setStartTime("");
+      setEndTime("");
+      setErrors([]);
+
       console.log('Event insertion status:', res.data.status)
       if (onSave) onSave();
     } catch (err) {
       console.error("Error creating event", err);
+      setErrors(["Failed to create event. Please try again."]);
     }
   }
 
@@ -91,6 +120,14 @@ export const CreateEvent = ({ onClose, chosenDate, onSave }) => {
           <option>Every month</option>
         </select>
       </div>
+
+      {errors.length > 0 && (
+        <div style={{color: 'red', marginTop: '10px'}}>
+          {errors.map((e, i) => (
+            <div key={i}>{e}</div>
+          ))}
+          </div>
+      )}
 
       <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
         <button style={discardBtnStyle} onClick={onClose}>Discard</button>
