@@ -1,7 +1,7 @@
 .topnavbar{
 
-    height: 60px;
-    background: light-dark(#ddd, #292929);
+    height: 75px;
+    background: light-dark(#5E503F, #292929);
     display: flex;
     padding: 0 20px;
     position: fixed;

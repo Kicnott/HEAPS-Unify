@@ -2,10 +2,9 @@
 display: grid;
 grid-template-columns: repeat(7, 1fr);
 grid-template-rows: min-content;
-gap: 8px;
+gap: 8px; 
 height: auto;
 width: 1000px;
-background:light-dark(#333b3c, #000000);
-gap: 3px;
-padding: 8px;
+gap: 2px;
+padding: 10px;
 }
