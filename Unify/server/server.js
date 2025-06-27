@@ -2,7 +2,7 @@ import express from 'express' // Express.js
 import cors from 'cors' // Cross-Origin Resource Sharing: To configure requests to the server; We do not need it until we deploy stuff
 const app = express() // Creates a variable of the Express app
 const port = 8888 // Defines the port number as 8888 for the huat
-import {pool,local} from './db.js' // Defines the connection pool for the database
+import pool from './db.js' // Defines the connection pool for the database
 
 app.use(cors()) // Makes the Express app use cors
 app.use(express.json()) // Makes the Express app read incoming json data, which is (probably??) what we will use
@@ -194,7 +194,7 @@ app.post('/home/createEvent', async(req, res) => {
     const startdt = req.body.startdt;
     const enddt = req.body.enddt;
     
-    const result = await local.query( 
+    const result = await pool.query( 
       'INSERT INTO public.events (eventname,eventdescription,eventlocation,startdt,enddt) VALUES ($1, $2, $3, $4, $5)', [eventname,eventdescription,eventlocation,startdt,enddt]
     );   
 
@@ -209,7 +209,7 @@ app.post('/home/createEvent', async(req, res) => {
 app.get('/home/showAllEvents', async (req, res) => {
   try {
     console.log("showAllEvents: Connected!");
-    const result = await local.query( 
+    const result = await pool.query( 
       'SELECT * FROM events'
     );
     return res.json(result);
