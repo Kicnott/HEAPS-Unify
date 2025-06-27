@@ -1,9 +1,9 @@
 .calendar {
 display: grid;
 grid-template-columns: repeat(7, 1fr);
-grid-template-rows: repeat(7, 1fr);
+grid-template-rows: min-content;
 gap: 8px;
-height: 700px;
+height: auto;
 width: 1000px;
 background:light-dark(#333b3c, #000000);
 gap: 3px;

@@ -10,6 +10,13 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
     // onDateBoxClick: The function to be run when a DateBox is clicked. To be passed to the onClick variable in CalendarDateBox.
     // onDateHeaderClick: The function to be run when a DateHeader is clicked. To be passed to the onClick variable in CalendarDateHeader. (CURRENTLY NOT BEING USED IN home.jsx)
 
+    const year = displayDate.getFullYear();
+    const month = displayDate.getMonth();
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const cellCount = Math.ceil((firstDay + daysInMonth) / 7) * 7;
+
+
     let baseDate = getBaseDate(displayDate) // Stores the first date that the calendar should display for the displayDate
     let dateIndex = new Date(baseDate) // Creates a new Date object so that the baseDate is remembered but the dateIndex can be modified. 
     // This is because Date is an object and modifying a copy of baseDate will change it for the rest.
@@ -22,9 +29,9 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
     } // First, the CalendarDateHeaders, mapped to their corresponding days are pushed into the the calendarBoxes array.
     // According to AI, the key specified here is to uniquely identify the CalendarDateHeaders, so that they can be updated efficiently. Code **should** still work without defining the keys.
 
-    for (let i = 0; i < 42; i++){
+    for (let i = 0; i < cellCount; i++){
         let date = dateIndex.toLocaleDateString()
-        calendarBoxes.push(<CalendarDateBox key={date} baseMonth={displayDate.getMonth()} displayDate={new Date(dateIndex)} onClick={onDateBoxClick} setChosenDate={setChosenDate}>{children}</CalendarDateBox>) // Button functionality to be added
+        calendarBoxes.push(<CalendarDateBox key={date} baseMonth={displayDate.getMonth()} displayDate={new Date     (dateIndex)} onClick={onDateBoxClick} setChosenDate={setChosenDate}>{children}</CalendarDateBox>) // Button functionality to be added
         dateIndex.setDate(dateIndex.getDate() + 1)
     } // Next, the CalendarDateBoxes, each displaying the date from the baseDate and incrementally increasing until all 6 rows are filled, are pushed into the calendarBoxes array.
     // According to AI, the key specified here is to uniquely identify the CalendarDateHeaders, so that they can be updated efficiently. Code **should** still work without defining the keys.

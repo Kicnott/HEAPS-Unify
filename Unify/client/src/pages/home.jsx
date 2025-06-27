@@ -10,11 +10,16 @@ import { RightDrawer } from "../components/rightDrawer.jsx"
 import { MainCalendar } from '../components/mainCalendar.jsx'
 import { OverlayBlock } from '../components/OverlayBlock.jsx'
 import { DropdownList } from '../components/DropdownList.jsx'
-import { TimeTable } from '../components/TimeTable.jsx'
-import { CreateEvent } from '../components/newCreateEvent.jsx'
+import { TimeTable } from '../components/timeTable.jsx'
+import { CreateEvent } from '../components/CreateNewEvent.jsx'
 import { RightDrawerCloseBackground } from '../functions/rightDrawerCloseBackground'
+import { EditAccountForm } from '../components/EditAccounts.jsx'
+import { EditCalendarsForm } from '../components/EditCalendars.jsx'
 
 function HomePage() {
+
+    const currentUser = sessionStorage.getItem("currentUser"); //Gets Username in sessionStorage from login
+    const currentUserAccountId = sessionStorage.getItem("currentUserAccountId"); //Gets Username in sessionStorage from login
 
     // Dummy Data
 
@@ -32,11 +37,11 @@ function HomePage() {
     var E5 = new uEvent(T5, 5, "Event 5", "Fun and cool event", "Marina Bay Sands");
 
 
-    // uCalender(events, id, name, description, colour)
+    // uCalendar(events, id, name, description, colour)
     var C1 = new uCalendar([E2], 1, "myCalendar", "This is my calendar", "#ff0000")
     // uAccount(id, name, description, myCalendar, followedCalendars)
     var A1 = new uAccount(1, "Me", "This is my Account", [C1], [])
-    // uCalenderDisplay (displayDate, calendars, currentAccount) 
+    // uCalendarDisplay (displayDate, calendars, currentAccount) 
     // var CD1 = new uCalendarDisplay(new Date(2025, 7, 7), C1, A1)
 
     // useState creates variables that are saved even when the page re-renders
@@ -44,6 +49,8 @@ function HomePage() {
     const [isRightDrawerOpen, toggleRightDrawer] = useState(false) // Defining Right Drawer Open State
     const [isEventHidden, toggleEventHidden] = useState(true) // Defining Event Block Open State
     const [isEventFormOpen, setEventFormOpen] = useState(false)
+    const [isEditAccountsFormOpen, setEditAccountsFormOpen] = useState(false)
+    const [isEditCalendarsFormOpen, setEditCalendarsFormOpen] = useState(false)
     const [calendarDisplay, changeCalendarDisplay] = useState( new uCalendarDisplay(new Date(), C1, A1) ) 
     const [chosenDate, setChosenDate] = useState(new Date())
     const [events, setEvents] = useState([E2,E3,E4,E5])
@@ -88,6 +95,8 @@ function HomePage() {
 
     return (
         <div>
+            <h3>Current User: {currentUser} &nbsp; Account ID: {currentUserAccountId}</h3>
+
             <TopNavbar isRightDrawerOpen = {isRightDrawerOpen} toggleRightDrawer= {toggleRightDrawer}></TopNavbar> 
 
             <RightDrawerCloseBackground isRightDrawerOpen = {isRightDrawerOpen} toggleRightDrawer= {toggleRightDrawer}></RightDrawerCloseBackground>
@@ -107,6 +116,9 @@ function HomePage() {
                         <br></br>
                         <br></br>
                         <button>Events (TODO)</button>
+                        <br></br>
+                        <br></br>
+                        <button onClick={()=>setEditAccountsFormOpen(!isEditAccountsFormOpen)}>Edit Account (Admin use)</button>
                     </div> {/* TODO all these buttons */}
 
                     <div style={rightDrawerButtonBottom}>
@@ -184,11 +196,23 @@ function HomePage() {
                 onClose={() => setEventFormOpen(false)}>
                 <CreateEvent onClose={() => setEventFormOpen(false)} />
             </OverlayBlock>
+            
+{/* nic's edit accounts form */}
+            <OverlayBlock
+                isHidden={!isEditAccountsFormOpen}>
+                <EditAccountForm onClose={() => setEditAccountsFormOpen(false)} />
+            </OverlayBlock>
 
+{/* nic's edit accounts form */}
+            <button onClick={()=>setEditCalendarsFormOpen(!isEditCalendarsFormOpen)}>Edit Calendar</button>
+
+{/* nic's edit accounts form */}
+            <OverlayBlock
+                isHidden={!isEditCalendarsFormOpen}>
+                <EditCalendarsForm onClose={() => setEditCalendarsFormOpen(false)} currentAccountId ={currentUserAccountId} />
+            </OverlayBlock>
         </div>
-
     )
-
 }
 
 export default HomePage // Means that home.jsx only exports HomePage

@@ -12,6 +12,7 @@ function RegisterPage() {
     const [yourName, setYourName] = useState('')
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const [accountDescription, setAccountDescription] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [action, setAction] = useState('')
     const [error, setError] = useState('')
@@ -29,6 +30,7 @@ function RegisterPage() {
                     yourName,
                     username,
                     password,
+                    accountDescription
                 })
             })
             const data = await status.json()
@@ -128,12 +130,25 @@ function RegisterPage() {
                                 value={confirmPassword}
                                 onChange={(change) => setConfirmPassword(change.target.value)}>
                             </input>
+                          </div>
+                        <div className='form-group'>
+                            <label htmlFor='accountDescription'>
+                                Account Description: &nbsp;&nbsp;&nbsp;
+                            </label>
+                            <input
+                                type='textbox'
+                                placeholder='Account Description...'
+                                id='accountDescription'
+                                value={accountDescription}
+                                onChange={(change) => setAccountDescription(change.target.value)}>
+                            </input>
+                          </div>
                             <br></br>
                             <button type='register' onClick={() => setAction('register')}>
                                 Register
                             </button>
 
-                        </div>
+
 
                     </form>
 
