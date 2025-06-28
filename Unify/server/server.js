@@ -18,11 +18,11 @@ pool.query('SELECT current_database()', (err, res) => {
 //await pauses the function until promise finishes 
 app.get('/home/showAllAccounts', async (req, res) => { // 1. url parameter 2. function handling req & res
   try {
-    console.log("GetAllAccounts: Connected!")
+    // console.log("GetAllAccounts: Connected!")
     
     // use await when function returns a promise. pauses execution until promise settles
-    const result = await pool.query( // searches for all accounts in the database. query sends sql commands to database
-      'SELECT * FROM AccountsTable'
+    const result = await pool.query( // searches for all accountstable in the database. query sends sql commands to database
+      'SELECT * FROM Accountstable'
     );
     
     return res.json(result) //send json formatted data back to client
@@ -39,28 +39,22 @@ app.post('/home/createAccount', async (req, res) => {
 
     const inputUsername = req.body.username
     const inputPassword = req.body.password
+    const inputDescription = req.body.description
 
     if (inputUsername == '' || inputPassword == ''){
       return res.json({ status : "Input Something!"}) // returns error message if username or password is empty
     }
 
     const usernamePasswordMatch = await pool.query( // Gets the db object message of the result of the query
-      'SELECT accountid FROM AccountsTable where accountusername = ($1) and accountpassword = ($2)', [inputUsername, inputPassword]
-    );
+      'SELECT accountid FROM accountstable where accountusername = ($1) and accountpassword = ($2)', [inputUsername, inputPassword]
+    )
 
     if (usernamePasswordMatch.rows.length > 0){ // Checks inside the db object if any rows are returned from db
       return res.json({ status : "Account already exists"}) // If rows > 0, the account already exists in db 
     }
 
-    const latestResult = await pool.query( // searches the highest account id in the db
-      'SELECT accountid FROM AccountsTable ORDER BY accountid::int DESC LIMIT 1'
-    );
-
-    const latestId = latestResult.rows.length > 0 ? parseInt(latestResult.rows[0].accountid) : 0;
-    const newId = latestId + 1; // adds 1 to the highest id to assign to the oncoming created account 
-
     const result = await pool.query( // Inserts the oncoming created account into db
-      'INSERT INTO AccountsTable (accountid,accountusername,accountpassword) VALUES ($1, $2, $3)', [newId, req.body.username, req.body.password]
+      'INSERT INTO Accountstable (accountid,accountusername,accountpassword, accountdescription) VALUES (DEFAULT, $1, $2, $3)', [req.body.username, req.body.password, req.body.description]
     );
     
     return res.json({ status: 'Account created' })
@@ -77,6 +71,7 @@ app.delete('/home/deleteAccount', async (req, res) => {
 
     const inputUsername = req.body.username
     const inputPassword = req.body.password
+    const inputDescription = req.body.description
 
     if (inputUsername == '' || inputPassword == ''){ // returns error message if username or password is empty
       return res.json({ status : "Input Something!"})
@@ -87,7 +82,7 @@ app.delete('/home/deleteAccount', async (req, res) => {
     }
 
     const result = await pool.query( // result constant contains db object of any rows that are deleted
-      'DELETE FROM AccountsTable WHERE accountusername = ($1) and accountpassword = ($2)', [req.body.username, req.body.password]
+      'DELETE FROM Accountstable WHERE accountusername = ($1) and accountpassword = ($2)', [req.body.username, req.body.password]
     );
 
     if (result.rowCount === 0){ // if result constant has no rows, it means no rows are deleted
@@ -102,11 +97,11 @@ app.delete('/home/deleteAccount', async (req, res) => {
   }
 })
 
-//Display Calenders
-app.get('/home/showAllCalenders', async (req, res) => {
+//Display Calendars
+app.get('/home/showAllCalendars', async (req, res) => {
   try {
-    const result = await pool.query( // searches for all calenders in the database
-      'SELECT * FROM mycalenderstable'
+    const result = await pool.query( // searches for all calendarstable in the database
+      'SELECT * FROM calendarstable'
     );
     
     return res.json(result)
@@ -117,74 +112,93 @@ app.get('/home/showAllCalenders', async (req, res) => {
   }
 })
 
-//Create Calenders
-app.post('/home/createCalender', async (req, res) => {
+app.get('/home/getMyCalendars', async (req, res) => {
+  try {
+    const accountid = req.query.accountID
+
+    if (!accountid) {
+      return res.status(400).json({ error: 'Missing accountid parameter' });
+    }
+
+    console.log("GetMyCalendars: Connected!");
+
+    const result = await pool.query(
+      'SELECT * FROM calendarstable WHERE accountid = $1', [accountid]
+    );
+
+    return res.json(result)
+  } catch (e) {
+    console.log("GetMyCalendars: Server Error");
+    console.log(e);
+    return res.status(500).json({ error: 'Server error' });
+  }
+})
+
+//Create Calendars
+app.post('/home/createCalendar', async (req, res) => {
   try {
 
-    const calenderName = req.body.calenderName
-    const calenderDescription = req.body.calenderDescription
+    const calendarName = req.body.calendarName
+    const calendarDescription = req.body.calendarDescription
     const currentAccountId = req.body.accountid
 
     console.log(currentAccountId)
 
-    if (calenderName == ''){
+    if (calendarName == ''){
       return res.json({ status : "Input Something!"}) // returns error message if username or password is empty
     }
 
-    const checkCalenderInsideDbResult = await pool.query( // Gets the db object of the calender name if it's already there
-      'SELECT mycalendername FROM mycalenderstable where mycalendername = ($1)', [calenderName]
+    const checkCalendarInsideDbResult = await pool.query( // Gets the db object of the calendar name if it's already there
+      'SELECT calendarstable FROM calendarstable where calendarname = ($1)', [calendarName]
     );
 
-    if (checkCalenderInsideDbResult.rows.length > 0){ // Checks inside the db object if any rows are returned from db
-      return res.json({ status : "Calender already exists"}) // If rows > 0, the calender already exists in db 
+    if (checkCalendarInsideDbResult.rows.length > 0){ // Checks inside the db object if any rows are returned from db
+      return res.json({ status : "Calendar already exists"}) // If rows > 0, the calendar already exists in db 
     }
 
-    const latestResult = await pool.query( // searches the highest calender id in the db
-      'SELECT mycalenderid FROM mycalenderstable ORDER BY mycalenderid::int DESC LIMIT 1'
+    const latestResult = await pool.query( // searches the highest calendar id in the db
+      'SELECT calendarid FROM calendarstable ORDER BY calendarid::int DESC LIMIT 1'
     );
 
-    const latestId = latestResult.rows.length > 0 ? parseInt(latestResult.rows[0].mycalenderid) : 0;
-    const newId = latestId + 1; // adds 1 to the highest id to assign to the oncoming created calender 
-
-    const result = await pool.query( // Inserts the oncoming created calender into db
-      'INSERT INTO mycalenderstable (mycalenderid,mycalendername,mycalenderdescription, accountid) VALUES ($1, $2, $3, $4)', [newId, calenderName, calenderDescription, currentAccountId]
+    const result = await pool.query( // Inserts the oncoming created calendar into db
+      'INSERT INTO calendarstable (calendarid,calendarname,calendardescription, accountid) VALUES (DEFAULT, $1, $2, $3)', [calendarName, calendarDescription, currentAccountId]
     );
     
-    return res.json({ status: 'Calender created' })
+    return res.json({ status: 'Calendar created' })
   } catch (e){
     console.log("createAccount: Server Error")
     console.log(e)
-    return res.json({ status: 'Failed to create calender' })
+    return res.json({ status: 'Failed to create calendar' })
   }
 })
 
-//Delete Calender
-app.delete('/home/deleteCalender', async (req, res) => {
+//Delete Calendar
+app.delete('/home/deleteCalendar', async (req, res) => {
   try {
 
-    const mycalenderid = req.body.calenderid
+    const calendarid = req.body.calendarid
 
-    if (mycalenderid == '' ){ // returns error message if mycalenderid from req is empty
-      return res.json({ status : "mycalenderid contains nothing!"})
+    if (calendarid == '' ){ // returns error message if mycalendarid from req is empty
+      return res.json({ status : "calendarid contains nothing!"})
     }
 
     const result = await pool.query( // result constant contains db object of any rows that are deleted
-      'DELETE FROM mycalendersTable WHERE mycalenderid = ($1)', [mycalenderid]
+      'DELETE FROM calendarTable WHERE calendarid = ($1)', [calendarid]
     );
 
     if (result.rowCount === 0){ // if result constant has no rows, it means no rows are deleted
-      return res.json({ status : "No such calender in Databse"})
+      return res.json({ status : "No such calendar in Databse"})
     } else {
-      return res.json({ status : "Calender Deleted"})
+      return res.json({ status : "Calendar Deleted"})
     }
   } catch (e){
-    console.log("deleteCalenders: Server Error")
+    console.log("deleteCalendar: Server Error")
     console.log(e)
     return res.json(e)
   }
 })
 
-// replace local pool with supabase pool if events table is there
+// replace local pool with supabase pool if eventstable table is there
 app.post('/home/createEvent', async(req, res) => {
   
   try {
@@ -193,9 +207,10 @@ app.post('/home/createEvent', async(req, res) => {
     const eventlocation = req.body.location;
     const startdt = req.body.startdt;
     const enddt = req.body.enddt;
+    const calendarid = 1
     
     const result = await pool.query( 
-      'INSERT INTO public.events (eventname,eventdescription,eventlocation,startdt,enddt) VALUES ($1, $2, $3, $4, $5)', [eventname,eventdescription,eventlocation,startdt,enddt]
+      'INSERT INTO public.eventstable (eventname,eventdescription,eventlocation,startdt,enddt, calendarid) VALUES ($1, $2, $3, $4, $5, $6)', [eventname,eventdescription,eventlocation,startdt,enddt, calendarid]
     );   
 
     return res.json({ status : "event created"});
@@ -208,9 +223,9 @@ app.post('/home/createEvent', async(req, res) => {
 
 app.get('/home/showAllEvents', async (req, res) => {
   try {
-    console.log("showAllEvents: Connected!");
+    // console.log("showAllEvents: Connected!");
     const result = await pool.query( 
-      'SELECT * FROM events'
+      'SELECT * FROM eventstable'
     );
     return res.json(result);
   } catch (e) {
@@ -245,3 +260,43 @@ app.post("/login", async (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on port ${port}`)
 }) // Starts the server and sends the message when there are any requests from port 8888
+ 
+
+// Registration stuff
+app.post("/register", async (req, res) => {
+  const { yourName, username, password, accountDescription } = req.body;
+
+  console.log(req.body);
+
+  try {
+    const userCheck = await pool.query(
+      'SELECT * FROM accountstable WHERE accountusername = $1',
+      [username]
+    );
+
+    if (userCheck.rowCount !== 0) {
+      return res.json({ status: false, error: "Username has already been taken!" });
+    }
+
+    if (userCheck.rowCount != 0) {
+      res.json({ status: false, error: "Username has already been taken!" })
+    }
+    else {
+      const insertion = await pool.query(
+        'INSERT INTO accountstable (accountid, accountusername, accountpassword, accountdescription) VALUES (DEFAULT, $1, $2, $3)',
+        [username, password, accountDescription]
+      )
+      if (insertion.rowCount != 1) {
+        res.json({ status: false, error: "Database insertion failed" })
+      }
+      else {
+        res.json({ status: true, name: yourName })
+      }
+    }
+
+
+  } catch (err) {
+    console.log("Registration error:", err)
+    res.json({ status: false, error: "Server error!" })
+  }
+})
