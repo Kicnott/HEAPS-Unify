@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import '../styles/App.css'
 import '../styles/register.css'
+import { Link } from 'react-router-dom'
 import '../classes/index.jsx'
 
 // Components
@@ -54,31 +55,17 @@ function RegisterPage() {
     return (
         <div>
             <h1>
-                Register for Unify
+                Create an Account
             </h1>
             <SimpleBlock
                 maxWidth="700px"
-                margin="60px auto"
-                padding="32px"
+                margin="20px auto"
+                padding="20px"
                 background="#ffffff"
-                border="2px solid #007bff"
-                boxShadow="0 4px 16px rgba(0,0,0,0.2)"
+                border="none"
+                boxShadow="none"
             >
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1em' }}>
-                    <button
-                        onClick={() => navigate('/')}
-                        style={{
-                            background: 'none',
-                            border: 'none',
-                            fontSize: '1.5em',
-                            cursor: 'pointer',
-                            padding: '0 0.5em',
-                        }}
-                    >
-                        &lt;
-                    </button>
-                </div>
                     {error && <h5 style={{ color: 'red' }}>{error}</h5>}
                     <form onSubmit={handleSubmit}>
                         <div className='form-group'>
@@ -144,13 +131,27 @@ function RegisterPage() {
                             </input>
                           </div>
                             <br></br>
-                            <button type='register' onClick={() => setAction('register')}>
+                            <button type='register' onClick={() => setAction('register')}
+                                style={{
+                                backgroundColor: ' #A78E72', 
+                                color: 'white', 
+                                width: '90%', 
+                                height: '60px', 
+                                borderRadius:'10px', 
+                                margin: 'auto',
+                                fontSize: '1.1rem' }}>
                                 Register
                             </button>
 
-
+                            <p style={{ fontSize: '1.1rem', marginTop: '1rem' }}>
+                            Already have an account?{'  '}
+                            <Link to="/" style={{ color: ' #A78E72' , textDecoration: 'underline'}}>
+                            Login
+                            </Link>
+                            </p>
 
                     </form>
+                    
 
             </SimpleBlock>
         </div>
