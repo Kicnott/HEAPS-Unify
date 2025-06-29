@@ -108,9 +108,6 @@ function HomePage() {
         console.log("Calender is rendered!")
     }
 
-                useEffect(() => { //Test moveable element, refreshes calender
-                    console.log("refreshes:", refreshEvents)
-                }, [refreshEvents])
     return (
         <div>
                 {whenDisplayRenders()}

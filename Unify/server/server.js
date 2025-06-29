@@ -101,7 +101,7 @@ app.delete('/home/deleteAccount', async (req, res) => {
 app.get('/home/showAllCalendars', async (req, res) => {
   try {
     const result = await pool.query( // searches for all calendarstable in the database
-      'SELECT * FROM calendarstable'
+      'SELECT * FROM mycalendarstable'
     );
     
     return res.json(result)
@@ -126,6 +126,8 @@ app.get('/home/getMyCalendars', async (req, res) => {
       'SELECT * FROM calendarstable WHERE accountid = $1', [accountid]
     );
 
+    console.log(result)
+
     return res.json(result)
   } catch (e) {
     console.log("GetMyCalendars: Server Error");
@@ -149,7 +151,7 @@ app.post('/home/createCalendar', async (req, res) => {
     }
 
     const checkCalendarInsideDbResult = await pool.query( // Gets the db object of the calendar name if it's already there
-      'SELECT calendarstable FROM calendarstable where calendarname = ($1)', [calendarName]
+      'SELECT mycalendarstable FROM mycalendarstable where calendarname = ($1)', [calendarName]
     );
 
     if (checkCalendarInsideDbResult.rows.length > 0){ // Checks inside the db object if any rows are returned from db
@@ -157,11 +159,11 @@ app.post('/home/createCalendar', async (req, res) => {
     }
 
     const latestResult = await pool.query( // searches the highest calendar id in the db
-      'SELECT calendarid FROM calendarstable ORDER BY calendarid::int DESC LIMIT 1'
+      'SELECT calendarid FROM mycalendarstable ORDER BY calendarid::int DESC LIMIT 1'
     );
 
     const result = await pool.query( // Inserts the oncoming created calendar into db
-      'INSERT INTO calendarstable (calendarid,calendarname,calendardescription, accountid) VALUES (DEFAULT, $1, $2, $3)', [calendarName, calendarDescription, currentAccountId]
+      'INSERT INTO mycalendarstable (calendarid,calendarname,calendardescription, accountid) VALUES (DEFAULT, $1, $2, $3)', [calendarName, calendarDescription, currentAccountId]
     );
     
     return res.json({ status: 'Calendar created' })
@@ -183,7 +185,7 @@ app.delete('/home/deleteCalendar', async (req, res) => {
     }
 
     const result = await pool.query( // result constant contains db object of any rows that are deleted
-      'DELETE FROM calendarTable WHERE calendarid = ($1)', [calendarid]
+      'DELETE FROM mycalendarstable WHERE calendarid = ($1)', [calendarid]
     );
 
     if (result.rowCount === 0){ // if result constant has no rows, it means no rows are deleted
