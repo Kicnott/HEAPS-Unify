@@ -76,15 +76,28 @@ function LoginPage() {
                             </input>
                             <br></br>
                             <br></br>
-                            <button type='login' onClick={() => setAction("login")}>
+                            <button type='login' onClick={() => setAction("login")}
+                                style={{ backgroundColor: ' #A78E72', 
+                                color: 'white', 
+                                width: '90%', 
+                                height: '75px', 
+                                borderRadius:'10px', 
+                                margin: 'auto' }}
+>
                                 Login
                             </button>
-                            <button type='register' onClick={() => navigate('/register')}>
-                                Register
-                            </button>
+
+                            <p style={{ fontSize: '1.1rem', marginTop: '1rem' }}>
+  Need an account?{'  '}
+  <Link to="/register" style={{ color: ' #A78E72' , textDecoration: 'underline'}}>
+    Register
+  </Link>
+</p>
+
+
                         </h4>
                     </form>
-                    <h5 style={{ color: 'red' }}>{errorMessage}</h5> {/*Displays errorMessage*/}
+                    <h5 style={{ color: 'tomato' }}>{errorMessage}</h5> {/*Displays errorMessage*/}
                     <h5 style={{ color: 'green' }}>{message}</h5>
                 </SimpleBlock>
             </h2>

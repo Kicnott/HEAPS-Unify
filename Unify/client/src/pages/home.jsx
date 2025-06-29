@@ -207,7 +207,7 @@ function HomePage() {
 
             </OverlayBlock>
 
-            {/* bev's event making thing 2nd overlay */}
+            {/* ADD event overlay block */}
             {isEventFormOpen && (
                 <OverlayBlock
                     isHidden={false}

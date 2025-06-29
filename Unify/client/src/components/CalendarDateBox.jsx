@@ -22,7 +22,7 @@ export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, set
 
   let calendarStyle = {
     // date number 
-    color: isBaseMonth ? '#A78E72' : 'grey', // If the date is part of the base month, the font color is black; otherwise, it is grey.
+    color: isBaseMonth ? '#5E503F' : '#A78E72', // If the date is part of the base month, the font color is black; otherwise, it is grey.
     height: '8rem', 
     width: '100%',
     position: 'relative'
