@@ -1,13 +1,14 @@
+import { useState, useEffect } from 'react'
 
 // CalendarDateBox is a component used by MainCalendar to create the boxes in the Calendar.
-export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, setChosenDate }) => {
+export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, setChosenDate, refreshEvents, setrefreshEvents, moveableEvent, setmoveableEvent }) => {
   // onClick: A function that runs when the DateBox is clicked.
   // children: Any additional labels to be stored on each DateBox.
   // baseMonth: The current month being displayed - to determine the font color
   // displayDate: The date to be displayed in the DateBox.
-  let date = displayDate.getDate() // Converts the displayDate to a string so it can be displayed.
+  let date = displayDate.getDate() // Converts the displayDate to the day number
 
-  const eventDate = () => {
+  const eventDateUnused = () => {
     setChosenDate(displayDate);
   }
 
@@ -28,26 +29,72 @@ export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, set
     position: 'relative'
   }
 
+  let eventStyle = {
+    fontSize: '0.75rem', 
+    backgroundColor: 'pink',
+    color: 'red',
+    borderRadius: '1rem', //idk how to curve the eventbox on calendarbox slightly
+    cursor: 'grab',
+    opacity: 1
+    
+  }
+
+const dragStart = (e) => {
+  e.dataTransfer.setData('text/plain', 'dragged-event'); // can be any string since only one event
+};
+
+const dragOver = (e) => {
+  e.preventDefault(); // allow drop
+};
+
+const drop = (e) => {
+  e.preventDefault();
+  const data = e.dataTransfer.getData('text/plain');
+  if (data === 'dragged-event') {
+    console.log("Matches!")
+    setmoveableEvent(displayDate); // update the event's date to the dropped calendar box
+  }
+};
+
   return (
-    // A button is used to represent a date box.
-    // When clicked, the function stored in onClick is run.
-    // The date is displayed by default. Additional information can be displayed by using the children variable.
-    <button onClick={() => {
+  <button 
+    id={displayDate}
+    style={calendarStyle}       
+    onDragOver={(e)=>dragOver(e)}
+    onDrop={(e) => drop(e, date)}
+    onClick={() => {
       onClick();
-      eventDate();
-    }} style={calendarStyle}>
-      {children}
-      
-      <span style={{
+    }}
+  >
+    {children}
+
+    {moveableEvent == displayDate && (
+      <div 
+        id="1"
+        draggable
+        onDragStart={(e) => dragStart(e)}
+        style={eventStyle}
+        onClick={(event) => {
+          console.log("Event Clicked");
+          event.stopPropagation();
+        }}
+      >
+        Moveable Event
+      </div>
+    )}
+    
+    <span style={{
+      color: isBaseMonth ? 'black' : 'grey',
       position: 'absolute',
       top: '0.2rem',
       left: '0.5rem',
     }}>
-        {date}
-      </span>
-    </button>
+      {date}
+    </span>
+  </button>
   )
 }
+
 
 // CalendarDateHeader is a component used by MainCalendar to create the header boxes in the Calendar, to display days of the week.
 export const CalendarDateHeader = ({ onClick, children }) => {

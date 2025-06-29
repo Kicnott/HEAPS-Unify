@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import '../styles/App.css'
 // import getBaseDate from '../functions/getBaseDate.jsx'
@@ -7,7 +7,7 @@ import { uAccount, uCalendar, uCalendarDisplay, uEvent, uTimeslot } from '../cla
 // Components
 import { TopNavbar } from "../components/TopNavbar.jsx"
 import { RightDrawer } from "../components/rightDrawer.jsx"
-import { MainCalendar } from '../components/mainCalendar.jsx'
+import { MainCalendar } from '../components/MainCalendar.jsx'
 import { OverlayBlock } from '../components/OverlayBlock.jsx'
 import { DropdownList } from '../components/DropdownList.jsx'
 import { TimeTable } from '../components/timeTable.jsx'
@@ -104,8 +104,14 @@ function HomePage() {
         yearOptionsArray.push({ value: String(i), label: String(i) })
     } // The options to be stored in the year drop down list. It is too long so using a for loop to push the values in from 1970 to 2050.
 
+    const whenDisplayRenders = () => {
+        console.log("Calender is rendered!")
+    }
+
     return (
         <div>
+                {whenDisplayRenders()}
+                
             <h3>Current User: {currentUser} &nbsp; Account ID: {currentUserAccountId}</h3>
 
             <OverlayBackground
@@ -217,7 +223,8 @@ function HomePage() {
                             setEventFormOpen(false);
                             seteventRefreshTrigger(prev => prev + 1);
                         }}
-                        chosenDate={chosenDate} />
+                        chosenDate={chosenDate}
+                        accountID={currentUserAccountId} />
                 </OverlayBlock>
             )}
 

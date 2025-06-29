@@ -85,12 +85,12 @@ const createAccount = (inputUsername, inputPassword, inputDescription, setErrMsg
     setRefreshDisplayTrigger(refreshDisplayTrigger + 1)
   } catch (err) {
     console.error('Error creating account:', err);
-    setErrMsg('Error creating account');
+      ('Error creating account');
   }
 };
 
 //Create an account in the database
-const deleteAccount = (inputUsername, inputPassword, setErrMsg, refreshDisplayTrigger, setRefreshDisplayTrigger) => async (event) => {
+const deleteAccount = (inputUsername, inputPassword, inputDescription, setErrMsg, refreshDisplayTrigger, setRefreshDisplayTrigger) => async (event) => {
   event.preventDefault();
 
   try {
