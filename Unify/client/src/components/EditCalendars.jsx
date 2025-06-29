@@ -64,7 +64,7 @@ const DisplayCalendars = ({ErrMsg, setErrMsg, setRefreshDisplayTrigger, refreshD
                     style={{cursor: 'pointer', color: 'red'}} 
                     onClick={ (e) => 
                         deleteCalendar(
-                            row.mycalendarid, 
+                            row.calendarid, 
                             setErrMsg, 
                             refreshDisplayTrigger, 
                             setRefreshDisplayTrigger

@@ -183,7 +183,7 @@ app.delete('/home/deleteCalendar', async (req, res) => {
     }
 
     const result = await pool.query( // result constant contains db object of any rows that are deleted
-      'DELETE FROM calendarTable WHERE calendarid = ($1)', [calendarid]
+      'DELETE FROM calendarstable WHERE calendarid = ($1)', [calendarid]
     );
 
     if (result.rowCount === 0){ // if result constant has no rows, it means no rows are deleted
