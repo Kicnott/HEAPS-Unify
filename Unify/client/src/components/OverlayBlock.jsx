@@ -9,10 +9,9 @@ export const OverlayBlock = ({ children, isHidden, onClose }) => {
     width: '500px',
     height: '500px',
     padding: '24px',
-    background: '#f9f9f9',
-    border: '1px solid rgb(0, 0, 0)',
-    borderRadius: '8px',
-    boxShadow: '0 2px 8px rgba(0,0,0,1)',
+    background: 'white',
+    border: '3px solid #A78E72',
+    borderRadius: '3px',
     textAlign: 'center',
     position: 'fixed',
     // So far just generic css stuff to make a plain box
@@ -27,7 +26,7 @@ export const OverlayBlock = ({ children, isHidden, onClose }) => {
   const rowStyle = {
     display: 'flex',
     alignItems: 'flex-start', // Aligns items at the top
-    gap: '8px' // Optional: space between button and grid
+    gap: '4px' // Optional: space between button and grid
   };
 
   return (
