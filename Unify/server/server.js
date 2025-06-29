@@ -53,8 +53,14 @@ app.post('/home/createAccount', async (req, res) => {
       return res.json({ status : "Account already exists"}) // If rows > 0, the account already exists in db 
     }
 
+    const latestResult = await pool.query( // searches the highest calendar id in the db
+      'SELECT accountid FROM accountstable ORDER BY accountid::int DESC LIMIT 1'
+    );
+
+    const newAccountId = parseInt(latestResult.rows[0].accountid, 10) + 1;
+
     const result = await pool.query( // Inserts the oncoming created account into db
-      'INSERT INTO Accountstable (accountid,accountusername,accountpassword, accountdescription) VALUES (DEFAULT, $1, $2, $3)', [req.body.username, req.body.password, req.body.description]
+      'INSERT INTO Accountstable (accountid,accountusername,accountpassword, accountdescription) VALUES ($1, $2, $3, $4)', [newAccountId, req.body.username, req.body.password, req.body.description]
     );
     
     return res.json({ status: 'Account created' })
@@ -86,7 +92,7 @@ app.delete('/home/deleteAccount', async (req, res) => {
     );
 
     if (result.rowCount === 0){ // if result constant has no rows, it means no rows are deleted
-      return res.json({ status : "No such account in Databse"})
+      return res.json({ status : "No such account in Database"})
     } else {
       return res.json({ status : "Account Deleted"})
     }
@@ -162,8 +168,10 @@ app.post('/home/createCalendar', async (req, res) => {
       'SELECT calendarid FROM mycalendarstable ORDER BY calendarid::int DESC LIMIT 1'
     );
 
+    const newCalendarId = parseInt(latestResult.rows[0].calendarid, 10) + 1;
+
     const result = await pool.query( // Inserts the oncoming created calendar into db
-      'INSERT INTO mycalendarstable (calendarid,calendarname,calendardescription, accountid) VALUES (DEFAULT, $1, $2, $3)', [calendarName, calendarDescription, currentAccountId]
+      'INSERT INTO mycalendarstable (calendarid,calendarname,calendardescription, accountid) VALUES ($1, $2, $3, $4)', [newCalendarId, calendarName, calendarDescription, currentAccountId]
     );
     
     return res.json({ status: 'Calendar created' })
@@ -184,12 +192,14 @@ app.delete('/home/deleteCalendar', async (req, res) => {
       return res.json({ status : "calendarid contains nothing!"})
     }
 
+    console.log(res)
+
     const result = await pool.query( // result constant contains db object of any rows that are deleted
       'DELETE FROM mycalendarstable WHERE calendarid = ($1)', [calendarid]
     );
 
     if (result.rowCount === 0){ // if result constant has no rows, it means no rows are deleted
-      return res.json({ status : "No such calendar in Databse"})
+      return res.json({ status : "No such calendar in Database"})
     } else {
       return res.json({ status : "Calendar Deleted"})
     }
