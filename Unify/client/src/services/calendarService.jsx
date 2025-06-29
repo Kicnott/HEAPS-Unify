@@ -19,8 +19,13 @@ const deleteCalendar = (data) => {
     return http.delete(`/home/deleteCalendar`, {data})
 }
 
+const getMyCalendars = (data) => {
+    return http.get('/home/getMyCalendars', {data})
+}
+
 export default {
     showAllCalendars,
     createCalendar,
-    deleteCalendar
+    deleteCalendar,
+    getMyCalendars
 }

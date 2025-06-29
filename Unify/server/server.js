@@ -18,7 +18,7 @@ pool.query('SELECT current_database()', (err, res) => {
 //await pauses the function until promise finishes 
 app.get('/home/showAllAccounts', async (req, res) => { // 1. url parameter 2. function handling req & res
   try {
-    console.log("GetAllAccounts: Connected!")
+    // console.log("GetAllAccounts: Connected!")
     
     // use await when function returns a promise. pauses execution until promise settles
     const result = await pool.query( // searches for all accountstable in the database. query sends sql commands to database
@@ -112,6 +112,28 @@ app.get('/home/showAllCalendars', async (req, res) => {
   }
 })
 
+app.get('/home/getMyCalendars', async (req, res) => {
+  try {
+    const accountid = req.query.accountID
+
+    if (!accountid) {
+      return res.status(400).json({ error: 'Missing accountid parameter' });
+    }
+
+    console.log("GetMyCalendars: Connected!");
+
+    const result = await pool.query(
+      'SELECT * FROM calendarstable WHERE accountid = $1', [accountid]
+    );
+
+    return res.json(result)
+  } catch (e) {
+    console.log("GetMyCalendars: Server Error");
+    console.log(e);
+    return res.status(500).json({ error: 'Server error' });
+  }
+})
+
 //Create Calendars
 app.post('/home/createCalendar', async (req, res) => {
   try {
@@ -201,7 +223,7 @@ app.post('/home/createEvent', async(req, res) => {
 
 app.get('/home/showAllEvents', async (req, res) => {
   try {
-    console.log("showAllEvents: Connected!");
+    // console.log("showAllEvents: Connected!");
     const result = await pool.query( 
       'SELECT * FROM eventstable'
     );

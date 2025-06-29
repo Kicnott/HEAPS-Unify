@@ -26,7 +26,7 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
     // This is because Date is an object and modifying a copy of baseDate will change it for the rest.
 
     let calendarBoxes = [] // Creates an empty array to store the calendar boxes that will later be displayed.
-    let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] // Defining the calendar headers.
+    let days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "Sat"] // Defining the calendar headers.
 
     for (let i = 0; i < 7; i++){
         calendarBoxes.push(<CalendarDateHeader key={days[i]}>{days[i]}</CalendarDateHeader>) // Add Day Names on the top row

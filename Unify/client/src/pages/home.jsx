@@ -226,7 +226,8 @@ function HomePage() {
                             setEventFormOpen(false);
                             seteventRefreshTrigger(prev => prev + 1);
                         }}
-                        chosenDate={chosenDate} />
+                        chosenDate={chosenDate}
+                        accountID={currentUserAccountId} />
                 </OverlayBlock>
             )}
 
