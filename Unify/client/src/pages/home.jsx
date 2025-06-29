@@ -7,7 +7,7 @@ import { uAccount, uCalendar, uCalendarDisplay, uEvent, uTimeslot } from '../cla
 // Components
 import { TopNavbar } from "../components/TopNavbar.jsx"
 import { RightDrawer } from "../components/rightDrawer.jsx"
-import { MainCalendar } from '../components/mainCalendar.jsx'
+import { MainCalendar } from '../components/MainCalendar.jsx'
 import { OverlayBlock } from '../components/OverlayBlock.jsx'
 import { DropdownList } from '../components/DropdownList.jsx'
 import { TimeTable } from '../components/timeTable.jsx'
