@@ -1,4 +1,5 @@
 import { Pool } from 'pg'
+
 const pool = new Pool({
     user: 'nicholas',
     host: 'localhost',
@@ -6,6 +7,7 @@ const pool = new Pool({
     password: 'root',
     port: 5432
 })
+
 
 /*  Main db details
     user: 'postgres.jcozwjesouhvqxgbdijp',

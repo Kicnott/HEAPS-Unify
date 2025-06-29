@@ -4,6 +4,7 @@ import accountService from '../services/accountService.jsx'
 export const EditAccountForm = ({ onClose }) => {
   const [inputUsername, setinputUsername] = useState("") // state for inputted username box
   const [inputPassword, setinputPassword] = useState("") // state for inputted password box
+  const [inputDescription, setinputDescription] = useState("") 
   const [ErrMsg, setErrMsg] = useState("") // Error Message to be displayed, error outcomes received from server
   const [refreshDisplayTrigger, setRefreshDisplayTrigger] = useState(1) // After create/delete, refreshes displayed Accounts
 
@@ -22,9 +23,14 @@ export const EditAccountForm = ({ onClose }) => {
         <input type="text" value={inputPassword} onChange={e => setinputPassword(e.target.value)} style={inputStyle} />
       </div>
 
+      <div style={{ marginTop: '12px' }}>
+        <label>Account Description</label>
+        <input type="text" value={inputDescription} onChange={e => setinputDescription(e.target.value)} style={inputStyle} />
+      </div>
+
       <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
-        <button style={addBtnStyle} onClick={createAccount(inputUsername, inputPassword, setErrMsg, refreshDisplayTrigger, setRefreshDisplayTrigger)}>Add</button>
-        <button style={deleteBtnStyle} onClick={deleteAccount(inputUsername, inputPassword, setErrMsg, refreshDisplayTrigger, setRefreshDisplayTrigger)}>Delete</button>
+        <button style={addBtnStyle} onClick={createAccount(inputUsername, inputPassword, inputDescription, setErrMsg, refreshDisplayTrigger, setRefreshDisplayTrigger)}>Add</button>
+        <button style={deleteBtnStyle} onClick={deleteAccount(inputUsername, inputPassword, inputDescription, setErrMsg, refreshDisplayTrigger, setRefreshDisplayTrigger)}>Delete</button>
         <button style={deleteBtnStyle} onClick = {onClose}>Close form</button>
       </div>
       <DisplayAccounts ErrMsg = {ErrMsg} refreshDisplayTrigger={refreshDisplayTrigger}></DisplayAccounts>
@@ -65,13 +71,14 @@ const DisplayAccounts = ({ErrMsg, refreshDisplayTrigger}) => {
 }
 
 //Create a new account and add it to the database
-const createAccount = (inputUsername, inputPassword, setErrMsg, refreshDisplayTrigger, setRefreshDisplayTrigger) => async (event) => {
+const createAccount = (inputUsername, inputPassword, inputDescription, setErrMsg, refreshDisplayTrigger, setRefreshDisplayTrigger) => async (event) => {
   event.preventDefault();
 
   try {
     const res = await accountService.createAccount({
       username: inputUsername,
       password: inputPassword,
+      description: inputDescription
     });
     console.log('Account status:', res.data.status);
     setErrMsg(res.data.status);

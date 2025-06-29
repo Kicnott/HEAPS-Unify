@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import '../styles/App.css'
 // import getBaseDate from '../functions/getBaseDate.jsx'
@@ -14,7 +14,8 @@ import { TimeTable } from '../components/timeTable.jsx'
 import { CreateEvent } from '../components/CreateNewEvent.jsx'
 import { RightDrawerCloseBackground } from '../functions/rightDrawerCloseBackground'
 import { EditAccountForm } from '../components/EditAccounts.jsx'
-import { EditCalendersForm } from '../components/EditCalenders.jsx'
+import { EditCalendarsForm } from '../components/EditCalendars.jsx'
+import { OverlayBackground } from '../components/OverlayBackground.jsx'
 
 function HomePage() {
 
@@ -37,11 +38,11 @@ function HomePage() {
     var E5 = new uEvent(T5, 5, "Event 5", "Fun and cool event", "Marina Bay Sands");
 
 
-    // uCalender(events, id, name, description, colour)
+    // uCalendar(events, id, name, description, colour)
     var C1 = new uCalendar([E2], 1, "myCalendar", "This is my calendar", "#ff0000")
     // uAccount(id, name, description, myCalendar, followedCalendars)
     var A1 = new uAccount(1, "Me", "This is my Account", [C1], [])
-    // uCalenderDisplay (displayDate, calendars, currentAccount) 
+    // uCalendarDisplay (displayDate, calendars, currentAccount) 
     // var CD1 = new uCalendarDisplay(new Date(2025, 7, 7), C1, A1)
 
     // useState creates variables that are saved even when the page re-renders
@@ -50,10 +51,20 @@ function HomePage() {
     const [isEventHidden, toggleEventHidden] = useState(true) // Defining Event Block Open State
     const [isEventFormOpen, setEventFormOpen] = useState(false)
     const [isEditAccountsFormOpen, setEditAccountsFormOpen] = useState(false)
-    const [isEditCalendersFormOpen, setEditCalendersFormOpen] = useState(false)
-    const [calendarDisplay, changeCalendarDisplay] = useState( new uCalendarDisplay(new Date(), C1, A1) ) 
+    const [isEditCalendarsFormOpen, setEditCalendarsFormOpen] = useState(false)
+    const [calendarDisplay, changeCalendarDisplay] = useState(new uCalendarDisplay(new Date(), C1, A1))
     const [chosenDate, setChosenDate] = useState(new Date())
-    const [events, setEvents] = useState([E2,E3,E4,E5])
+    const [eventRefreshTrigger, seteventRefreshTrigger] = useState(0)
+    const isOverlayBackgroundHidden = isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen
+
+    const hideOverlayBackground = () => {
+        toggleEventHidden(true)
+        toggleRightDrawer(false)
+        setEventFormOpen(false)
+        setEditAccountsFormOpen(false)
+        setEditCalendarsFormOpen(false)
+    }
+
     // Defining the uCalendarDisplay object that the page will use to update the Main Calendar.
     // the date object is the current time
 
@@ -93,13 +104,27 @@ function HomePage() {
         yearOptionsArray.push({ value: String(i), label: String(i) })
     } // The options to be stored in the year drop down list. It is too long so using a for loop to push the values in from 1970 to 2050.
 
+    const whenDisplayRenders = () => {
+        console.log("Calender is rendered!")
+    }
+
+                useEffect(() => { //Test moveable element, refreshes calender
+                    console.log("refreshes:", refreshEvents)
+                }, [refreshEvents])
     return (
         <div>
+                {whenDisplayRenders()}
+                
             <h3>Current User: {currentUser} &nbsp; Account ID: {currentUserAccountId}</h3>
 
-            <TopNavbar isRightDrawerOpen = {isRightDrawerOpen} toggleRightDrawer= {toggleRightDrawer}></TopNavbar> 
+            <OverlayBackground
+                isHidden={isOverlayBackgroundHidden}
+                onClick={() => hideOverlayBackground()}>
+            </OverlayBackground>
 
-            <RightDrawerCloseBackground isRightDrawerOpen = {isRightDrawerOpen} toggleRightDrawer= {toggleRightDrawer}></RightDrawerCloseBackground>
+            <TopNavbar isRightDrawerOpen={isRightDrawerOpen} toggleRightDrawer={toggleRightDrawer}></TopNavbar>
+
+            <RightDrawerCloseBackground isRightDrawerOpen={isRightDrawerOpen} toggleRightDrawer={toggleRightDrawer}></RightDrawerCloseBackground>
 
             <RightDrawer
                 rightDrawerOpen={isRightDrawerOpen} // assigns isRightDrawer state
@@ -118,7 +143,7 @@ function HomePage() {
                         <button>Events (TODO)</button>
                         <br></br>
                         <br></br>
-                        <button onClick={()=>setEditAccountsFormOpen(!isEditAccountsFormOpen)}>Edit Account (Admin use)</button>
+                        <button onClick={() => setEditAccountsFormOpen(!isEditAccountsFormOpen)}>Edit Account (Admin use)</button>
                     </div> {/* TODO all these buttons */}
 
                     <div style={rightDrawerButtonBottom}>
@@ -159,13 +184,13 @@ function HomePage() {
             <MainCalendar
                 displayDate={calendarDisplay.getDisplayDate()} // Assigns the date to display (in month format) as the date in the calendarDisplay state
                 onDateBoxClick={() => toggleEventHidden(!isEventHidden)} // Gives the dateboxes some functionality to open an Overlay block
-                setChosenDate = {setChosenDate}
+                setChosenDate={setChosenDate}
             >
             </MainCalendar>
 
 
-{/* My section TODO */}
-            {!isEventHidden && (
+            {/* My section TODO */}
+            {/* {!isEventHidden && (
                 <div
                     style={{
                         position: 'fixed',
@@ -174,42 +199,51 @@ function HomePage() {
                         zIndex: 1000
                     }}
                     onClick={() => toggleEventHidden(!isEventHidden)} // Lets you click background to close overlay block
-                /> // When isEventHidden is false, creates an overlay background over the other components
-            )}
+                /> // When isEventHidden is false, creates an overlay background over the other components */}
+            {/* )} */}
+
             <OverlayBlock
                 isHidden={isEventHidden} // Assigns isEventHidden function
                 onClose={() => toggleEventHidden(!isEventHidden)} // Assigns toggleEventHidden function
             >
-                
-                < TimeTable chosenDate={chosenDate} events={events}>
+
+                < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger}>
                 </TimeTable>
                 <button onClick={() => {
                     console.log("Button clicked!")
                     setEventFormOpen(true)
-                    }}>+ Add Event</button>
+                }}>+ Add Event</button>
 
             </OverlayBlock>
 
-{/* bev's event making thing 2nd overlay */}
-            <OverlayBlock
-                isHidden={!isEventFormOpen}
-                onClose={() => setEventFormOpen(false)}>
-                <CreateEvent onClose={() => setEventFormOpen(false)} />
-            </OverlayBlock>
-            
-{/* nic's edit accounts form */}
+            {/* bev's event making thing 2nd overlay */}
+            {isEventFormOpen && (
+                <OverlayBlock
+                    isHidden={false}
+                    onClose={() => setEventFormOpen(false)}>
+                    <CreateEvent onClose={() => setEventFormOpen(false)}
+                        onSave={() => {
+                            setEventFormOpen(false);
+                            seteventRefreshTrigger(prev => prev + 1);
+                        }}
+                        chosenDate={chosenDate}
+                        accountID={currentUserAccountId} />
+                </OverlayBlock>
+            )}
+
+            {/* nic's edit accounts form */}
             <OverlayBlock
                 isHidden={!isEditAccountsFormOpen}>
                 <EditAccountForm onClose={() => setEditAccountsFormOpen(false)} />
             </OverlayBlock>
 
-{/* nic's edit accounts form */}
-            <button onClick={()=>setEditCalendersFormOpen(!isEditCalendersFormOpen)}>Edit Calender</button>
+            {/* nic's edit accounts form */}
+            <button onClick={() => setEditCalendarsFormOpen(!isEditCalendarsFormOpen)}>Edit Calendar</button>
 
-{/* nic's edit accounts form */}
+            {/* nic's edit accounts form */}
             <OverlayBlock
-                isHidden={!isEditCalendersFormOpen}>
-                <EditCalendersForm onClose={() => setEditCalendersFormOpen(false)} currentAccountId ={currentUserAccountId} />
+                isHidden={!isEditCalendarsFormOpen}>
+                <EditCalendarsForm onClose={() => setEditCalendarsFormOpen(false)} currentAccountId={currentUserAccountId} />
             </OverlayBlock>
         </div>
     )
