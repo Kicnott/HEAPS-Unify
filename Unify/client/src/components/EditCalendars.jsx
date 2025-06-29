@@ -97,12 +97,12 @@ const createCalendar = (inputCalendarName, inputCalendarDescription, setErrMsg, 
 };
 
 //Create an account in the database
-const deleteCalendar = (mycalendarid, setErrMsg, refreshDisplayTrigger, setRefreshDisplayTrigger) => async (event) => {
+const deleteCalendar = (calendarid, setErrMsg, refreshDisplayTrigger, setRefreshDisplayTrigger) => async (event) => {
   event.preventDefault();
 
   try {
     const res = await calendarService.deleteCalendar({
-      calendarid: mycalendarid,
+      calendarid: calendarid,
     });
     console.log('Calendar status:', res.data.status);
     setErrMsg(res.data.status);
