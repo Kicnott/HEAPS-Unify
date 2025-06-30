@@ -8,7 +8,8 @@ export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, set
   // displayDate: The date to be displayed in the DateBox.
   let date = displayDate.getDate() // Converts the displayDate to the day number
 
-  const eventDateUnused = () => {
+  // need this function to set day for events & timetable
+  const setEventDate = () => {
     setChosenDate(displayDate);
   }
 
@@ -64,6 +65,7 @@ const drop = (e) => {
     onDrop={(e) => drop(e, date)}
     onClick={() => {
       onClick();
+      setEventDate();
     }}
   >
     {children}
