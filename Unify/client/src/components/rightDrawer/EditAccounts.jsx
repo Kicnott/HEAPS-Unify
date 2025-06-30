@@ -1,5 +1,5 @@
 import { useState, useEffect} from 'react'
-import accountService from '../services/accountService.jsx'
+import accountService from '../../services/accountService.jsx'
 
 export const EditAccountForm = ({ onClose }) => {
   const [inputUsername, setinputUsername] = useState("") // state for inputted username box

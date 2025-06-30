@@ -1,5 +1,5 @@
 
-import calendarService from "../services/calendarService";
+import calendarService from "../../services/calendarService.jsx";
 
 export default async function getMyCalendars(accountid) {
     const res = await calendarService.showAllCalendars(

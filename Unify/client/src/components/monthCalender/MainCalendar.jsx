@@ -1,8 +1,8 @@
 import { CalendarDateBox } from './CalendarDateBox.jsx'
 import { CalendarDateHeader } from './CalendarDateBox.jsx'
 import { useState, useEffect } from 'react'
-import getBaseDate from '../functions/getBaseDate.jsx'
-import '../styles/MainCalendar.css'
+import getBaseDate from './getBaseDate.jsx'
+import '../../styles/MainCalendar.css'
 
 // MainCalendar component used to display the big calendar in the Home page.
 export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDate, refreshEvents, setrefreshEvents, nDateHeaderClick}) => {

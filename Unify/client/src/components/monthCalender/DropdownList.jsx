@@ -1,5 +1,5 @@
 import React from 'react'
-import '../styles/DropdownList.css'; 
+import '../../styles/DropdownList.css'; 
 
 // DropdownList is a (mostly redundant) component that is almost exactly like <select> in HTML.
 // Created to stay in line with React's format of creating reusable components.

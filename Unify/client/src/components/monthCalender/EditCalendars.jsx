@@ -1,5 +1,5 @@
 import { useState, useEffect} from 'react'
-import calendarService from '../services/calendarService.jsx'
+import calendarService from '../../services/calendarService.jsx'
 
 export const EditCalendarsForm = ({ onClose, currentAccountId }) => {
   const [inputCalendarName, setCalendarName] = useState("") 
@@ -53,7 +53,7 @@ const DisplayCalendars = ({ErrMsg, setErrMsg, setRefreshDisplayTrigger, refreshD
       <h6 style = {{color: 'red'}}>{ErrMsg}</h6>
       <h4>Calendar ID : My Calendar : Description : Account ID</h4>
         {response.map((row, index) => {
-            const isRoot = row.calendarid === '1'; // isRoot checks Root's calendar (ID:1)
+            const isRoot = row.calendarid == '1'; // isRoot checks Root's calendar (ID:1)
           return (
             <div key={index}>
               {row.calendarid} : {row.calendarname} : {row.calendardescription} : {row.accountid} 

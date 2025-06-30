@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState, useEffect} from 'react'
 import { DateTime } from 'luxon'
-import eventService from '../services/eventService.jsx'
+import eventService from '../../services/eventService.jsx'
 
 
 // chosenDate is the displayDate from calendardatebox

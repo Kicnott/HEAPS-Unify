@@ -1,21 +1,22 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import '../styles/App.css'
+import {monthOptionsArray, yearOptionsArray} from '../constants/calendarConstants.jsx'
 // import getBaseDate from '../functions/getBaseDate.jsx'
 import { uAccount, uCalendar, uCalendarDisplay, uEvent, uTimeslot } from '../classes/'
 
 // Components
-import { TopNavbar } from "../components/TopNavbar.jsx"
-import { RightDrawer } from "../components/rightDrawer.jsx"
-import { MainCalendar } from '../components/MainCalendar.jsx'
-import { OverlayBlock } from '../components/OverlayBlock.jsx'
-import { DropdownList } from '../components/DropdownList.jsx'
-import { TimeTable } from '../components/timeTable.jsx'
-import { CreateEvent } from '../components/CreateNewEvent.jsx'
-import { RightDrawerCloseBackground } from '../functions/rightDrawerCloseBackground'
-import { EditAccountForm } from '../components/EditAccounts.jsx'
-import { EditCalendarsForm } from '../components/EditCalendars.jsx'
-import { OverlayBackground } from '../components/OverlayBackground.jsx'
+import { TopNavbar } from "../components/blocks/TopNavbar.jsx"
+import { RightDrawer } from "../components/rightDrawer/RightDrawer.jsx"
+import { MainCalendar } from '../components/monthCalender/MainCalendar.jsx'
+import { OverlayBlock } from '../components/blocks/OverlayBlock.jsx'
+import { DropdownList } from '../components/monthCalender/DropdownList.jsx'
+import { TimeTable } from '../components/dayCalender/timeTable.jsx'
+import { CreateEvent } from '../components/dayCalender/CreateNewEvent.jsx'
+import { RightDrawerCloseBackground } from '../components/rightDrawer/rightDrawerCloseBackground.jsx'
+import { EditAccountForm } from '../components/rightDrawer/EditAccounts.jsx'
+import { EditCalendarsForm } from '../components/monthCalender/EditCalendars.jsx'
+import { OverlayBackground } from '../components/overlay/OverlayBackground.jsx'
 
 function HomePage() {
 
@@ -84,34 +85,8 @@ function HomePage() {
         padding: 0
     }
 
-    const monthOptionsArray = [
-        { value: "0", label: "January" },
-        { value: "1", label: "February" },
-        { value: "2", label: "March" },
-        { value: "3", label: "April" },
-        { value: "4", label: "May" },
-        { value: "5", label: "June" },
-        { value: "6", label: "July" },
-        { value: "7", label: "August" },
-        { value: "8", label: "September" },
-        { value: "9", label: "October" },
-        { value: "10", label: "November" },
-        { value: "11", label: "December" }
-    ] // The options to be stored in the month drop down list.
-
-    const yearOptionsArray = [] // Defining an empty options array for the year drop down list.
-    for (let i = 1970; i < 2051; i++) {
-        yearOptionsArray.push({ value: String(i), label: String(i) })
-    } // The options to be stored in the year drop down list. It is too long so using a for loop to push the values in from 1970 to 2050.
-
-    const whenDisplayRenders = () => {
-        console.log("Calender is rendered!")
-    }
-
     return (
         <div>
-                {whenDisplayRenders()}
-                
             <h3>Current User: {currentUser} &nbsp; Account ID: {currentUserAccountId}</h3>
 
             <OverlayBackground

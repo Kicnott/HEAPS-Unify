@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import eventService from '../services/eventService.jsx'
-import getMyCalendars from '../functions/getMyCalendars.jsx'
+import eventService from '../../services/eventService.jsx'
+import getMyCalendars from '../monthCalender/getMyCalendars.jsx'
 
 export const CreateEvent = ({ onClose, chosenDate, onSave, accountID }) => {
   const [name, setName] = useState("")

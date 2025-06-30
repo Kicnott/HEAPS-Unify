@@ -1,4 +1,4 @@
-import "../styles/TopNavbar.css";
+import "../../styles/TopNavbar.css";
 
 export const TopNavbar = ({isRightDrawerOpen, toggleRightDrawer}) => {
     return (
