@@ -1,0 +1,25 @@
+{
+  "name": "heaps-unify",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "vite"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kicnott/HEAPS-Unify.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kicnott/HEAPS-Unify/issues"
+  },
+  "homepage": "https://github.com/Kicnott/HEAPS-Unify#readme",
+  "description": "",
+  "devDependencies": {
+    "vite": "^6.3.5"
+  }
+}

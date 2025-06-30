@@ -55,10 +55,10 @@ function LoginPage() {
             <h1>
                 Sign in to Unify
             </h1>
-            <h2>
+            <p>
                 <SimpleBlock>
                     <form onSubmit={handleSubmit}> {/* Assigns the functionality for the submit button*/}
-                        <h4>
+                        <p style={{ fontSize: '1.1rem'}}>
                             <label htmlFor='username'>
                                 Username:&nbsp;&nbsp;&nbsp;
                             </label>
@@ -78,18 +78,32 @@ function LoginPage() {
                             </input>
                             <br></br>
                             <br></br>
-                            <button type='login' onClick={() => setAction("login")}>
+                            <button type='login' onClick={() => setAction("login")}
+                                style={{ backgroundColor: ' #A78E72', 
+                                color: 'white', 
+                                width: '90%', 
+                                height: '60px', 
+                                borderRadius:'10px', 
+                                margin: 'auto',
+                                fontSize: '1.1rem'}}
+>
                                 Login
                             </button>
-                            <button type='register' onClick={() => navigate('/register')}>
-                                Register
-                            </button>
-                        </h4>
+
+                            <p style={{ fontSize: '1.1rem', marginTop: '1rem' }}>
+                            Need an account?{'  '}
+                            <Link to="/register" style={{ color: ' #A78E72' , textDecoration: 'underline'}}>
+                            Register
+                            </Link>
+                            </p>
+
+
+                        </p>
                     </form>
-                    <h5 style={{ color: 'red' }}>{errorMessage}</h5> {/*Displays errorMessage*/}
+                    <h5 style={{ color: 'tomato' }}>{errorMessage}</h5> {/*Displays errorMessage*/}
                     <h5 style={{ color: 'green' }}>{message}</h5>
                 </SimpleBlock>
-            </h2>
+            </p>
         </div>
     )
 }
