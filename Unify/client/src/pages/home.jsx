@@ -36,15 +36,16 @@ function HomePage() {
     const [eventRefreshTrigger, seteventRefreshTrigger] = useState(0)
     const isOverlayBackgroundHidden = isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen
     const [refreshMonthEvents, setRefreshMonthEvents] = useState(0)
+    const [monthEvents, setMonthEvents] = useState([])
+
+    console.log("This Months Events", monthEvents)
 
     useEffect(() => {
         const fetchMonthEvents = async () => {
         try {
-            const todayDate = new Date();
-            const currMonth = todayDate.getMonth();
-            console.log("currMonth:", currMonth)
-            const monthEvents = await monthEventsService.getMonthEvents({currMonth: currMonth});
-            console.log("mmonthEvents from server: ", monthEvents)
+            const currMonth = calendarDisplay.getDisplayDate().getMonth()
+            const monthEvents = await monthEventsService.getMonthEvents({ currMonth: currMonth });
+            setMonthEvents(monthEvents.data);
             } catch (err){
                 console.error("Error fetching month events: ", err);
             }   
@@ -153,6 +154,10 @@ function HomePage() {
                 displayDate={calendarDisplay.getDisplayDate()} // Assigns the date to display (in month format) as the date in the calendarDisplay state
                 onDateBoxClick={() => toggleEventHidden(!isEventHidden)} // Gives the dateboxes some functionality to open an Overlay block
                 setChosenDate={setChosenDate}
+                refreshMonthEvents={refreshMonthEvents}
+                setRefreshMonthEvents={setRefreshMonthEvents}
+                monthEvents={monthEvents}
+                setMonthEvents={setMonthEvents}
             >
             </MainCalendar>
 

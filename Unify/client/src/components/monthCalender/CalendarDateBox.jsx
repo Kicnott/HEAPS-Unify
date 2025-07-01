@@ -21,11 +21,13 @@ export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, set
     color: isBaseMonth ? '#5E503F' : '#A78E72', // If the date is part of the base month, the font color is black; otherwise, it is grey.
     height: '8rem', 
     width: '100%',
+    margin: '0px',
+    padding: '20px 10px 0px 10px',
     position: 'relative'
   }
 
   let eventStyle = {
-    fontSize: '0.75rem', 
+    fontSize: '0.8rem', 
     backgroundColor: 'pink',
     color: 'red',
     borderRadius: '1rem', //idk how to curve the eventbox on calendarbox slightly

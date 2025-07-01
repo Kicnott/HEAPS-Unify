@@ -43,12 +43,11 @@ router.get('/home/showAllEvents', async (req, res) => {
 router.get('/home/getMonthEvents', async (req, res) => {
   try {
     console.log("getMonthEvents: Connected!");
-    const currMonth = parseInt(req.query.currMonth);
+    const currMonth = Number(req.query.currMonth);
 
     const result = await pool.query( 
       'SELECT * FROM eventstable'
     );
-    console.log("result", result);
     const filterEvents = result.rows.filter((event)=>{
       const eventDate = new Date(event.startdt);
       return eventDate.getMonth() === currMonth;

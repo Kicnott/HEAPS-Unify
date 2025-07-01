@@ -5,11 +5,10 @@ import getBaseDate from './getBaseDate.jsx'
 import '../../styles/MainCalendar.css'
 
 // MainCalendar component used to display the big calendar in the Home page.
-export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDate, refreshEvents, setrefreshEvents, nDateHeaderClick}) => {
+export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDate, refreshEvents, setrefreshEvents, refreshMonthEvents,setRefreshMonthEvents, monthEvents, setMonthEvents}) => {
     // children: Any additional labels to be stored on each DateBox. To be passed to the children variable in CalendarDateBox
     // displayDate: The date the user wants to display. As of now, the month of that date will be displayed by the calendar.
     // onDateBoxClick: The function to be run when a DateBox is clicked. To be passed to the onClick variable in CalendarDateBox.
-    // onDateHeaderClick: The function to be run when a DateHeader is clicked. To be passed to the onClick variable in CalendarDateHeader. (CURRENTLY NOT BEING USED IN home.jsx)
 
     const year = displayDate.getFullYear();
     const month = displayDate.getMonth();
@@ -18,8 +17,6 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
     const cellCount = Math.ceil((firstDay + daysInMonth) / 7) * 7;
 
         const [moveableEvent, setmoveableEvent] = useState("Sun Jun 01 2025 00:00:00 GMT+0800 (Singapore Standard Time)"); //test moveable event
-
-
 
     let baseDate = getBaseDate(displayDate) // Stores the first date that the calendar should display for the displayDate
     let dateIndex = new Date(baseDate) // Creates a new Date object so that the baseDate is remembered but the dateIndex can be modified. 
@@ -35,6 +32,35 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
 
     for (let i = 0; i < cellCount; i++){
         let date = dateIndex.toLocaleDateString()
+        let eventsInCurrBox = monthEvents.filter((event)=>{
+            const eventDate = new Date(event.startdt).toLocaleDateString();
+            return eventDate === date;
+        })
+        if (eventsInCurrBox.length !== 0){
+            console.log("Events of day: ", date, " : ",eventsInCurrBox);
+        }
+        const displayEventsInCurrBox = eventsInCurrBox.map((event) => {
+            return <div style={{
+                fontSize: '1rem',
+                color: 'blue', 
+                backgroundColor: 'pink', 
+                borderColor: 'black',
+                borderStyle: 'solid',
+                borderWidth: '1px',
+            }} key={event.eventid}>{event.eventname}</div>
+        })
+
+        while (displayEventsInCurrBox.length < 4){
+             displayEventsInCurrBox.push(<div style={{
+                fontSize: '1rem',
+                color: 'blue', 
+                backgroundColor: 'brown', 
+                borderColor: 'black',
+                borderStyle: 'solid',
+                borderWidth: '1px',
+            }}>empty space</div>)
+        }
+
         calendarBoxes.push(
         <CalendarDateBox 
             key={date} 
@@ -46,7 +72,20 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
             setrefreshEvents = {setrefreshEvents}
             moveableEvent = {moveableEvent}
             setmoveableEvent = {setmoveableEvent}>
+            <div style={{
+                display: 'grid',
+                padding: '0px',
+                margin: '0px',
+                backgroundColor: 'yellow',
+                gridTemplateRows: '1fr',
+                border: '1px solid black',
+                borderColor: 'orange',
+                borderStyle: 'solid',
+                borderWidth: '3px',
+                }}>
+                {displayEventsInCurrBox}
                 {children}
+            </div>
         </CalendarDateBox>) // Button functionality to be added
         dateIndex.setDate(dateIndex.getDate() + 1)
     } // Next, the CalendarDateBoxes, each displaying the date from the baseDate and incrementally increasing until all 6 rows are filled, are pushed into the calendarBoxes array.

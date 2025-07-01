@@ -8,7 +8,7 @@ const http = axios.create({
 })
 
 const getMonthEvents = (data) => {
-    return http.get('/home/getMonthEvents', data)
+    return http.get('/home/getMonthEvents', { params: data })
 }
 
 export default {
