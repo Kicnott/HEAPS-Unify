@@ -5,7 +5,7 @@ import getBaseDate from './getBaseDate.jsx'
 import '../../styles/MainCalendar.css'
 
 // MainCalendar component used to display the big calendar in the Home page.
-export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDate, refreshEvents, setrefreshEvents, nDateHeaderClick}) => {
+export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDate, refreshEvents, setrefreshEvents, onDateHeaderClick}) => {
     // children: Any additional labels to be stored on each DateBox. To be passed to the children variable in CalendarDateBox
     // displayDate: The date the user wants to display. As of now, the month of that date will be displayed by the calendar.
     // onDateBoxClick: The function to be run when a DateBox is clicked. To be passed to the onClick variable in CalendarDateBox.

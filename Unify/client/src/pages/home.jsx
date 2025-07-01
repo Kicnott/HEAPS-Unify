@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import '../styles/App.css'
-import {monthOptionsArray, yearOptionsArray} from '../constants/calendarConstants.jsx'
+import { monthOptionsArray, yearOptionsArray } from '../constants/calendarConstants.jsx'
 // import getBaseDate from '../functions/getBaseDate.jsx'
 import { uAccount, uCalendar, uCalendarDisplay, uEvent, uTimeslot } from '../classes/'
 
@@ -17,34 +17,13 @@ import { RightDrawerCloseBackground } from '../components/rightDrawer/rightDrawe
 import { EditAccountForm } from '../components/rightDrawer/EditAccounts.jsx'
 import { EditCalendarsForm } from '../components/monthCalender/EditCalendars.jsx'
 import { OverlayBackground } from '../components/overlay/OverlayBackground.jsx'
+import { LeftTabPanel } from '../components/blocks/LeftTabPanel.jsx'
 
 function HomePage() {
 
     const currentUser = sessionStorage.getItem("currentUser"); //Gets Username in sessionStorage from login
     const currentUserAccountId = sessionStorage.getItem("currentUserAccountId"); //Gets Username in sessionStorage from login
 
-    // Dummy Data
-
-    // uTimeslot(startDT, endDT)
-    var T2 = new uTimeslot("2025-06-18T02:00:00Z", "2025-06-18T05:00:00Z"); // 2am–5am UTC  10:00 AM – 1:00 PM
-    var T3 = new uTimeslot("2025-06-18T07:00:00Z", "2025-06-18T10:00:00Z"); // 7am–10am UTC 3:00 PM – 6:00 PM
-    var T4 = new uTimeslot("2025-06-19T13:00:00Z", "2025-06-19T20:00:00Z"); // 1pm–8pm UTC 9:00 PM - 4:00 AM
-    var T5 = new uTimeslot("2025-06-18T16:00:00Z", "2025-06-18T21:00:00Z"); // 12am–5am SGT on June 19
-
-
-    // uEvent(timeslots, id, name, description, location)
-    var E2 = new uEvent(T2, 2, "Event 2", "Fun and cool event", "Marina Bay Sands");
-    var E3 = new uEvent(T3, 3, "Event 3", "Fun and cool event", "Marina Bay Sands");
-    var E4 = new uEvent(T4, 4, "Event 4", "Fun and cool event", "Marina Bay Sands");
-    var E5 = new uEvent(T5, 5, "Event 5", "Fun and cool event", "Marina Bay Sands");
-
-
-    // uCalendar(events, id, name, description, colour)
-    var C1 = new uCalendar([E2], 1, "myCalendar", "This is my calendar", "#ff0000")
-    // uAccount(id, name, description, myCalendar, followedCalendars)
-    var A1 = new uAccount(1, "Me", "This is my Account", [C1], [])
-    // uCalendarDisplay (displayDate, calendars, currentAccount) 
-    // var CD1 = new uCalendarDisplay(new Date(2025, 7, 7), C1, A1)
 
     // useState creates variables that are saved even when the page re-renders
     // [variable, function to change variable] is the format
@@ -53,7 +32,7 @@ function HomePage() {
     const [isEventFormOpen, setEventFormOpen] = useState(false)
     const [isEditAccountsFormOpen, setEditAccountsFormOpen] = useState(false)
     const [isEditCalendarsFormOpen, setEditCalendarsFormOpen] = useState(false)
-    const [calendarDisplay, changeCalendarDisplay] = useState(new uCalendarDisplay(new Date(), C1, A1))
+    const [calendarDisplay, changeCalendarDisplay] = useState(new Date())
     const [chosenDate, setChosenDate] = useState(new Date())
     const [eventRefreshTrigger, seteventRefreshTrigger] = useState(0)
     const isOverlayBackgroundHidden = isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen
@@ -96,7 +75,9 @@ function HomePage() {
 
             <TopNavbar isRightDrawerOpen={isRightDrawerOpen} toggleRightDrawer={toggleRightDrawer}></TopNavbar>
 
-            <RightDrawerCloseBackground isRightDrawerOpen={isRightDrawerOpen} toggleRightDrawer={toggleRightDrawer}></RightDrawerCloseBackground>
+
+
+            {/* <RightDrawerCloseBackground isRightDrawerOpen={isRightDrawerOpen} toggleRightDrawer={toggleRightDrawer}></RightDrawerCloseBackground> */}
 
             <RightDrawer
                 rightDrawerOpen={isRightDrawerOpen} // assigns isRightDrawer state
@@ -126,39 +107,60 @@ function HomePage() {
 
             <DropdownList
                 optionArray={monthOptionsArray} // Assigns the options to the month dropdown list
-                value={calendarDisplay.getDisplayDate().getMonth()} // Assigns the default value of the list to the current month
+                value={calendarDisplay.getMonth()} // Assigns the default value of the list to the current month
                 onChange={(event) => {
-                    changeCalendarDisplay(new uCalendarDisplay(
+                    changeCalendarDisplay(
                         new Date(
-                            calendarDisplay.getDisplayDate().getFullYear(),
+                            calendarDisplay.getFullYear(),
                             Number(event.target.value),
-                            calendarDisplay.getDisplayDate().getDate()
+                            calendarDisplay.getDate()
                         )
-                    )
                     ) // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
                 }}
             />
             <DropdownList
                 optionArray={yearOptionsArray} // Assigns the options to the year dropdown list
-                value={calendarDisplay.getDisplayDate().getFullYear()} // Assigns the default value of the list to the current year
+                value={calendarDisplay.getFullYear()} // Assigns the default value of the list to the current year
                 onChange={(event) => {
-                    changeCalendarDisplay(new uCalendarDisplay(
+                    changeCalendarDisplay(
                         new Date(
                             Number(event.target.value),
-                            calendarDisplay.getDisplayDate().getMonth(),
-                            calendarDisplay.getDisplayDate().getDate()
+                            calendarDisplay.getMonth(),
+                            calendarDisplay.getDate()
                         )
-                    )
                     ) // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
                 }}
             />
+            <div className='main-layout'>
+                <LeftTabPanel
+                    tabs={[
+                        { id: '1', label: 'Calendars' },
+                        { id: '2', label: 'Accounts' },
+                        { id: '3', label: 'Events' }
+                    ]}
+                    tabContents={
+                        {
+                            1: '<p>Calendars</p>',
+                            2: '<p>Accounts</p>',
+                            3: '<p>Events</p>'
+                        }
+                    }
+                ></LeftTabPanel>
 
-            <MainCalendar
-                displayDate={calendarDisplay.getDisplayDate()} // Assigns the date to display (in month format) as the date in the calendarDisplay state
-                onDateBoxClick={() => toggleEventHidden(!isEventHidden)} // Gives the dateboxes some functionality to open an Overlay block
-                setChosenDate={setChosenDate}
-            >
-            </MainCalendar>
+                <main className='main-container'>
+                    <div className='main-content'>
+                    <MainCalendar
+                        displayDate={calendarDisplay} // Assigns the date to display (in month format) as the date in the calendarDisplay state
+                        onDateBoxClick={() => toggleEventHidden(!isEventHidden)} // Gives the dateboxes some functionality to open an Overlay block
+                        setChosenDate={setChosenDate}
+                    >
+                    </MainCalendar>
+                    </div>
+                </main>
+            </div>
+
+
+
 
 
             <OverlayBlock
