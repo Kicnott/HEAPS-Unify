@@ -6,7 +6,7 @@ export const LeftTabPanel = ({ tabContents, tabs, initialTab = '1' }) => {
     const [activeTab, setActiveTab] = useState(initialTab)
     return (
 
-            <div className="left-panel">
+            <div className="left-tab-panel">
                 <div className="tabs">
                     {tabs.map((tab) => (
                         <button

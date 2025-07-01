@@ -18,6 +18,7 @@ import { EditAccountForm } from '../components/rightDrawer/EditAccounts.jsx'
 import { EditCalendarsForm } from '../components/monthCalender/EditCalendars.jsx'
 import { OverlayBackground } from '../components/overlay/OverlayBackground.jsx'
 import { LeftTabPanel } from '../components/blocks/LeftTabPanel.jsx'
+import MainLayout from '../components/blocks/MainLayout.jsx'
 
 function HomePage() {
 
@@ -131,9 +132,9 @@ function HomePage() {
                     ) // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
                 }}
             />
-            <div className='main-layout'>
-                <div className='left-panel-wrapper'>
-                    <LeftTabPanel
+
+            <MainLayout
+                leftPanel={<LeftTabPanel
                         tabs={[
                             { id: '1', label: 'Calendars' },
                             { id: '2', label: 'Accounts' },
@@ -141,24 +142,22 @@ function HomePage() {
                         ]}
                         tabContents={
                             {
-                                1: '<p>Calendars</p>',
+                                1: 
+                                <div></div>
+                                ,
                                 2: '<p>Accounts</p>',
                                 3: '<p>Events</p>'
                             }
                         }
-                    ></LeftTabPanel>
-                </div>
-
-                <div className='calendar-wrapper'>
-                    <MainCalendar
+                    />}
+                mainContent={<MainCalendar
                         displayDate={calendarDisplay} // Assigns the date to display (in month format) as the date in the calendarDisplay state
                         onDateBoxClick={() => toggleEventHidden(!isEventHidden)} // Gives the dateboxes some functionality to open an Overlay block
                         setChosenDate={setChosenDate}
-                    >
-                    </MainCalendar>
-                </div>
-            </div>
+                    />}
+            >
 
+            </MainLayout>
 
 
 
