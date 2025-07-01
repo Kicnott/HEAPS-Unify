@@ -19,9 +19,13 @@
   box-sizing: border-box;
 } TESTING */
 
-.main-layout {
+/* .main-layout {
   display: flex;
   min-height: 100vh;
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
 }
 
 .main-container {
@@ -38,4 +42,23 @@
   align-items: flex-start; 
   padding: 2rem 0;
   overflow: auto;
+} */
+
+.main-layout {
+  display: grid;
+  grid-template-columns: 1fr auto auto 1fr;
+  align-items: start;
+  min-height: 100vh;
+}
+
+.left-panel-wrapper {
+  grid-column: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.calendar-wrapper {
+  grid-column: 2;
+  display: flex;
+  justify-content: center;
 }

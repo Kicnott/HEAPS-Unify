@@ -5,7 +5,7 @@ import "../../styles/LeftTabPanel.css"
 export const LeftTabPanel = ({ tabContents, tabs, initialTab = '1' }) => {
     const [activeTab, setActiveTab] = useState(initialTab)
     return (
-        <div className="page-layout">
+
             <div className="left-panel">
                 <div className="tabs">
                     {tabs.map((tab) => (
@@ -22,8 +22,5 @@ export const LeftTabPanel = ({ tabContents, tabs, initialTab = '1' }) => {
                     {tabContents[activeTab] || <div>No content for this tab.</div>}
                 </div>
             </div>
-            <main className="main-content">
-            </main>
-        </div>
     )
 }

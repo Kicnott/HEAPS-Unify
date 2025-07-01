@@ -77,7 +77,7 @@ function HomePage() {
 
 
 
-            {/* <RightDrawerCloseBackground isRightDrawerOpen={isRightDrawerOpen} toggleRightDrawer={toggleRightDrawer}></RightDrawerCloseBackground> */}
+            <RightDrawerCloseBackground isRightDrawerOpen={isRightDrawerOpen} toggleRightDrawer={toggleRightDrawer}></RightDrawerCloseBackground>
 
             <RightDrawer
                 rightDrawerOpen={isRightDrawerOpen} // assigns isRightDrawer state
@@ -132,31 +132,31 @@ function HomePage() {
                 }}
             />
             <div className='main-layout'>
-                <LeftTabPanel
-                    tabs={[
-                        { id: '1', label: 'Calendars' },
-                        { id: '2', label: 'Accounts' },
-                        { id: '3', label: 'Events' }
-                    ]}
-                    tabContents={
-                        {
-                            1: '<p>Calendars</p>',
-                            2: '<p>Accounts</p>',
-                            3: '<p>Events</p>'
+                <div className='left-panel-wrapper'>
+                    <LeftTabPanel
+                        tabs={[
+                            { id: '1', label: 'Calendars' },
+                            { id: '2', label: 'Accounts' },
+                            { id: '3', label: 'Events' }
+                        ]}
+                        tabContents={
+                            {
+                                1: '<p>Calendars</p>',
+                                2: '<p>Accounts</p>',
+                                3: '<p>Events</p>'
+                            }
                         }
-                    }
-                ></LeftTabPanel>
+                    ></LeftTabPanel>
+                </div>
 
-                <main className='main-container'>
-                    <div className='main-content'>
+                <div className='calendar-wrapper'>
                     <MainCalendar
                         displayDate={calendarDisplay} // Assigns the date to display (in month format) as the date in the calendarDisplay state
                         onDateBoxClick={() => toggleEventHidden(!isEventHidden)} // Gives the dateboxes some functionality to open an Overlay block
                         setChosenDate={setChosenDate}
                     >
                     </MainCalendar>
-                    </div>
-                </main>
+                </div>
             </div>
 
 
