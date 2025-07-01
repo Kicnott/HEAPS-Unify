@@ -41,7 +41,7 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
         }
         const displayEventsInCurrBox = eventsInCurrBox.map((event) => {
             return <div style={{
-                fontSize: '1rem',
+                fontSize: '0.9rem',
                 color: 'blue', 
                 backgroundColor: 'pink', 
                 borderColor: 'black',
@@ -52,13 +52,13 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
 
         while (displayEventsInCurrBox.length < 4){
              displayEventsInCurrBox.push(<div style={{
-                fontSize: '1rem',
+                fontSize: '0.9rem',
                 color: 'blue', 
                 backgroundColor: 'brown', 
                 borderColor: 'black',
                 borderStyle: 'solid',
                 borderWidth: '1px',
-            }}>empty space</div>)
+            }}>Empty</div>)
         }
 
         calendarBoxes.push(
@@ -74,14 +74,10 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
             setmoveableEvent = {setmoveableEvent}>
             <div style={{
                 display: 'grid',
+                gap: '3px',
                 padding: '0px',
                 margin: '0px',
-                backgroundColor: 'yellow',
-                gridTemplateRows: '1fr',
-                border: '1px solid black',
-                borderColor: 'orange',
-                borderStyle: 'solid',
-                borderWidth: '3px',
+                gridAutoRows: '20px',
                 }}>
                 {displayEventsInCurrBox}
                 {children}
