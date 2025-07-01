@@ -36,10 +36,32 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
             const eventDate = new Date(event.startdt).toLocaleDateString();
             return eventDate === date;
         })
-        if (eventsInCurrBox.length !== 0){
+
+        //Testing code
+        /*if (eventsInCurrBox.length !== 0){
             console.log("Events of day: ", date, " : ",eventsInCurrBox);
+        } */
+
+        const sortedEventsInCurrBox = [...eventsInCurrBox].sort((a, b) => { //sorts the events in the box
+            const aDuration = (new Date(a.enddt) - new Date(a.startdt)) / (1000 * 60 * 60 * 24);
+            const bDuration = (new Date(b.enddt) - new Date(b.startdt)) / (1000 * 60 * 60 * 24);
+        // Push multi-day events to the front
+        const aIsMultiDay = aDuration >= 1;
+        const bIsMultiDay = bDuration >= 1;
+        if (aIsMultiDay !== bIsMultiDay) {
+            return bIsMultiDay - aIsMultiDay; 
         }
-        const displayEventsInCurrBox = eventsInCurrBox.map((event) => {
+        // Push ealierest event to the front
+        return new Date(a.startdt) - new Date(b.startdt);
+        });
+
+        const displayEventsInCurrBox = sortedEventsInCurrBox.map((event) => {
+            let startDayValue = new Date(event.startdt).getDate() + new Date(event.startdt).getMonth() + new Date().getFullYear(); //gets day + month + year of startdt
+            let endDayValue = new Date(event.enddt).getDate() + new Date(event.enddt).getMonth() + new Date(event.enddt).getFullYear(); //gets day + month + year of enddt
+            let moreThanOneDay = startDayValue - endDayValue !== 0 ? true : false; //if startdt and enddt are on the same day, the value should be zero. moreThanOnday determines if the event is multi-dayed
+            if (moreThanOneDay){
+            let eventOverflowCount = new Date(event.enddt).getDate() - new Date(event.startdt).getDate();
+            let eventOffset = eventOverflowCount * 143;
             return <div style={{
                 fontSize: '0.9rem',
                 color: 'blue', 
@@ -47,7 +69,23 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
                 borderColor: 'black',
                 borderStyle: 'solid',
                 borderWidth: '1px',
-            }} key={event.eventid}>{event.eventname}</div>
+                marginRight: `-${eventOffset}px`,
+                zIndex: '2',
+                textAlign: 'left',
+                paddingLeft: '25px',
+                }} 
+                key={event.eventid}>{event.eventname}</div>
+            } else {
+            return <div style={{
+                fontSize: '0.9rem',
+                color: 'blue', 
+                backgroundColor: 'pink', 
+                borderColor: 'black',
+                borderStyle: 'solid',
+                borderWidth: '1px',
+                }} 
+                key={event.eventid}>{event.eventname}</div>
+            }
         })
 
         while (displayEventsInCurrBox.length < 4){
