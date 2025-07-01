@@ -161,19 +161,6 @@ function HomePage() {
             </MainCalendar>
 
 
-            {/* My section TODO */}
-            {/* {!isEventHidden && (
-                <div
-                    style={{
-                        position: 'fixed',
-                        top: 0, left: 0, right: 0, bottom: 0,
-                        background: 'rgba(0,0,0,0.4)',
-                        zIndex: 1000
-                    }}
-                    onClick={() => toggleEventHidden(!isEventHidden)} // Lets you click background to close overlay block
-                /> // When isEventHidden is false, creates an overlay background over the other components */}
-            {/* )} */}
-
             <OverlayBlock
                 isHidden={isEventHidden} // Assigns isEventHidden function
                 onClose={() => toggleEventHidden(!isEventHidden)} // Assigns toggleEventHidden function
