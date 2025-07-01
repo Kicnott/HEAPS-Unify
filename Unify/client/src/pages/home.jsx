@@ -17,34 +17,12 @@ import { RightDrawerCloseBackground } from '../components/rightDrawer/rightDrawe
 import { EditAccountForm } from '../components/rightDrawer/EditAccounts.jsx'
 import { EditCalendarsForm } from '../components/monthCalender/EditCalendars.jsx'
 import { OverlayBackground } from '../components/overlay/OverlayBackground.jsx'
+import monthEventsService from '../services/monthEventsService.jsx'
 
 function HomePage() {
 
     const currentUser = sessionStorage.getItem("currentUser"); //Gets Username in sessionStorage from login
     const currentUserAccountId = sessionStorage.getItem("currentUserAccountId"); //Gets Username in sessionStorage from login
-
-    // Dummy Data
-
-    // uTimeslot(startDT, endDT)
-    var T2 = new uTimeslot("2025-06-18T02:00:00Z", "2025-06-18T05:00:00Z"); // 2am–5am UTC  10:00 AM – 1:00 PM
-    var T3 = new uTimeslot("2025-06-18T07:00:00Z", "2025-06-18T10:00:00Z"); // 7am–10am UTC 3:00 PM – 6:00 PM
-    var T4 = new uTimeslot("2025-06-19T13:00:00Z", "2025-06-19T20:00:00Z"); // 1pm–8pm UTC 9:00 PM - 4:00 AM
-    var T5 = new uTimeslot("2025-06-18T16:00:00Z", "2025-06-18T21:00:00Z"); // 12am–5am SGT on June 19
-
-
-    // uEvent(timeslots, id, name, description, location)
-    var E2 = new uEvent(T2, 2, "Event 2", "Fun and cool event", "Marina Bay Sands");
-    var E3 = new uEvent(T3, 3, "Event 3", "Fun and cool event", "Marina Bay Sands");
-    var E4 = new uEvent(T4, 4, "Event 4", "Fun and cool event", "Marina Bay Sands");
-    var E5 = new uEvent(T5, 5, "Event 5", "Fun and cool event", "Marina Bay Sands");
-
-
-    // uCalendar(events, id, name, description, colour)
-    var C1 = new uCalendar([E2], 1, "myCalendar", "This is my calendar", "#ff0000")
-    // uAccount(id, name, description, myCalendar, followedCalendars)
-    var A1 = new uAccount(1, "Me", "This is my Account", [C1], [])
-    // uCalendarDisplay (displayDate, calendars, currentAccount) 
-    // var CD1 = new uCalendarDisplay(new Date(2025, 7, 7), C1, A1)
 
     // useState creates variables that are saved even when the page re-renders
     // [variable, function to change variable] is the format
@@ -53,10 +31,26 @@ function HomePage() {
     const [isEventFormOpen, setEventFormOpen] = useState(false)
     const [isEditAccountsFormOpen, setEditAccountsFormOpen] = useState(false)
     const [isEditCalendarsFormOpen, setEditCalendarsFormOpen] = useState(false)
-    const [calendarDisplay, changeCalendarDisplay] = useState(new uCalendarDisplay(new Date(), C1, A1))
+    const [calendarDisplay, changeCalendarDisplay] = useState(new uCalendarDisplay(new Date()))
     const [chosenDate, setChosenDate] = useState(new Date())
     const [eventRefreshTrigger, seteventRefreshTrigger] = useState(0)
     const isOverlayBackgroundHidden = isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen
+    const [refreshMonthEvents, setRefreshMonthEvents] = useState(0)
+
+    useEffect(() => {
+        const fetchMonthEvents = async () => {
+        try {
+            const todayDate = new Date();
+            const currMonth = todayDate.getMonth();
+            console.log("currMonth:", currMonth)
+            const monthEvents = await monthEventsService.getMonthEvents({currMonth: currMonth});
+            console.log("mmonthEvents from server: ", monthEvents)
+            } catch (err){
+                console.error("Error fetching month events: ", err);
+            }   
+        }
+        fetchMonthEvents();
+    }, [refreshMonthEvents])
 
     const hideOverlayBackground = () => {
         toggleEventHidden(true)
@@ -134,8 +128,9 @@ function HomePage() {
                             Number(event.target.value),
                             calendarDisplay.getDisplayDate().getDate()
                         )
-                    )
-                    ) // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
+                    )) // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
+                    setRefreshMonthEvents(refreshMonthEvents + 1);
+                    console.log("Events Refreshed!");
                 }}
             />
             <DropdownList
@@ -148,9 +143,10 @@ function HomePage() {
                             calendarDisplay.getDisplayDate().getMonth(),
                             calendarDisplay.getDisplayDate().getDate()
                         )
-                    )
-                    ) // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
-                }}
+                    )); // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
+                setRefreshMonthEvents(refreshMonthEvents + 1);
+                console.log("Events Refreshed!");
+            }}
             />
 
             <MainCalendar

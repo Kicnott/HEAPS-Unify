@@ -17,7 +17,7 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const cellCount = Math.ceil((firstDay + daysInMonth) / 7) * 7;
 
-            const [moveableEvent, setmoveableEvent] = useState("Sun Jun 01 2025 00:00:00 GMT+0800 (Singapore Standard Time)"); //test moveable event
+        const [moveableEvent, setmoveableEvent] = useState("Sun Jun 01 2025 00:00:00 GMT+0800 (Singapore Standard Time)"); //test moveable event
 
 
 

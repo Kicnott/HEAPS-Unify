@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react'
 
 // CalendarDateBox is a component used by MainCalendar to create the boxes in the Calendar.
 export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, setChosenDate, refreshEvents, setrefreshEvents, moveableEvent, setmoveableEvent }) => {
@@ -7,10 +6,6 @@ export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, set
   // baseMonth: The current month being displayed - to determine the font color
   // displayDate: The date to be displayed in the DateBox.
   let date = displayDate.getDate() // Converts the displayDate to the day number
-
-  const eventDateUnused = () => {
-    setChosenDate(displayDate);
-  }
 
 
   let isBaseMonth // Stores true or false on whether the current date displayed in part of the base month.
@@ -36,7 +31,6 @@ export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, set
     borderRadius: '1rem', //idk how to curve the eventbox on calendarbox slightly
     cursor: 'grab',
     opacity: 1
-    
   }
 
 const dragStart = (e) => {

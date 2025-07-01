@@ -39,5 +39,27 @@ router.get('/home/showAllEvents', async (req, res) => {
   }
 })
 
+//get events for the month calendar grid
+router.get('/home/getMonthEvents', async (req, res) => {
+  try {
+    console.log("getMonthEvents: Connected!");
+    const currMonth = parseInt(req.query.currMonth);
+
+    const result = await pool.query( 
+      'SELECT * FROM eventstable'
+    );
+    console.log("result", result);
+    const filterEvents = result.rows.filter((event)=>{
+      const eventDate = new Date(event.startdt);
+      return eventDate.getMonth() === currMonth;
+  })
+    console.log('filter:', filterEvents);
+    return res.json(filterEvents);
+  } catch (e) {
+    console.log("getMonthEvents: Server Error");
+    console.log(e);
+    return res.json(e);
+  }
+})
 
 export default router
