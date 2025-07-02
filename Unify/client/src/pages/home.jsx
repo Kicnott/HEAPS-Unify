@@ -66,27 +66,10 @@ function HomePage() {
 
             getAllAccounts(currentUserAccountId).then(setAllAccounts);
 
+            getMyEvents(currentUserAccountId).then(setMyEvents);
+
         }
     }, [currentUserAccountId]);
-
-    useEffect(() => {
-    if (currentUserAccountId) {
-        getMyCalendars(currentUserAccountId).then(setMyCalendars);
-
-        getMyEvents(currentUserAccountId).then(eventsArray => {
-            // Group events by calendarid
-            const grouped = {};
-            eventsArray.forEach(event => {
-                if (!grouped[event.calendarid]) grouped[event.calendarid] = [];
-                grouped[event.calendarid].push(event);
-            });
-            setMyEvents(grouped);
-        });
-
-        getAllAccounts(currentUserAccountId).then(setAllAccounts);
-    }
-}, [currentUserAccountId]);
-
 
     console.log("My Events: ", myEvents);
     // console.log("My Calendars: ", myCalendars);
@@ -100,7 +83,7 @@ function HomePage() {
         setEditAccountsFormOpen(false)
         setEditCalendarsFormOpen(false)
         setShowCalendarOpen(false)
-        setShowAccountsOpen(false)
+        setShowAccountsOpen(false)  
         setShowEventOpen(false)
     }
 
@@ -240,7 +223,18 @@ function HomePage() {
                                     <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>My Events</h2>
                                     {myCalendars.map((calendar) => (
                                         <ScrollBlock
+                                        key={calendar.calendarid}
+                                        height='40%'
+                                        buttonData={myEvents[calendar.calendarid]?.map((event) => ({
+                                            label: event.eventname,
+                                            onClick: () => {
+                                                setShowEventOpen(true)
+                                                setShowEventID(event.eventid)
+                                            }
+                                        }))}
                                         >
+
+                                            <h3>{calendar.calendarname}</h3>
 
                                         </ScrollBlock>
                                     ))}
@@ -304,7 +298,7 @@ function HomePage() {
                 < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger}>
                 </TimeTable>
                 <button onClick={() => {
-                    console.log("Button clicked!")
+                    // console.log("Button clicked!")
                     setEventFormOpen(true)
                 }}>+ Add Event</button>
 

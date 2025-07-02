@@ -26,8 +26,8 @@ export const ShowEvent = ({ eventid }) => {
     if (error) return <div>{error}</div>;
     if (!eventData || !calendarData) return <div>Loading...</div>;
 
-    console.log("eventstarttime:", eventData.startdt);
-    console.log("eventendtime:", eventData.enddt);
+    // console.log("eventstarttime:", eventData.startdt);
+    // console.log("eventendtime:", eventData.enddt);
 
     // const rawStartDate = eventData.eventstarttime;
     // const isoStartDate = rawStartDate.replace(" ", "T");
