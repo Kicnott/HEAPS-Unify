@@ -15,10 +15,10 @@ const getEvents = () => {
     return http.get('/home/showAllEvents')
 }
 
-const getMyEvents = (accountid) => {
+const getMyEvents = (calendarid) => {
     return http.get('/home/getMyEvents', {
         params: {
-            accountid: accountid
+            calendarid: calendarid
         }
     })
 }

@@ -41,31 +41,18 @@ router.get('/home/showAllEvents', async (req, res) => {
 
 router.get('/home/getMyEvents', async (req, res) => {
   try {
-    const accountid = req.query.accountid;
+    const calendarid = req.query.calendarid;
 
-    if (!accountid) {
-      return res.status(400).json({ error: 'Missing accountid parameter' });
+    if (!calendarid) {
+      return res.status(400).json({ error: 'Missing calendarid parameter' });
     }
 
     console.log("GetMyEvents: Connected!");
 
-    const calendarids = await pool.query(
-      'SELECT calendarid FROM calendarstable WHERE accountid = $1', [accountid]
-    );
+    const result = await pool.query(
+      'SELECT * FROM eventstable WHERE calendarid = $1', [calendarid])
 
-    console.log("Calendar IDs: ", calendarids.rows);
-
-    const eventResults = await Promise.all(
-      calendarids.rows.map(row =>
-        pool.query('SELECT * FROM eventstable WHERE calendarid = $1', [row.calendarid])
-      )
-    );
-
-    console.log("Event Results: ", eventResults);
-
-    const events = eventResults.flatMap(result => result.rows);
-
-    return res.json({ rows: events });
+    return res.json({ rows: result.rows });
   } catch (e) {
     console.log("GetMyEvents: Server Error");
     console.log(e);

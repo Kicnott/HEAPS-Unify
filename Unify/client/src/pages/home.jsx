@@ -63,15 +63,32 @@ function HomePage() {
         if (currentUserAccountId) {
             getMyCalendars(currentUserAccountId).then(setMyCalendars);
 
-            getMyEvents(currentUserAccountId).then(setMyEvents);
 
             getAllAccounts(currentUserAccountId).then(setAllAccounts);
 
         }
     }, [currentUserAccountId]);
 
+    useEffect(() => {
+    if (currentUserAccountId) {
+        getMyCalendars(currentUserAccountId).then(setMyCalendars);
 
-    // console.log("My Events: ", myEvents);
+        getMyEvents(currentUserAccountId).then(eventsArray => {
+            // Group events by calendarid
+            const grouped = {};
+            eventsArray.forEach(event => {
+                if (!grouped[event.calendarid]) grouped[event.calendarid] = [];
+                grouped[event.calendarid].push(event);
+            });
+            setMyEvents(grouped);
+        });
+
+        getAllAccounts(currentUserAccountId).then(setAllAccounts);
+    }
+}, [currentUserAccountId]);
+
+
+    console.log("My Events: ", myEvents);
     // console.log("My Calendars: ", myCalendars);
     // console.log("All Accounts: ", allAccounts);
 
@@ -219,15 +236,14 @@ function HomePage() {
                                 </ScrollBlock>
                             ,
                             3:
-                                <ScrollBlock
-                                    buttonData={myEvents.map((event) => ({
-                                        label: event.eventname,
-                                        onClick: () => {
-                                            setShowEventOpen(true)
-                                            setShowEventID(event.eventid)
-                                        }
-                                    }))}>
+                                <ScrollBlock>
                                     <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>My Events</h2>
+                                    {myCalendars.map((calendar) => (
+                                        <ScrollBlock
+                                        >
+
+                                        </ScrollBlock>
+                                    ))}
 
                                 </ScrollBlock>
                         }
@@ -254,7 +270,12 @@ function HomePage() {
                 isHidden={!isShowCalendarOpen}
                 onClose={() => setShowCalendarOpen(false)}>
                 <ShowCalendar
-                    calendarid={showCalendarID}>
+                    calendarid={showCalendarID}
+                    setShowCalendarOpen={setShowCalendarOpen}
+                    setShowAccountID={setShowAccountID}
+                    setShowAccountOpen={setShowAccountsOpen}
+                    setShowEventID={setShowEventID}
+                    setShowEventOpen={setShowEventOpen}>
 
                 </ShowCalendar>
 
@@ -264,8 +285,11 @@ function HomePage() {
                 isHidden={!isShowAccountsOpen}
                 onClose={() => setShowAccountsOpen(false)}>
                 <ShowAccount
-                    accountid={showAccountID}>
-
+                    accountid={showAccountID}
+                    setShowCalendarID={setShowCalendarID}
+                    setShowCalendarOpen={setShowCalendarOpen}
+                    setShowAccountOpen={setShowAccountsOpen}
+                    >
                 </ShowAccount>
 
             </OverlayBlock>

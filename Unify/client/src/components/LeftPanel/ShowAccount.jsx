@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import accountService from "../../services/accountService.jsx";
 import calendarService from "../../services/calendarService.jsx";
+import { ScrollBlock } from "../blocks/ScrollBlock.jsx";
 
-export const ShowAccount = ({ accountid }) => {
+export const ShowAccount = ({ accountid, setShowCalendarID, setShowCalendarOpen, setShowAccountOpen }) => {
     const [accountData, setAccountData] = useState(null);
-    const[accountCalendars, setAccountCalendars] = useState([]);
+    const [accountCalendars, setAccountCalendars] = useState([]);
     const [error, setError] = useState(null);
 
-   useEffect(() => {
+    useEffect(() => {
         if (accountid) {
             accountService.getAccount(accountid)
                 .then(res => setAccountData(res.data))
@@ -37,7 +38,7 @@ export const ShowAccount = ({ accountid }) => {
                     </tr>
                     <tr>
                         <th>Account Name</th>
-                        <td>{accountData.accountname}</td>
+                        <td>{accountData.accountusername}</td>
                     </tr>
                     <tr>
                         <th>Account Description</th>
@@ -46,6 +47,29 @@ export const ShowAccount = ({ accountid }) => {
                     <tr>
                         <th>Account Privacy</th>
                         <td>{accountData.accountprivacy}</td>
+                    </tr>
+                    <tr>
+                        <th>Account Calendars</th>
+                        <td>
+                            <ScrollBlock
+                                buttonData={accountCalendars.map(calendar => ({
+                                    label: calendar.calendarname,
+                                    onClick: () => {
+
+                                        setShowCalendarID(calendar.calendarid);
+                                        // console.log("Selected Calendar ID:", calendar.calendarid);
+                                        setTimeout(() => {
+                                            setShowCalendarOpen(true);
+                                            setShowAccountOpen(false);
+                                        }
+                                        , 100); 
+
+                                    }
+                                }))}
+                            >
+                            </ScrollBlock>
+
+                        </td>
                     </tr>
                 </tbody>
             </table>

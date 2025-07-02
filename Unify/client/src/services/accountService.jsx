@@ -20,7 +20,7 @@ const deleteAccount = (data) => {
 }
 
 const getAccount = (accountid) => {
-    return http.get('/home/getAccount', { params: { accountid } });
+    return http.get('/home/getAccount', { params: { accountid: accountid } });
 }
 
 export default {

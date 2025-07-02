@@ -12,7 +12,7 @@ router.get('/home/showAllAccounts', async (req, res) => { // 1. url parameter 2.
     
     // use await when function returns a promise. pauses execution until promise settles
     const result = await pool.query( // searches for all accountstable in the database. query sends sql commands to database
-      'SELECT * FROM Accountstable'
+      'SELECT * FROM accountstable'
     );
     
     return res.json(result) //send json formatted data back to client
@@ -50,7 +50,7 @@ router.post('/home/createAccount', async (req, res) => {
     const newAccountId = parseInt(latestResult.rows[0].accountid, 10) + 1;
 
     const result = await pool.query( // Inserts the oncoming created account into db
-      'INSERT INTO Accountstable (accountid,accountusername,accountpassword, accountdescription) VALUES ($1, $2, $3, $4)', [newAccountId, req.body.username, req.body.password, req.body.description]
+      'INSERT INTO accountstable (accountid,accountusername,accountpassword, accountdescription) VALUES ($1, $2, $3, $4)', [newAccountId, req.body.username, req.body.password, req.body.description]
     );
     
     return res.json({ status: 'Account created' })

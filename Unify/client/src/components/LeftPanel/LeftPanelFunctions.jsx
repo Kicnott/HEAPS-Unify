@@ -10,8 +10,8 @@ const res = await calendarService.getMyCalendars(accountid)
     return res.data.rows
 }
 
-export async function getMyEvents(accountid){
-    const res = await eventService.getMyEvents(accountid)
+export async function getMyEvents(calendarid){
+    const res = await eventService.getMyEvents(calendarid)
     return res.data.rows
 }
 
