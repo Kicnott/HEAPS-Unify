@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import '../classes/index.jsx'
 
 // Components
-import { SimpleBlock } from '../components/simpleBlock.jsx'
+import { SimpleBlock } from '../components/blocks/SimpleBlock.jsx'
 
 function RegisterPage() {
     const navigate = useNavigate()
