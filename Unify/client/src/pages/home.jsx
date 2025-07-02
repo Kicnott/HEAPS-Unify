@@ -146,6 +146,9 @@ function HomePage() {
                         <br></br>
                         <br></br>
                         <button onClick={() => setEditAccountsFormOpen(!isEditAccountsFormOpen)}>Edit Account (Admin use)</button>
+                        <br></br>
+                        <br></br>
+                         <button onClick={() => setEditCalendarsFormOpen(!isEditCalendarsFormOpen)}>Edit Calendar</button>
                     </div> {/* TODO all these buttons */}
 
                     <div style={rightDrawerButtonBottom}>
@@ -271,7 +274,7 @@ function HomePage() {
                                 ) // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
                             }}
                         />
-                        <button onClick={() => setEditCalendarsFormOpen(!isEditCalendarsFormOpen)}>Edit Calendar</button>
+
                         <MainCalendar
                             displayDate={calendarDisplay} // Assigns the date to display (in month format) as the date in the calendarDisplay state
                             onDateBoxClick={() => toggleEventHidden(!isEventHidden)} // Gives the dateboxes some functionality to open an Overlay block
