@@ -19,7 +19,7 @@ router.get('/home/showAllCalendars', async (req, res) => {
 
 router.get('/home/getMyCalendars', async (req, res) => {
   try {
-    const accountid = req.query.accountID
+    const accountid = req.query.accountid
 
     if (!accountid) {
       return res.status(400).json({ error: 'Missing accountid parameter' });

@@ -11,7 +11,7 @@ router.post('/home/createEvent', async(req, res) => {
     const eventlocation = req.body.location;
     const startdt = req.body.startdt;
     const enddt = req.body.enddt;
-    const calendarid = 1
+    const calendarid = req.body.calendarID;
     
     const result = await pool.query( 
       'INSERT INTO public.eventstable (eventname,eventdescription,eventlocation,startdt,enddt, calendarid) VALUES ($1, $2, $3, $4, $5, $6)', [eventname,eventdescription,eventlocation,startdt,enddt, calendarid]
@@ -36,6 +36,40 @@ router.get('/home/showAllEvents', async (req, res) => {
     console.log("showAllEvents: Server Error");
     console.log(e);
     return res.json(e);
+  }
+})
+
+router.get('/home/getMyEvents', async (req, res) => {
+  try {
+    const accountid = req.query.accountid;
+
+    if (!accountid) {
+      return res.status(400).json({ error: 'Missing accountid parameter' });
+    }
+
+    console.log("GetMyEvents: Connected!");
+
+    const calendarids = await pool.query(
+      'SELECT calendarid FROM calendarstable WHERE accountid = $1', [accountid]
+    );
+
+    console.log("Calendar IDs: ", calendarids.rows);
+
+    const eventResults = await Promise.all(
+      calendarids.rows.map(row =>
+        pool.query('SELECT * FROM eventstable WHERE calendarid = $1', [row.calendarid])
+      )
+    );
+
+    console.log("Event Results: ", eventResults);
+
+    const events = eventResults.flatMap(result => result.rows);
+
+    return res.json({ rows: events });
+  } catch (e) {
+    console.log("GetMyEvents: Server Error");
+    console.log(e);
+    return res.status(500).json({ error: 'Server error' });
   }
 })
 

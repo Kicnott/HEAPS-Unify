@@ -17,13 +17,16 @@ import { RightDrawerCloseBackground } from '../components/rightDrawer/rightDrawe
 import { EditAccountForm } from '../components/rightDrawer/EditAccounts.jsx'
 import { EditCalendarsForm } from '../components/monthCalender/EditCalendars.jsx'
 import { OverlayBackground } from '../components/overlay/OverlayBackground.jsx'
-import { LeftTabPanel } from '../components/blocks/LeftTabPanel.jsx'
+import { LeftTabPanel } from '../components/LeftPanel/LeftTabPanel.jsx'
+import { ScrollBlock } from '../components/blocks/ScrollBlock.jsx'
 import MainLayout from '../components/blocks/MainLayout.jsx'
+import { getMyCalendars, getMyEvents, getAllAccounts } from '../components/LeftPanel/LeftPanelFunctions.jsx'
 
 function HomePage() {
 
     const currentUser = sessionStorage.getItem("currentUser"); //Gets Username in sessionStorage from login
     const currentUserAccountId = sessionStorage.getItem("currentUserAccountId"); //Gets Username in sessionStorage from login
+    // console.log("Current User: " + currentUser + " Account ID: " + currentUserAccountId)
 
 
     // useState creates variables that are saved even when the page re-renders
@@ -37,6 +40,28 @@ function HomePage() {
     const [chosenDate, setChosenDate] = useState(new Date())
     const [eventRefreshTrigger, seteventRefreshTrigger] = useState(0)
     const isOverlayBackgroundHidden = isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen
+
+    const [myCalendars, setMyCalendars] = useState([]);
+    const [followedCalendars, setFollowedCalendars] = useState([])
+    const [allAccounts, setAllAccounts] = useState([])
+    const [myEvents, setMyEvents] = useState([]);
+
+    useEffect(() => {
+        if (currentUserAccountId) {
+            getMyCalendars(currentUserAccountId).then(setMyCalendars);
+
+            getMyEvents(currentUserAccountId).then(setMyEvents);
+
+            getAllAccounts(currentUserAccountId).then(setAllAccounts);
+
+        }
+    }, [currentUserAccountId]);
+
+
+    console.log("My Events: ", myEvents);
+    // console.log("My Calendars: ", myCalendars);
+    // console.log("All Accounts: ", allAccounts);
+
 
     const hideOverlayBackground = () => {
         toggleEventHidden(true)
@@ -132,29 +157,58 @@ function HomePage() {
                     ) // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
                 }}
             />
+                        <button onClick={() => setEditCalendarsFormOpen(!isEditCalendarsFormOpen)}>Edit Calendar</button>
 
             <MainLayout
                 leftPanel={<LeftTabPanel
-                        tabs={[
-                            { id: '1', label: 'Calendars' },
-                            { id: '2', label: 'Accounts' },
-                            { id: '3', label: 'Events' }
-                        ]}
-                        tabContents={
-                            {
-                                1: 
-                                <div></div>
-                                ,
-                                2: '<p>Accounts</p>',
-                                3: '<p>Events</p>'
-                            }
+                    tabs={[
+                        { id: '1', label: 'Calendars' },
+                        { id: '2', label: 'Accounts' },
+                        { id: '3', label: 'Events' }
+                    ]}
+                    tabContents={
+                        {
+                            1:
+                                <>
+                                    <ScrollBlock height='48%'
+                                        buttonData={myCalendars.map((calendar) => ({
+                                            label: calendar.calendarname}))}
+                                    >
+                                        <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>My Calendars</h2>
+                                    </ScrollBlock>
+                                    <br></br>
+                                    <ScrollBlock height='48%'>
+                                        <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>Followed Calendars</h2>
+                                    </ScrollBlock>
+                                </>
+                            ,
+                            2:
+                                <ScrollBlock
+                                    buttonData={allAccounts.map((account) => ({
+                                        label: account.accountusername
+                                    }))}
+                                    height='100%'
+                                >
+                                    <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>Accounts</h2>
+
+                                </ScrollBlock>
+                            ,
+                            3:
+                                <ScrollBlock
+                                    buttonData={myEvents.map((event) => ({
+                                        label: event.eventname
+                                    }))}>
+                                    <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>My Events</h2>
+
+                                </ScrollBlock>
                         }
-                    />}
+                    }
+                />}
                 mainContent={<MainCalendar
-                        displayDate={calendarDisplay} // Assigns the date to display (in month format) as the date in the calendarDisplay state
-                        onDateBoxClick={() => toggleEventHidden(!isEventHidden)} // Gives the dateboxes some functionality to open an Overlay block
-                        setChosenDate={setChosenDate}
-                    />}
+                    displayDate={calendarDisplay} // Assigns the date to display (in month format) as the date in the calendarDisplay state
+                    onDateBoxClick={() => toggleEventHidden(!isEventHidden)} // Gives the dateboxes some functionality to open an Overlay block
+                    setChosenDate={setChosenDate}
+                />}
             >
 
             </MainLayout>
@@ -187,7 +241,7 @@ function HomePage() {
                             seteventRefreshTrigger(prev => prev + 1);
                         }}
                         chosenDate={chosenDate}
-                        accountID={currentUserAccountId} />
+                        accountid={currentUserAccountId} />
                 </OverlayBlock>
             )}
 
@@ -198,7 +252,7 @@ function HomePage() {
             </OverlayBlock>
 
             {/* nic's edit accounts form */}
-            <button onClick={() => setEditCalendarsFormOpen(!isEditCalendarsFormOpen)}>Edit Calendar</button>
+
 
             {/* nic's edit accounts form */}
             <OverlayBlock

@@ -19,8 +19,8 @@ const deleteCalendar = (data) => {
     return http.delete(`/home/deleteCalendar`, {data})
 }
 
-const getMyCalendars = (data) => {
-    return http.get('/home/getMyCalendars', {data})
+const getMyCalendars = (accountid) => {
+    return http.get('/home/getMyCalendars', { params: { accountid: accountid } })
 }
 
 export default {

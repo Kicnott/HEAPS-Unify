@@ -15,7 +15,16 @@ const getEvents = () => {
     return http.get('/home/showAllEvents')
 }
 
+const getMyEvents = (accountid) => {
+    return http.get('/home/getMyEvents', {
+        params: {
+            accountid: accountid
+        }
+    })
+}
+
 export default {
     createEvent,
-    getEvents
+    getEvents,
+    getMyEvents
 }
