@@ -93,4 +93,30 @@ router.delete('/home/deleteAccount', async (req, res) => {
   }
 })
 
+router.get('/home/getAccount', async (req, res) => {
+  try {
+    const accountid = req.query.accountid;
+
+    if (!accountid) {
+      return res.status(400).json({ error: 'Missing accountid parameter' });
+    }
+
+    console.log("GetAccount: Connected!");
+
+    const result = await pool.query(
+      'SELECT * FROM accountstable WHERE accountid = $1', [accountid]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Account not found' });
+    }
+
+    return res.json(result.rows[0]);
+  } catch (e) {
+    console.log("GetAccount: Server Error");
+    console.log(e);
+    return res.json(e);
+  }
+})
+
 export default router

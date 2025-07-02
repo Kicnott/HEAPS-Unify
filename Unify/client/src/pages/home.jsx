@@ -21,6 +21,9 @@ import { LeftTabPanel } from '../components/LeftPanel/LeftTabPanel.jsx'
 import { ScrollBlock } from '../components/blocks/ScrollBlock.jsx'
 import MainLayout from '../components/blocks/MainLayout.jsx'
 import { getMyCalendars, getMyEvents, getAllAccounts } from '../components/LeftPanel/LeftPanelFunctions.jsx'
+import { ShowCalendar } from '../components/LeftPanel/ShowCalendar.jsx'
+import { ShowAccount } from '../components/LeftPanel/ShowAccount.jsx'
+import { ShowEvent } from '../components/LeftPanel/ShowEvent.jsx'
 
 function HomePage() {
 
@@ -39,7 +42,17 @@ function HomePage() {
     const [calendarDisplay, changeCalendarDisplay] = useState(new Date())
     const [chosenDate, setChosenDate] = useState(new Date())
     const [eventRefreshTrigger, seteventRefreshTrigger] = useState(0)
-    const isOverlayBackgroundHidden = isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen
+
+    const [isShowCalendarOpen, setShowCalendarOpen] = useState(false)
+    const [showCalendarID, setShowCalendarID] = useState('')
+
+    const [isShowAccountsOpen, setShowAccountsOpen] = useState(false)
+    const [showAccountID, setShowAccountID] = useState('')
+
+    const [isShowEventOpen, setShowEventOpen] = useState(false)
+    const [showEventID, setShowEventID] = useState('')
+
+    const isOverlayBackgroundHidden = isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen && !isShowCalendarOpen && !isShowAccountsOpen && !isShowEventOpen;
 
     const [myCalendars, setMyCalendars] = useState([]);
     const [followedCalendars, setFollowedCalendars] = useState([])
@@ -58,7 +71,7 @@ function HomePage() {
     }, [currentUserAccountId]);
 
 
-    console.log("My Events: ", myEvents);
+    // console.log("My Events: ", myEvents);
     // console.log("My Calendars: ", myCalendars);
     // console.log("All Accounts: ", allAccounts);
 
@@ -69,6 +82,9 @@ function HomePage() {
         setEventFormOpen(false)
         setEditAccountsFormOpen(false)
         setEditCalendarsFormOpen(false)
+        setShowCalendarOpen(false)
+        setShowAccountsOpen(false)
+        setShowEventOpen(false)
     }
 
     // Defining the uCalendarDisplay object that the page will use to update the Main Calendar.
@@ -157,7 +173,7 @@ function HomePage() {
                     ) // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
                 }}
             />
-                        <button onClick={() => setEditCalendarsFormOpen(!isEditCalendarsFormOpen)}>Edit Calendar</button>
+            <button onClick={() => setEditCalendarsFormOpen(!isEditCalendarsFormOpen)}>Edit Calendar</button>
 
             <MainLayout
                 leftPanel={<LeftTabPanel
@@ -172,7 +188,12 @@ function HomePage() {
                                 <>
                                     <ScrollBlock height='48%'
                                         buttonData={myCalendars.map((calendar) => ({
-                                            label: calendar.calendarname}))}
+                                            label: calendar.calendarname,
+                                            onClick: () => {
+                                                setShowCalendarOpen(true)
+                                                setShowCalendarID(calendar.calendarid)
+                                            }
+                                        }))}
                                     >
                                         <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>My Calendars</h2>
                                     </ScrollBlock>
@@ -185,7 +206,11 @@ function HomePage() {
                             2:
                                 <ScrollBlock
                                     buttonData={allAccounts.map((account) => ({
-                                        label: account.accountusername
+                                        label: account.accountusername,
+                                        onClick: () => {
+                                            setShowAccountsOpen(true)
+                                            setShowAccountID(account.accountid)
+                                        }
                                     }))}
                                     height='100%'
                                 >
@@ -196,7 +221,11 @@ function HomePage() {
                             3:
                                 <ScrollBlock
                                     buttonData={myEvents.map((event) => ({
-                                        label: event.eventname
+                                        label: event.eventname,
+                                        onClick: () => {
+                                            setShowEventOpen(true)
+                                            setShowEventID(event.eventid)
+                                        }
                                     }))}>
                                     <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>My Events</h2>
 
@@ -213,6 +242,33 @@ function HomePage() {
 
             </MainLayout>
 
+            <OverlayBlock
+                isHidden={!isShowEventOpen}
+                onClose={() => setShowEventOpen(false)}>
+                <ShowEvent
+                    eventid={showEventID}>
+                </ShowEvent>
+            </OverlayBlock>
+
+            <OverlayBlock
+                isHidden={!isShowCalendarOpen}
+                onClose={() => setShowCalendarOpen(false)}>
+                <ShowCalendar
+                    calendarid={showCalendarID}>
+
+                </ShowCalendar>
+
+            </OverlayBlock>
+
+            <OverlayBlock
+                isHidden={!isShowAccountsOpen}
+                onClose={() => setShowAccountsOpen(false)}>
+                <ShowAccount
+                    accountid={showAccountID}>
+
+                </ShowAccount>
+
+            </OverlayBlock>
 
 
 

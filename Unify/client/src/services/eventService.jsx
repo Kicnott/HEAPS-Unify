@@ -23,8 +23,13 @@ const getMyEvents = (accountid) => {
     })
 }
 
+const getEvent = (eventid) => {
+    return http.get('/home/getEvent', {params: { eventid: eventid }})
+}
+
 export default {
     createEvent,
     getEvents,
-    getMyEvents
+    getMyEvents,
+    getEvent
 }

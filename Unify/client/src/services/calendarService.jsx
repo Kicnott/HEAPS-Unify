@@ -1,4 +1,5 @@
 import axios from "axios";
+import { CalendarDateBox } from "../components/monthCalender/CalendarDateBox";
 
 const http = axios.create({
     baseURL: "http://localhost:8888",
@@ -23,9 +24,14 @@ const getMyCalendars = (accountid) => {
     return http.get('/home/getMyCalendars', { params: { accountid: accountid } })
 }
 
+const getCalendar = (calendarid) => {
+    return http.get('/home/getCalendar', { params: { calendarid: calendarid } })
+}
+
 export default {
     showAllCalendars,
     createCalendar,
     deleteCalendar,
-    getMyCalendars
+    getMyCalendars,
+    getCalendar,
 }

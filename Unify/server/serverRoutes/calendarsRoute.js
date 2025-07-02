@@ -109,4 +109,30 @@ router.delete('/home/deleteCalendar', async (req, res) => {
   }
 })
 
+router.get('/home/getCalendar', async (req, res) => {
+  try {
+    const calendarid = req.query.calendarid
+
+    if (!calendarid) {
+      return res.status(400).json({ error: 'Missing calendarid parameter' });
+    }
+
+    console.log("GetCalendar: Connected!");
+
+    const result = await pool.query(
+      'SELECT * FROM calendarstable WHERE calendarid = $1', [calendarid]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Calendar not found' });
+    }
+
+    return res.json(result.rows[0]);
+  } catch (e) {
+    console.log("GetCalendar: Server Error");
+    console.log(e);
+    return res.status(500).json({ error: 'Server error' });
+  }
+})
+
 export default router
