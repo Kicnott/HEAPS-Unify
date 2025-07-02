@@ -1,8 +1,10 @@
 #root {
-  max-width: 100vh;
+  /* max-width: 100vh; */
   margin: 0 auto;
   padding: 10rem;
   text-align: center;
   font-size: 1rem;
-  padding-top: 4.6875rem;
+  padding-top: 5rem;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }

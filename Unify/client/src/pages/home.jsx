@@ -246,7 +246,8 @@ function HomePage() {
                     }
                 />}
                 mainContent={
-                    <div>
+                    <div className='calendar-wrapper'>
+                        <div className='main-content-centered'>
                         <h3>Current User: {currentUser} &nbsp; Account ID: {currentUserAccountId}</h3>
                         <DropdownList
                             optionArray={monthOptionsArray} // Assigns the options to the month dropdown list
@@ -280,6 +281,7 @@ function HomePage() {
                             onDateBoxClick={() => toggleEventHidden(!isEventHidden)} // Gives the dateboxes some functionality to open an Overlay block
                             setChosenDate={setChosenDate}
                         />
+                        </div>
                     </div>
                 }
             >
