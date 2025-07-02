@@ -78,11 +78,13 @@ function HomePage() {
         }
     }, [currentUserAccountId]);
 
-    console.log("Followed Calendars: ", followedCalendars);
+    // console.log("Followed Calendars: ", followedCalendars);
     // console.log("My Events: ", myEvents);
     // console.log("My Calendars: ", myCalendars);
     // console.log("All Accounts: ", allAccounts);
 
+
+    // console.log("Chosen Date: ", chosenDate);
 
     const hideOverlayBackground = () => {
         toggleEventHidden(true)
@@ -148,7 +150,7 @@ function HomePage() {
                         <button onClick={() => setEditAccountsFormOpen(!isEditAccountsFormOpen)}>Edit Account (Admin use)</button>
                         <br></br>
                         <br></br>
-                         <button onClick={() => setEditCalendarsFormOpen(!isEditCalendarsFormOpen)}>Edit Calendar</button>
+                        <button onClick={() => setEditCalendarsFormOpen(!isEditCalendarsFormOpen)}>Edit Calendar</button>
                     </div> {/* TODO all these buttons */}
 
                     <div style={rightDrawerButtonBottom}>
@@ -248,39 +250,45 @@ function HomePage() {
                 mainContent={
                     <div className='calendar-wrapper'>
                         <div className='main-content-centered'>
-                        <h3>Current User: {currentUser} &nbsp; Account ID: {currentUserAccountId}</h3>
-                        <DropdownList
-                            optionArray={monthOptionsArray} // Assigns the options to the month dropdown list
-                            value={calendarDisplay.getMonth()} // Assigns the default value of the list to the current month
-                            onChange={(event) => {
-                                changeCalendarDisplay(
-                                    new Date(
-                                        calendarDisplay.getFullYear(),
-                                        Number(event.target.value),
-                                        calendarDisplay.getDate()
-                                    )
-                                ) // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
-                            }}
-                        />
-                        <DropdownList
-                            optionArray={yearOptionsArray} // Assigns the options to the year dropdown list
-                            value={calendarDisplay.getFullYear()} // Assigns the default value of the list to the current year
-                            onChange={(event) => {
-                                changeCalendarDisplay(
-                                    new Date(
-                                        Number(event.target.value),
-                                        calendarDisplay.getMonth(),
-                                        calendarDisplay.getDate()
-                                    )
-                                ) // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
-                            }}
-                        />
+                            <h3>Current User: {currentUser} &nbsp; Account ID: {currentUserAccountId}</h3>
+                            <DropdownList
+                                optionArray={monthOptionsArray} // Assigns the options to the month dropdown list
+                                value={calendarDisplay.getMonth()} // Assigns the default value of the list to the current month
+                                onChange={(event) => {
+                                    changeCalendarDisplay(
+                                        new Date(
+                                            calendarDisplay.getFullYear(),
+                                            Number(event.target.value),
+                                            calendarDisplay.getDate()
+                                        )
+                                    ) // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
+                                }}
+                            />
+                            <DropdownList
+                                optionArray={yearOptionsArray} // Assigns the options to the year dropdown list
+                                value={calendarDisplay.getFullYear()} // Assigns the default value of the list to the current year
+                                onChange={(event) => {
+                                    changeCalendarDisplay(
+                                        new Date(
+                                            Number(event.target.value),
+                                            calendarDisplay.getMonth(),
+                                            calendarDisplay.getDate()
+                                        )
+                                    ) // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
+                                }}
+                            />
 
-                        <MainCalendar
-                            displayDate={calendarDisplay} // Assigns the date to display (in month format) as the date in the calendarDisplay state
-                            onDateBoxClick={() => toggleEventHidden(!isEventHidden)} // Gives the dateboxes some functionality to open an Overlay block
-                            setChosenDate={setChosenDate}
-                        />
+                            <MainCalendar
+                                displayDate={calendarDisplay} // Assigns the date to display (in month format) as the date in the calendarDisplay state
+                                onDateBoxClick={(date) => {
+                                    setChosenDate(date)
+                                    setTimeout(() => {
+                                        toggleEventHidden(!isEventHidden)
+                                    }, 100);
+                                }
+                                } // Gives the dateboxes some functionality to open an Overlay block
+                                setChosenDate={setChosenDate}
+                            />
                         </div>
                     </div>
                 }

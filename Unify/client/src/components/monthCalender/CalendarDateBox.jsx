@@ -63,7 +63,7 @@ const drop = (e) => {
     onDragOver={(e)=>dragOver(e)}
     onDrop={(e) => drop(e, date)}
     onClick={() => {
-      onClick();
+      onClick && onClick(displayDate);
     }}
   >
     {children}

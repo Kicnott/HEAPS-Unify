@@ -28,7 +28,7 @@ export const ShowCalendar = ({ accountid, calendarid, setShowEventOpen, setShowC
         }
     }, [calendarData, accountid]);
 
-    console.log("Is Following:", isFollowing);
+    // console.log("Is Following:", isFollowing);
 
     useEffect(() => {
         if (calendarData) {
@@ -49,7 +49,7 @@ export const ShowCalendar = ({ accountid, calendarid, setShowEventOpen, setShowC
     if (error) return <div>{error}</div>;
     if (!calendarData || !accountData || !eventData) return <div>Loading...</div>;
 
-    console.log("Event Data:", eventData);
+    // console.log("Event Data:", eventData);
 
     return (
         <div>
