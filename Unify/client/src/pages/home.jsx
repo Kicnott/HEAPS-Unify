@@ -20,7 +20,7 @@ import { OverlayBackground } from '../components/overlay/OverlayBackground.jsx'
 import { LeftTabPanel } from '../components/LeftPanel/LeftTabPanel.jsx'
 import { ScrollBlock } from '../components/blocks/ScrollBlock.jsx'
 import MainLayout from '../components/blocks/MainLayout.jsx'
-import { getMyCalendars, getMyEvents, getAllAccounts } from '../components/LeftPanel/LeftPanelFunctions.jsx'
+import { getMyCalendars, getMyEvents, getAllAccounts, getFollowedCalendars } from '../components/LeftPanel/LeftPanelFunctions.jsx'
 import { ShowCalendar } from '../components/LeftPanel/ShowCalendar.jsx'
 import { ShowAccount } from '../components/LeftPanel/ShowAccount.jsx'
 import { ShowEvent } from '../components/LeftPanel/ShowEvent.jsx'
@@ -55,23 +55,31 @@ function HomePage() {
     const isOverlayBackgroundHidden = isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen && !isShowCalendarOpen && !isShowAccountsOpen && !isShowEventOpen;
 
     const [myCalendars, setMyCalendars] = useState([]);
+
     const [followedCalendars, setFollowedCalendars] = useState([])
+    const refreshFollowedCalendars = () => {
+    getFollowedCalendars(currentUserAccountId).then(setFollowedCalendars);
+};
+
     const [allAccounts, setAllAccounts] = useState([])
+
     const [myEvents, setMyEvents] = useState([]);
 
     useEffect(() => {
         if (currentUserAccountId) {
             getMyCalendars(currentUserAccountId).then(setMyCalendars);
 
-
             getAllAccounts(currentUserAccountId).then(setAllAccounts);
 
             getMyEvents(currentUserAccountId).then(setMyEvents);
 
+            getFollowedCalendars(currentUserAccountId).then(setFollowedCalendars);
+
         }
     }, [currentUserAccountId]);
 
-    console.log("My Events: ", myEvents);
+    console.log("Followed Calendars: ", followedCalendars);
+    // console.log("My Events: ", myEvents);
     // console.log("My Calendars: ", myCalendars);
     // console.log("All Accounts: ", allAccounts);
 
@@ -83,7 +91,7 @@ function HomePage() {
         setEditAccountsFormOpen(false)
         setEditCalendarsFormOpen(false)
         setShowCalendarOpen(false)
-        setShowAccountsOpen(false)  
+        setShowAccountsOpen(false)
         setShowEventOpen(false)
     }
 
@@ -190,15 +198,26 @@ function HomePage() {
                                         buttonData={myCalendars.map((calendar) => ({
                                             label: calendar.calendarname,
                                             onClick: () => {
-                                                setShowCalendarOpen(true)
+
                                                 setShowCalendarID(calendar.calendarid)
+                                                setTimeout(() => {
+                                                    setShowCalendarOpen(true)
+                                                }, 100)
                                             }
                                         }))}
                                     >
                                         <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>My Calendars</h2>
                                     </ScrollBlock>
                                     <br></br>
-                                    <ScrollBlock height='48%'>
+                                    <ScrollBlock height='48%'
+                                        buttonData={followedCalendars.map((calendar) => ({
+                                            label: calendar.calendarname,
+                                            onClick: () => {
+                                                setShowCalendarID(calendar.calendarid)
+                                                setTimeout(() => {
+                                                    setShowCalendarOpen(true)
+                                                }, 100)
+                                            }}))}>
                                         <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>Followed Calendars</h2>
                                     </ScrollBlock>
                                 </>
@@ -208,8 +227,11 @@ function HomePage() {
                                     buttonData={allAccounts.map((account) => ({
                                         label: account.accountusername,
                                         onClick: () => {
-                                            setShowAccountsOpen(true)
+
                                             setShowAccountID(account.accountid)
+                                            setTimeout(() => {
+                                                setShowAccountsOpen(true)
+                                            }, 100)
                                         }
                                     }))}
                                     height='100%'
@@ -223,15 +245,18 @@ function HomePage() {
                                     <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>My Events</h2>
                                     {myCalendars.map((calendar) => (
                                         <ScrollBlock
-                                        key={calendar.calendarid}
-                                        height='40%'
-                                        buttonData={myEvents[calendar.calendarid]?.map((event) => ({
-                                            label: event.eventname,
-                                            onClick: () => {
-                                                setShowEventOpen(true)
-                                                setShowEventID(event.eventid)
-                                            }
-                                        }))}
+                                            key={calendar.calendarid}
+                                            height='40%'
+                                            buttonData={myEvents[calendar.calendarid]?.map((event) => ({
+                                                label: event.eventname,
+                                                onClick: () => {
+
+                                                    setShowEventID(event.eventid)
+                                                    setTimeout(() => {
+                                                        setShowEventOpen(true)
+                                                    }, 100)
+                                                }
+                                            }))}
                                         >
 
                                             <h3>{calendar.calendarname}</h3>
@@ -265,11 +290,13 @@ function HomePage() {
                 onClose={() => setShowCalendarOpen(false)}>
                 <ShowCalendar
                     calendarid={showCalendarID}
+                    accountid={currentUserAccountId}
                     setShowCalendarOpen={setShowCalendarOpen}
                     setShowAccountID={setShowAccountID}
                     setShowAccountOpen={setShowAccountsOpen}
                     setShowEventID={setShowEventID}
-                    setShowEventOpen={setShowEventOpen}>
+                    setShowEventOpen={setShowEventOpen}
+                    refreshFollowedCalendars={refreshFollowedCalendars}>
 
                 </ShowCalendar>
 
@@ -283,7 +310,7 @@ function HomePage() {
                     setShowCalendarID={setShowCalendarID}
                     setShowCalendarOpen={setShowCalendarOpen}
                     setShowAccountOpen={setShowAccountsOpen}
-                    >
+                >
                 </ShowAccount>
 
             </OverlayBlock>

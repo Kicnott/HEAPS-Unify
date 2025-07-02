@@ -23,6 +23,10 @@ export const ShowEvent = ({ eventid }) => {
         }
     }, [eventData]);
 
+    useEffect(() => {
+        return () => setError(null);
+    }, [eventid]);
+
     if (error) return <div>{error}</div>;
     if (!eventData || !calendarData) return <div>Loading...</div>;
 

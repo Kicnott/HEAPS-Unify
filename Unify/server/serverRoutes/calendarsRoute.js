@@ -135,4 +135,108 @@ router.get('/home/getCalendar', async (req, res) => {
   }
 })
 
+router.post('/home/followCalendar', async (req, res) => {
+  try {
+    const calendarid = req.body.calendarid
+    const accountid = req.body.accountid
+
+    if (!calendarid || !accountid) {
+      return res.status(400).json({ error: 'Missing calendarid or accountid parameter' });
+    }
+
+    console.log("FollowCalendar: Connected!");
+
+    const checkFollowed = await pool.query(
+      'SELECT * FROM followedcalendarstable WHERE calendarid = $1 AND accountid = $2', [calendarid, accountid]
+    );
+
+    if (checkFollowed.rows.length > 0) {
+      return res.json({ status: 'Already following this calendar' });
+    }
+
+    await pool.query(
+      'INSERT INTO followedcalendarstable (calendarid, accountid) VALUES ($1, $2)', [calendarid, accountid]
+    );
+
+    return res.json({ status: 'Successfully followed the calendar' });
+  } catch (e) {
+    console.log("FollowCalendar: Server Error");
+    console.log(e);
+    return res.status(500).json({ error: 'Server error' });
+  }})
+
+router.get('/home/checkFollowedCalendar', async (req, res) => {
+  try{
+    const calendarid = req.query.calendarid
+    const accountid = req.query.accountid
+
+    if (!calendarid || !accountid) {
+      return res.status(400).json({ error: 'Missing calendarid or accountid parameter' });
+    }
+
+    console.log("CheckFollowedCalendar: Connected!");
+
+    const result = await pool.query(
+      'SELECT * FROM followedcalendarstable WHERE calendarid = $1 AND accountid = $2', [calendarid, accountid]
+    );
+
+    if (result.rows.length > 0) {
+      return res.json({status: true});
+    } else {
+      return res.json({status: false});
+    }
+  } catch (e) {
+    console.log("CheckFollowedCalendar: Server Error");
+    console.log(e);
+    return res.status(500).json({ error: 'Server error' });
+  }})
+
+router.get('/home/getFollowedCalendars', async (req, res) => {
+  try {
+    const accountid = req.query.accountid
+
+    if (!accountid) {
+      return res.status(400).json({ error: 'Missing accountid parameter' });
+    }
+
+    console.log("GetFollowedCalendars: Connected!");
+
+    const result = await pool.query(
+      'SELECT * FROM followedcalendarstable WHERE accountid = $1', [accountid]
+    );
+
+    return res.json({ rows: result.rows });
+  } catch (e) {
+    console.log("GetFollowedCalendars: Server Error");
+    console.log(e);
+    return res.status(500).json({ error: 'Server error' });
+  }
+})
+
+router.delete('/home/unfollowCalendar', async (req, res) => {
+  try {
+    const calendarid = req.body.calendarid
+    const accountid = req.body.accountid
+
+    if (!calendarid || !accountid) {
+      return res.status(400).json({ error: 'Missing calendarid or accountid parameter' });
+    }
+
+    console.log("UnfollowCalendar: Connected!");
+
+    const result = await pool.query(
+      'DELETE FROM followedcalendarstable WHERE calendarid = $1 AND accountid = $2', [calendarid, accountid]
+    );
+
+    if (result.rowCount === 0) {
+      return res.json({ status: 'Not following this calendar' });
+    } else {
+      return res.json({ status: 'Successfully unfollowed the calendar' });
+    }
+  } catch (e) {
+    console.log("UnfollowCalendar: Server Error");
+    console.log(e);
+    return res.status(500).json({ error: 'Server error' });
+  }})
+
 export default router

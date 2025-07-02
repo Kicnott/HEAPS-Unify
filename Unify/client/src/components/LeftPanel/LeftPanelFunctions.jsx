@@ -27,3 +27,21 @@ export async function getAllAccounts() {
     const res = await accountService.showAllAccounts()
     return res.data.rows
 }
+
+export async function getFollowedCalendars(accountid) {
+    const res = await calendarService.getFollowedCalendars(accountid)
+    const followedCalendars = res.data.rows;
+
+    if (!followedCalendars || followedCalendars.length === 0) {
+        return []
+    }
+    else{
+        const calendarPromises = followedCalendars.map(async (calendar) => {
+            const res = await calendarService.getCalendar(calendar.calendarid);
+            return res.data;
+        });
+
+        const calendars = await Promise.all(calendarPromises);
+        return calendars;
+    }
+}

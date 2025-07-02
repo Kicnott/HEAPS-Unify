@@ -4,11 +4,13 @@ import accountService from "../../services/accountService.jsx";
 import eventService from "../../services/eventService.jsx";
 import { ScrollBlock } from "../blocks/ScrollBlock.jsx";
 
-export const ShowCalendar = ({ calendarid, setShowEventOpen, setShowCalendarOpen, setShowAccountOpen, setShowAccountID, setShowEventID }) => {
+export const ShowCalendar = ({ accountid, calendarid, setShowEventOpen, setShowCalendarOpen, setShowAccountOpen, setShowAccountID, setShowEventID, refreshFollowedCalendars }) => {
     const [calendarData, setCalendarData] = useState(null);
     const [accountData, setAccountData] = useState(null);
     const [eventData, setEventData] = useState(null);
     const [error, setError] = useState(null);
+    const [isFollowing, setIsFollowing] = useState(null);
+
 
     useEffect(() => {
         if (calendarid) {
@@ -17,6 +19,16 @@ export const ShowCalendar = ({ calendarid, setShowEventOpen, setShowCalendarOpen
                 .catch(err => setError("Calendar not found or error loading calendar."));
         }
     }, [calendarid]);
+
+    useEffect(() => {
+        if (calendarData) {
+            calendarService.checkFollowedCalendar(calendarData.calendarid, accountid)
+                .then(res => setIsFollowing(res.data.status))
+                .catch(err => setError("Error checking if calendar is followed."));
+        }
+    }, [calendarData, accountid]);
+
+    console.log("Is Following:", isFollowing);
 
     useEffect(() => {
         if (calendarData) {
@@ -29,6 +41,10 @@ export const ShowCalendar = ({ calendarid, setShowEventOpen, setShowCalendarOpen
                 .catch(err => setError("Events not found or error loading events."));
         }
     }, [calendarData]);
+
+    useEffect(() => {
+        return () => setError(null);
+    }, [calendarid]);
 
     if (error) return <div>{error}</div>;
     if (!calendarData || !accountData || !eventData) return <div>Loading...</div>;
@@ -74,21 +90,65 @@ export const ShowCalendar = ({ calendarid, setShowEventOpen, setShowCalendarOpen
                             {eventData.length === 0 ? (
                                 <div>No events</div>
                             ) : (
-                                <ScrollBlock
-                                    buttonData={eventData.map(event => ({
-                                        label: event.eventname,
-                                        onClick: () => {
-                                            setShowEventID(event.eventid);
-                                            setShowEventOpen(true);
-                                            setShowCalendarOpen(false);
-                                        }
-                                    }))}
-                                />
+                                <div
+                                    style={{ maxHeight: "200px", overflowY: "auto" }}>
+                                    <ScrollBlock
+                                        buttonData={eventData.map(event => ({
+                                            label: event.eventname,
+                                            onClick: () => {
+                                                setShowEventID(event.eventid);
+                                                setShowEventOpen(true);
+                                                setShowCalendarOpen(false);
+                                            }
+                                        }))}
+                                    />
+                                </div>
                             )}
                         </td>
                     </tr>
                 </tbody>
             </table>
+
+            {accountid && String(accountid) === String(calendarData.accountid) && (
+                <button>
+                    You own this calendar
+                </button>
+            )}
+
+            {isFollowing !== null && isFollowing && String(accountid) !== String(calendarData.accountid) && (
+                <button
+                    onClick={() => {
+                        calendarService.unfollowCalendar(calendarData.calendarid, accountid)
+                            .then(() => {
+                                setIsFollowing(false);
+                                setTimeout(() => {
+                                    if (refreshFollowedCalendars) refreshFollowedCalendars();
+                                }, 100);
+
+                            })
+                            .catch(err => setError("Error unfollowing calendar."));
+                    }}
+                >
+                    Unfollow Calendar
+                </button>
+            )}
+            {isFollowing !== null && !isFollowing && String(accountid) !== String(calendarData.accountid) && (
+                <button
+                    onClick={() => {
+                        calendarService.followCalendar(calendarData.calendarid, accountid)
+                            .then(() => {
+                                setIsFollowing(true);
+                                setTimeout(() => {
+                                    if (refreshFollowedCalendars) refreshFollowedCalendars();
+                                }, 100);
+
+                            })
+                            .catch(err => setError("Error following calendar."));
+                    }}
+                >
+                    Follow Calendar
+                </button>
+            )}
         </div>
     );
 }

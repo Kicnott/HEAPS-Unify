@@ -24,6 +24,10 @@ export const ShowAccount = ({ accountid, setShowCalendarID, setShowCalendarOpen,
         }
     }, [accountid]);
 
+    useEffect(() => {
+        return () => setError(null);
+    }, [accountid]);
+
     if (error) return <div>{error}</div>;
     if (!accountData) return <div>Loading...</div>;
 
@@ -62,7 +66,7 @@ export const ShowAccount = ({ accountid, setShowCalendarID, setShowCalendarOpen,
                                             setShowCalendarOpen(true);
                                             setShowAccountOpen(false);
                                         }
-                                        , 100); 
+                                            , 100);
 
                                     }
                                 }))}
