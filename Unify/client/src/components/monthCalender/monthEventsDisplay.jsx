@@ -43,7 +43,7 @@ const case2Event = (event, diffInDays) => {
     {event.eventname}</div> 
 }
 
-// Case 4: Multiple day Event, crosses week edge
+// Case 3: Multiple day Event, crosses week edge
 const case3Event = (event, diffInDays) => {
     let eventOverflowCount = diffInDays;
     let eventOffset = eventOverflowCount * 143 + 10;
@@ -58,8 +58,12 @@ const case3Event = (event, diffInDays) => {
         zIndex: '2',
         textAlign: 'left',
         paddingLeft: '25px',
-    }} 
-    key={event.eventid} id={event.eventid}>{event.eventname}</div>
+        }} 
+        draggable
+        onDragStart = {(e) => {dragStart(e, event)}}
+        event={event}
+        key={event.eventid}>
+    {event.eventname}</div>
 }
 
 // Case 4: part of an event that crossed week edge, ends on Sun

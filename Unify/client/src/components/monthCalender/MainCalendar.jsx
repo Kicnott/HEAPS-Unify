@@ -28,8 +28,11 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
     let currComparedDate = new Date(baseDate) // currComparedDate: copy of baseDate. Serves an index/pointer that goes thru all displayed days in the chosen month. After getBaseDate and new Date(), it becomes a date of the '1st displayed' day of the month. For eg, in july 2025, the value -> Sun Jun 29 2025 00:00:00 GMT+0800 (Singapore Standard Time)
     let sundaysOfTheMonth = []; // sundaysOfTheMonth; used to store all sun (Digit)
     let currSunDate = new Date(baseDate); // currSunDate; copy of baseDate. Used to populate sundaysOfTheMonth
-    let saturdaysOfTheMonth = []; // saturdaysOfTheMonth; used to store all sat (Digit)
-    let currSatDate = new Date(baseDate) + 6; // currSatDate; copy of baseDate. Used to populate saturdaysOfTheMonth
+
+    // initilize master month array
+    for (let i = 0; i < cellCount; i++){
+        monthEventsArray.push([null, null, null, null, []])
+    }
 
     // Gets the first displayed date of that week (not necessarily 1st)
     while (currComparedDate.getDay() !== 0){ 
@@ -39,16 +42,6 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
     for (let i = 0; i < cellCount / 7 ; i++){
         sundaysOfTheMonth.push(new Date(currSunDate).getDate());
         currSunDate.setDate(currSunDate.getDate() + 7);
-    }
-
-    for (let i = 0; i < cellCount / 7 ; i++){
-        saturdaysOfTheMonth.push(new Date(currSatDate).getDate());
-        currSunDate.setDate(currSunDate.getDate() + 7);
-    }
-
-    // initilize master month array
-    for (let i = 0; i < cellCount; i++){
-        monthEventsArray.push([null, null, null, null, []])
     }
 
     // filter events for that day into sortedEventsInCurrDate
@@ -108,14 +101,18 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
                 if (noSunsPassed == 0){ // case 2: multi day event, within the week
                     monthEventsArray[dateIndex][innerArrayIndex] = calenderEventsType.case2Event(event, diffInDays);
                     for (let emptyPopulator = 1; emptyPopulator < diffInDays + 1; emptyPopulator++){
+                        if (dateIndex + emptyPopulator == cellCount){ break; } // prevents index overflow
                         monthEventsArray[dateIndex + emptyPopulator][innerArrayIndex] = calenderEventsType.case8Event(emptyEventSpaceCount);
                         emptyEventSpaceCount += 1; // increments emptyEventSpaceCount to set keys
                     }
                 } else { // case 3: multi day event, crosses week
-                    const diffInDaysToSat = noOfDaysToNextClosestSat(event, saturdaysOfTheMonth);
+                    const diffInDaysToSat = noOfDaysToNextClosestSat(event, sundaysOfTheMonth);
+
+                    console.log("diffInDaysToSat: ", diffInDaysToSat)
 
                     monthEventsArray[dateIndex][innerArrayIndex] = calenderEventsType.case3Event(event, diffInDaysToSat);
                     for (let emptyPopulator = 1; emptyPopulator < diffInDays + 1; emptyPopulator++){
+                        if (dateIndex + emptyPopulator == cellCount){ break; } // prevents index overflow
                         monthEventsArray[emptyPopulator][innerArrayIndex] = calenderEventsType.case8Event(emptyEventSpaceCount);
                         emptyEventSpaceCount += 1; // increments emptyEventSpaceCount to set keys
                     }
@@ -313,11 +310,11 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
 
 // Returns number of times an event passes the week edge into the next week
 function noOfWeekEdgePasses(event, sundaysOfTheMonth) {
-    const startEndDate = event.startdt.substring(8, 10);
+    const eventStartDate = event.startdt.substring(8, 10);
     const eventEndDate = event.enddt.substring(8, 10);
     let noOfWeekEdgePasses = 0;
     sundaysOfTheMonth.forEach((sun) => {
-        if (startEndDate < sun && sun <= eventEndDate) {
+        if (eventStartDate < sun && sun <= eventEndDate) {
             noOfWeekEdgePasses += 1;
         }
     });
@@ -325,11 +322,10 @@ function noOfWeekEdgePasses(event, sundaysOfTheMonth) {
 }
 
 // Returns the next closest Sat
-function noOfDaysToNextClosestSat(event, saturdaysOfTheMonth) {
-    const startEndDate = event.startdt.substring(8, 10);
-    saturdaysOfTheMonth.forEach((sat) => {
-        if (startEndDate < sat){
-            return sat - startEndDate;
-        }
-    })
+function noOfDaysToNextClosestSat(event, sundaysOfTheMonth) {
+    const eventStartDate = new Date(event.startdt).getDay();
+
+    let diffInDaysToSat = 6 - eventStartDate; // sat (6) - currentDay (?) = diffInDays
+
+    return diffInDaysToSat;
 }

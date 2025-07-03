@@ -49,8 +49,19 @@ router.get('/home/getMonthEvents', async (req, res) => {
       'SELECT * FROM eventstable'
     );
     const filterEvents = result.rows.filter((event)=>{
+      let filtered = false
       const eventDate = new Date(event.startdt);
-      return eventDate.getMonth() === currMonth;
+      const startDayValue = new Date(event.startdt).getDate();
+
+      if (eventDate.getMonth() === currMonth){
+        filtered = true;
+      } else if (eventDate.getMonth() === currMonth - 1 & startDayValue > 25){ // get events from the previous month
+        filtered = true;
+      } else if (eventDate.getMonth() === currMonth + 1 & startDayValue < 7){ // get events from the next month
+        filtered = true;
+      }
+
+      return filtered;
   })
 
     return res.json(filterEvents);
