@@ -17,27 +17,30 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const cellCount = Math.ceil((firstDay + daysInMonth) / 7) * 7;
 
-    let newDatesThatPassSunday = []; // array to store events that passed Sun
+    let eventsDisplayedArray = []
 
-        const [moveableEvent, setmoveableEvent] = useState("Sun Jun 01 2025 00:00:00 GMT+0800 (Singapore Standard Time)"); //test moveable event
+    for (let i = 0; i < cellCount; i++){
+        eventsDisplayedArray.push([null, null, null, null, []])
+    }
+
+    console.log(eventsDisplayedArray)
+
+
+    let newDatesThatPassSunday = []; // array to store events that passed Sun
 
     let emptyEventSpaceCount = 0; //for empty events divs 
 
     let baseDate = getBaseDate(displayDate) // Stores the first date that the calendar should display for the displayDate
-    let dateIndex = new Date(baseDate) // Creates a new Date object so that the baseDate is remembered but the dateIndex can be modified. 
-    // This is because Date is an object and modifying a copy of baseDate will change it for the rest.
+    let dateIndexValue = new Date(baseDate) // Creates a new Date object so that the baseDate is remembered but the dateIndexValue can be modified. This is because Date is an object and modifying a copy of baseDate will change it for the rest.
 
-    // The 1st does not show the first displayed day of that week. For example, on July 2025, 1st July on a Tuesday, but 29th June is the first displayed day of that week.
-    while (dateIndex.getDay() !== 0){
-        dateIndex.setDate(dateIndex.getDate() - 1);
+    while (dateIndexValue.getDay() !== 0){ // Gets the first displayed date of that week (not necessarily 1st)
+        dateIndexValue.setDate(dateIndexValue.getDate() - 1);
     }
-
-    let firstDisplayedDateOfTheMonth = new Date(dateIndex); //firstDisplayedDateOfTheMonth; used to display events across months
 
     let countMutiDayEvents = 0 //determines no of multiple day events in one calendar box, and passes the info to the next calendar box to generate empty space for UI readability 
 
     let sundaysOfTheMonth = []; //sundaysOfTheMonth; used to display events across weeks
-    let currSunDate = new Date(firstDisplayedDateOfTheMonth);
+    let currSunDate = new Date(dateIndexValue);
     for (let i = 0; i < cellCount / 7 ; i++){
         sundaysOfTheMonth.push(new Date(currSunDate));
         currSunDate.setDate(currSunDate.getDate() + 7);
@@ -52,8 +55,8 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
     } // First, the CalendarDateHeaders, mapped to their corresponding days are pushed into the the calendarBoxes array.
     // According to AI, the key specified here is to uniquely identify the CalendarDateHeaders, so that they can be updated efficiently. Code **should** still work without defining the keys.
 
-    for (let i = 0; i < cellCount; i++){ // eventsInCurrBox; filter events for that day into eventsInCurrBox
-        let date = dateIndex.toLocaleString("en-CA", {
+    for (let dateIndex = 0; dateIndex < cellCount; dateIndex++){ // eventsInCurrBox; filter events for that day into eventsInCurrBox
+        let date = dateIndexValue.toLocaleString("en-CA", {
         timeZone: "Asia/Singapore",}).substring(5,10)
 
         let eventsInCurrBox = monthEvents.filter((event)=>{
@@ -124,33 +127,9 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
             // Returns respective divs if the event is 1 day, or more than 1 day
             if (currSundayPassed & event.enddt > currSundayPassed){
                 newDatesThatPassSunday.push(event);
-                return <div style={{ // Case 3: Event is Multi Day and starts on a Sat
-                    fontSize: '0.9rem',
-                    color: 'blue', 
-                    backgroundColor: 'pink', 
-                    borderColor: 'black',
-                    borderStyle: 'solid',
-                    borderWidth: '1px',
-                    marginRight: `-10px`,
-                    zIndex: '2',
-                    textAlign: 'left',
-                    paddingLeft: '25px',
-                }}
-                key={checkIfEventPassWeekEdge}>{event.eventname}</div>
+                 return calenderEventsType.case3Event(event)
             } else if (currSundayPassed) { 
-                return <div style={{
-                    fontSize: '0.9rem',
-                    color: 'blue', 
-                    backgroundColor: 'pink', 
-                    borderColor: 'black',
-                    borderStyle: 'solid',
-                    borderWidth: '1px',
-                    marginRight: `-10px`,
-                    zIndex: '2',
-                    textAlign: 'left',
-                    paddingLeft: '25px',
-                }}
-                key={checkIfEventPassWeekEdge}>{event.eventname}</div>
+                return calenderEventsType.case3Event(event)
             } else if (moreThanOneDay) { // Case 2: Single Day event & Muti Day event
                 return calenderEventsType.case2Event(event)
             } else { // Case 1: No events
@@ -160,14 +139,7 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
 
         // adds events to fill up the calendar box
         while (displayEventsInCurrBox.length < 4){ 
-             displayEventsInCurrBox.push(<div key={`empty-${emptyEventSpaceCount}`} style={{
-                fontSize: '0.9rem',
-                color: 'blue', 
-                backgroundColor: 'brown', 
-                borderColor: 'black',
-                borderStyle: 'solid',
-                borderWidth: '1px',
-            }}></div>);
+            displayEventsInCurrBox.push(calenderEventsType.case8Event(emptyEventSpaceCount));
             emptyEventSpaceCount = emptyEventSpaceCount + 1;
         }
 
@@ -175,15 +147,13 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
         <CalendarDateBox 
             key={date} 
             baseMonth={displayDate.getMonth()} 
-            displayDate={new Date(dateIndex)} 
+            displayDate={new Date(dateIndexValue)} 
             onClick={onDateBoxClick} 
             setChosenDate={setChosenDate} 
             refreshEvents = {refreshEvents} 
             setrefreshEvents = {setrefreshEvents}
             refreshMonthEvents = {refreshMonthEvents}
-            setRefreshMonthEvents = {setRefreshMonthEvents}
-            moveableEvent = {moveableEvent}
-            setmoveableEvent = {setmoveableEvent}>
+            setRefreshMonthEvents = {setRefreshMonthEvents}>
             <div style={{
                 display: 'grid',
                 gap: '3px',
@@ -195,11 +165,10 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
                 {children}
             </div>
         </CalendarDateBox>) // Button functionality to be added
-        dateIndex.setDate(dateIndex.getDate() + 1)
+        dateIndexValue.setDate(dateIndexValue.getDate() + 1)
         displayEventsInCurrBox = [] //resets eventsInCurrBox
         newDatesThatPassSunday = [] //reset the values
     } // Next, the CalendarDateBoxes, each displaying the date from the baseDate and incrementally increasing until all 6 rows are filled, are pushed into the calendarBoxes array.
-    // According to AI, the key specified here is to uniquely identify the CalendarDateHeaders, so that they can be updated efficiently. Code **should** still work without defining the keys.
 
     return (
         <div className='calendar'>

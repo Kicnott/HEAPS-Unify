@@ -42,7 +42,7 @@ router.get('/home/showAllEvents', async (req, res) => {
 //get events for the month calendar grid
 router.get('/home/getMonthEvents', async (req, res) => {
   try {
-    console.log("getMonthEvents: Connected!");
+    // console.log("getMonthEvents: Connected!");
     const currMonth = Number(req.query.currMonth);
 
     const result = await pool.query( 
@@ -52,7 +52,7 @@ router.get('/home/getMonthEvents', async (req, res) => {
       const eventDate = new Date(event.startdt);
       return eventDate.getMonth() === currMonth;
   })
-    console.log('filter:', filterEvents);
+
     return res.json(filterEvents);
   } catch (e) {
     console.log("getMonthEvents: Server Error");
@@ -63,7 +63,7 @@ router.get('/home/getMonthEvents', async (req, res) => {
 
 router.put('/home/updateEvent', async (req, res) => {
   try {
-    console.log("updateEvents: Connected!");
+    // console.log("updateEvents: Connected!");
 
     const newStartDt = req.body.newStartDt;
     const newEndDt = req.body.newEndDt;
