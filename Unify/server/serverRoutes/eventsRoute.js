@@ -61,4 +61,23 @@ router.get('/home/getMonthEvents', async (req, res) => {
   }
 })
 
+router.put('/home/updateEvent', async (req, res) => {
+  try {
+    console.log("updateEvents: Connected!");
+
+    const newStartDt = req.body.newStartDt;
+    const newEndDt = req.body.newEndDt;
+    const eventId = req.body.eventId;
+
+    const result = await pool.query( 
+      'UPDATE eventstable SET startdt = ($1), enddt = ($2) WHERE eventid = ($3)', [newStartDt, newEndDt, eventId]
+    );
+    return res.json(true);
+  } catch (e) {
+    console.log("updateEvent: Server Error");
+    console.log(e);
+    return res.json(false);
+  }
+})
+
 export default router

@@ -38,9 +38,7 @@ function HomePage() {
     const [refreshMonthEvents, setRefreshMonthEvents] = useState(0)
     const [monthEvents, setMonthEvents] = useState([])
 
-    console.log("This Months Events", monthEvents)
-
-    useEffect(() => {
+    useEffect(() => { //refreshes month events; display updated events on month calender
         const fetchMonthEvents = async () => {
         try {
             const currMonth = calendarDisplay.getDisplayDate().getMonth()
