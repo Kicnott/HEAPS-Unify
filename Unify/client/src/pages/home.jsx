@@ -6,21 +6,6 @@ import { monthOptionsArray, yearOptionsArray } from '../constants/calendarConsta
 import { uAccount, uCalendar, uCalendarDisplay, uEvent, uTimeslot } from '../classes/'
 
 // Components
-<<<<<<< HEAD
-import { TopNavbar } from "../components/TopNavbar.jsx"
-import { RightDrawer } from "../components/rightDrawer.jsx"
-import { MainCalendar } from '../components/MainCalendar.jsx'
-import { OverlayBlock } from '../components/OverlayBlock.jsx'
-import { DropdownList } from '../components/DropdownList.jsx'
-import { TimeTable } from '../components/timeTable.jsx'
-import { CreateEvent } from '../components/CreateNewEvent.jsx'
-import { RightDrawerCloseBackground } from '../functions/rightDrawerCloseBackground'
-import { EditAccountForm } from '../components/EditAccounts.jsx'
-import { EditCalendarsForm } from '../components/EditCalendars.jsx'
-import { OverlayBackground } from '../components/OverlayBackground.jsx'
-import { EventDisplay } from '../components/EventDisplay.jsx'
-
-=======
 import { TopNavbar } from "../components/blocks/TopNavbar.jsx"
 import { RightDrawer } from "../components/rightDrawer/RightDrawer.jsx"
 import { MainCalendar } from '../components/monthCalender/MainCalendar.jsx'
@@ -40,7 +25,8 @@ import { ShowCalendar } from '../components/LeftPanel/ShowCalendar.jsx'
 import { ShowAccount } from '../components/LeftPanel/ShowAccount.jsx'
 import { ShowEvent } from '../components/LeftPanel/ShowEvent.jsx'
 import monthEventsService from '../services/monthEventsService.jsx'
->>>>>>> main
+import { EventDisplay } from '../components/EventDisplay.jsx'
+
 
 function HomePage() {
 
@@ -59,11 +45,9 @@ function HomePage() {
     const [calendarDisplay, changeCalendarDisplay] = useState(new Date())
     const [chosenDate, setChosenDate] = useState(new Date())
     const [eventRefreshTrigger, seteventRefreshTrigger] = useState(0)
-<<<<<<< HEAD
+
     const [isEventDetailsOpen, setEventDetailsOpen] = useState(false)
     const [selectedEvent, setSelectedEvent] = useState(null)
-    const isOverlayBackgroundHidden = isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen
-=======
 
     const [isShowCalendarOpen, setShowCalendarOpen] = useState(false)
     const [showCalendarID, setShowCalendarID] = useState('')
@@ -130,7 +114,6 @@ function HomePage() {
         }
         fetchMonthEvents();
     }, [refreshMonthEvents])
->>>>>>> main
 
     const hideOverlayBackground = () => {
         toggleEventHidden(true)
@@ -138,13 +121,11 @@ function HomePage() {
         setEventFormOpen(false)
         setEditAccountsFormOpen(false)
         setEditCalendarsFormOpen(false)
-<<<<<<< HEAD
-        setEventDetailsOpen(false)
-=======
         setShowCalendarOpen(false)
         setShowAccountsOpen(false)
         setShowEventOpen(false)
->>>>>>> main
+        setEventDetailsOpen(false)
+
     }
 
     // Defining the uCalendarDisplay object that the page will use to update the Main Calendar.

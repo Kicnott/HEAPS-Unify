@@ -9,14 +9,11 @@ export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, set
   // displayDate: The date to be displayed in the DateBox.
   let date = displayDate.getDate() // Converts the displayDate to the day number
 
-<<<<<<< HEAD:Unify/client/src/components/CalendarDateBox.jsx
   // need this function to set day for events & timetable
   const setEventDate = () => {
     setChosenDate(displayDate);
   }
 
-=======
->>>>>>> main:Unify/client/src/components/monthCalender/CalendarDateBox.jsx
 
   let isBaseMonth // Stores true or false on whether the current date displayed in part of the base month.
   if (baseMonth === (displayDate.getMonth())) {
@@ -96,12 +93,7 @@ const drop = (e, displayDate) => {
     onDragOver={(e)=>dragOver(e)}
     onDrop={(e) => drop(e, displayDate)}
     onClick={() => {
-<<<<<<< HEAD:Unify/client/src/components/CalendarDateBox.jsx
-      onClick();
-      setEventDate();
-=======
-      onClick && onClick(displayDate);
->>>>>>> main:Unify/client/src/components/monthCalender/CalendarDateBox.jsx
+      onClick && onClick(displayDate) && setEventDate();
     }}
   >
     {children}

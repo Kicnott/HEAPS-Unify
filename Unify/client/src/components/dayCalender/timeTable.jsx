@@ -1,14 +1,7 @@
-<<<<<<< HEAD:Unify/client/src/components/timeTable.jsx
 import React, { useState, useEffect, useMemo } from 'react';
 import { DateTime } from 'luxon';
-import eventService from '../services/eventService.jsx';
-import '../styles/timetable.css';
-=======
-import React from 'react'
-import { useState, useEffect} from 'react'
-import { DateTime } from 'luxon'
-import eventService from '../../services/eventService.jsx'
->>>>>>> main:Unify/client/src/components/dayCalender/timeTable.jsx
+import eventService from '../../services/eventService.jsx';
+import '../../styles/timetable.css';
 
 export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector, setEventDetailsOpen }) => {
     const [eventsForDay, setEventsForDay] = useState([]);
