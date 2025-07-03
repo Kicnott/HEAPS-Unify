@@ -25,6 +25,8 @@ import { ShowCalendar } from '../components/LeftPanel/ShowCalendar.jsx'
 import { ShowAccount } from '../components/LeftPanel/ShowAccount.jsx'
 import { ShowEvent } from '../components/LeftPanel/ShowEvent.jsx'
 import monthEventsService from '../services/monthEventsService.jsx'
+import { EventDisplay } from '../components/EventDisplay.jsx'
+
 
 function HomePage() {
 
@@ -43,6 +45,9 @@ function HomePage() {
     const [calendarDisplay, changeCalendarDisplay] = useState(new Date())
     const [chosenDate, setChosenDate] = useState(new Date())
     const [eventRefreshTrigger, seteventRefreshTrigger] = useState(0)
+
+    const [isEventDetailsOpen, setEventDetailsOpen] = useState(false)
+    const [selectedEvent, setSelectedEvent] = useState(null)
 
     const [isShowCalendarOpen, setShowCalendarOpen] = useState(false)
     const [showCalendarID, setShowCalendarID] = useState('')
@@ -119,6 +124,8 @@ function HomePage() {
         setShowCalendarOpen(false)
         setShowAccountsOpen(false)
         setShowEventOpen(false)
+        setEventDetailsOpen(false)
+
     }
 
     // Defining the uCalendarDisplay object that the page will use to update the Main Calendar.
@@ -370,8 +377,7 @@ function HomePage() {
                 isHidden={isEventHidden} // Assigns isEventHidden function
                 onClose={() => hideOverlayBackground()} // Assigns toggleEventHidden function
             >
-
-                < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger}>
+                < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setSelectedEvent} setEventDetailsOpen={setEventDetailsOpen}>
                 </TimeTable>
                 <button onClick={() => {
                     // console.log("Button clicked!")
@@ -379,6 +385,12 @@ function HomePage() {
                 }}>+ Add Event</button>
 
             </OverlayBlock>
+
+            {isEventDetailsOpen && selectedEvent && (
+                <OverlayBlock onClose={() => setEventDetailsOpen(false)}>
+                    <EventDisplay displayedEvent = {selectedEvent}/>
+                </OverlayBlock>
+            )}
 
             {/* ADD event overlay block */}
             {
