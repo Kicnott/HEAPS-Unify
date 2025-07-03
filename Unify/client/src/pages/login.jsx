@@ -23,27 +23,29 @@ function LoginPage() {
     const handleSubmit = async (submitAction) => {
         submitAction.preventDefault() // Prevents the form from being submitted through GET or POST normally
         // TODO, send data to server, authentication, all that jazz
-        const response = await fetch("http://localhost:8888/login", {
-            method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username,
-                password,
+        if (action === "login") {
+            const response = await fetch("http://localhost:8888/login", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username,
+                    password,
+                })
             })
-        })
 
-        const data = await response.json();
+            const data = await response.json();
 
-        if (data.status===true){
-            sessionStorage.setItem("currentUser", username)
-            console.log(response)
-            sessionStorage.setItem("currentUserAccountId", data.userid)
-            navigate('/home')
-        } else {
-            console.log("Log in failed.")
-            setErrorMessage("Log in failed."); // Displays error message when user fails to log in
+            if (data.status === true) {
+                sessionStorage.setItem("currentUser", username)
+                console.log(response)
+                sessionStorage.setItem("currentUserAccountId", data.userid)
+                navigate('/home')
+            } else {
+                console.log("Log in failed.")
+                setErrorMessage("Log in failed."); // Displays error message when user fails to log in
+            }
         }
     }
 

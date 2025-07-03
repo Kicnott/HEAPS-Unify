@@ -1,23 +1,23 @@
 import express from 'express'
-import pool from '../db.js'; 
+import pool from '../db.js';
 const router = express.Router()
 
 // replace local pool with supabase pool if eventstable table is there
-router.post('/home/createEvent', async(req, res) => {
-  
+router.post('/home/createEvent', async (req, res) => {
+
   try {
     const eventname = req.body.name;
     const eventdescription = req.body.description;
     const eventlocation = req.body.location;
     const startdt = req.body.startdt;
     const enddt = req.body.enddt;
-    const calendarid = 1
-    
-    const result = await pool.query( 
-      'INSERT INTO public.eventstable (eventname,eventdescription,eventlocation,startdt,enddt, calendarid) VALUES ($1, $2, $3, $4, $5, $6)', [eventname,eventdescription,eventlocation,startdt,enddt, calendarid]
-    );   
+    const calendarid = req.body.calendarID;
 
-    return res.json({ status : "event created"});
+    const result = await pool.query(
+      'INSERT INTO public.eventstable (eventname,eventdescription,eventlocation,startdt,enddt, calendarid) VALUES ($1, $2, $3, $4, $5, $6)', [eventname, eventdescription, eventlocation, startdt, enddt, calendarid]
+    );
+
+    return res.json({ status: "event created" });
   } catch (e) {
     console.log("createEvent: Server Error");
     console.log(e);
@@ -28,7 +28,7 @@ router.post('/home/createEvent', async(req, res) => {
 router.get('/home/showAllEvents', async (req, res) => {
   try {
     // console.log("showAllEvents: Connected!");
-    const result = await pool.query( 
+    const result = await pool.query(
       'SELECT * FROM eventstable'
     );
     return res.json(result);
@@ -39,7 +39,53 @@ router.get('/home/showAllEvents', async (req, res) => {
   }
 })
 
+router.get('/home/getMyEvents', async (req, res) => {
+  try {
+    const calendarid = req.query.calendarid;
+
+    if (!calendarid) {
+      return res.status(400).json({ error: 'Missing calendarid parameter' });
+    }
+
+    console.log("GetMyEvents: Connected!");
+
+    const result = await pool.query(
+      'SELECT * FROM eventstable WHERE calendarid = $1', [calendarid])
+
+    return res.json({ rows: result.rows });
+  } catch (e) {
+    console.log("GetMyEvents: Server Error");
+    console.log(e);
+    return res.status(500).json({ error: 'Server error' });
+  }
+})
+
+router.get('/home/getEvent', async (req, res) => {
+  try {
+    const eventid = req.query.eventid;
+
+    if (!eventid) {
+      return res.status(400).json({ error: 'Missing eventid parameter' });
+    }
+
+    console.log("GetEvent: Connected!");
+
+    const result = await pool.query(
+      'SELECT * FROM eventstable WHERE eventid = $1', [eventid]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    return res.json(result.rows[0]);
+  } catch (e) {
+    console.log("GetEvent: Server Error");
+    console.log(e);
+    return res.status(500).json({ error: 'Server error' })}});
 //get events for the month calendar grid
+
+
 router.get('/home/getMonthEvents', async (req, res) => {
   try {
     console.log("getMonthEvents: Connected!");
@@ -76,8 +122,7 @@ router.put('/home/updateEvent', async (req, res) => {
   } catch (e) {
     console.log("updateEvent: Server Error");
     console.log(e);
-    return res.json(false);
-  }
+    return res.json(false);}
 })
 
 export default router

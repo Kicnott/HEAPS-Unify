@@ -19,10 +19,22 @@ const getEvents = () => {
     return http.get('/home/showAllEvents')
 }
 
-const eventService = {
-    createEvent,
-    getEvents,
-    updateEvent
+const getMyEvents = (calendarid) => {
+    return http.get('/home/getMyEvents', {
+        params: {
+            calendarid: calendarid
+        }
+    })
 }
 
-export default eventService
+const getEvent = (eventid) => {
+    return http.get('/home/getEvent', {params: { eventid: eventid }})
+}
+
+export default {
+    createEvent,
+    getEvents,
+    getMyEvents,
+    getEvent,
+    updateEvent
+}

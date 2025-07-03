@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import eventService from '../../services/eventService.jsx'
-import getMyCalendars from '../monthCalender/getMyCalendars.jsx'
+import {getMyCalendars} from '../LeftPanel/LeftPanelFunctions.jsx'
 
-export const CreateEvent = ({ onClose, chosenDate, onSave, accountID }) => {
+export const CreateEvent = ({ onClose, chosenDate, onSave, accountid }) => {
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
   const [location, setLocation] = useState("")
@@ -14,10 +14,10 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountID }) => {
   const [myCalendars, setMyCalendars] = useState([])
 
   useEffect(() => {
-    getMyCalendars(accountID).then(setMyCalendars);
-  }, [accountID])
+    getMyCalendars(accountid).then(setMyCalendars);
+  }, [accountid])
 
-  // console.log("myCalendars State:", myCalendars)
+  console.log("myCalendars State:", myCalendars)
 
   const handleSave = async (e) => {
     setErrors([]);
