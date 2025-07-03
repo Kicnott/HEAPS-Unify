@@ -320,7 +320,6 @@ function HomePage() {
                                     }, 100);
                                 }
                                 } // Gives the dateboxes some functionality to open an Overlay block
-                                setChosenDate={setChosenDate}
                                 refreshMonthEvents={refreshMonthEvents}
                                 setRefreshMonthEvents={setRefreshMonthEvents}
                                 monthEvents={monthEvents}

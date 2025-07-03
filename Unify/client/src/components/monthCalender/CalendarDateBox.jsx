@@ -2,17 +2,12 @@
 import eventService from '../../services/eventService.jsx';
 
 // CalendarDateBox is a component used by MainCalendar to create the boxes in the Calendar.
-export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, setChosenDate, refreshEvents, setrefreshEvents, moveableEvent, setmoveableEvent, refreshMonthEvents, setRefreshMonthEvents }) => {
+export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, refreshEvents, setrefreshEvents, moveableEvent, setmoveableEvent, refreshMonthEvents, setRefreshMonthEvents }) => {
   // onClick: A function that runs when the DateBox is clicked.
   // children: Any additional labels to be stored on each DateBox.
   // baseMonth: The current month being displayed - to determine the font color
   // displayDate: The date to be displayed in the DateBox.
   let date = displayDate.getDate() // Converts the displayDate to the day number
-
-  // need this function to set day for events & timetable
-  const setEventDate = () => {
-    setChosenDate(displayDate);
-  }
 
 
   let isBaseMonth // Stores true or false on whether the current date displayed in part of the base month.
@@ -93,7 +88,7 @@ const drop = (e, displayDate) => {
     onDragOver={(e)=>dragOver(e)}
     onDrop={(e) => drop(e, displayDate)}
     onClick={() => {
-      onClick && onClick(displayDate) && setEventDate();
+      onClick && onClick(displayDate);
     }}
   >
     {children}
