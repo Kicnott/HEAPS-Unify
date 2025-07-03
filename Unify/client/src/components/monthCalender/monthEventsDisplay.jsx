@@ -21,8 +21,8 @@ const case1Event = (event) => {
 }
 
 // Case 2: Multiple day Event
-const case2Event = (event) => { 
-    let eventOverflowCount = new Date(event.enddt).getDate() - new Date(event.startdt).getDate();
+const case2Event = (event, diffInDays) => { 
+    let eventOverflowCount = diffInDays;
     let eventOffset = eventOverflowCount * 143;
     return <div style={{
         fontSize: '0.9rem',

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import calenderEventsType from './monthEventsDisplay.jsx'
 import getBaseDate from './getBaseDate.jsx'
 import '../../styles/MainCalendar.css'
+import monthEventsService from '../../services/monthEventsService.jsx'
 
 // MainCalendar component used to display the big calendar in the Home page.
 export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDate, refreshEvents, setrefreshEvents, refreshMonthEvents,setRefreshMonthEvents, monthEvents, setMonthEvents}) => {
@@ -17,16 +18,121 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const cellCount = Math.ceil((firstDay + daysInMonth) / 7) * 7;
 
-    let eventsDisplayedArray = []
+    //
+    let monthEventsArray = [] // master array
+    let calendarBoxes = [] // used as the final return
+    let emptyEventSpaceCount = 0; // give the keys of empty divs an incremental value
 
-    for (let i = 0; i < cellCount; i++){
-        eventsDisplayedArray.push([null, null, null, null, []])
+    let currComparedDate = new Date(getBaseDate(displayDate)) // currComparedDate: serves an index/pointer that goes thru all displayed days in the chosen month. After getBaseDate and new Date(), it becomes a date of the 1st day of the month. For eg, in july 2025, the value -> Sun Jun 29 2025 00:00:00 GMT+0800 (Singapore Standard Time)
+
+    while (currComparedDate.getDay() !== 0){ // Gets the first displayed date of that week (not necessarily 1st)
+        currComparedDate.setDate(currComparedDate.getDate() - 1);
     }
 
-    console.log(eventsDisplayedArray)
+    // initilize array
+    for (let i = 0; i < cellCount; i++){
+        monthEventsArray.push([null, null, null, null, []])
+    }
 
+    // eventsInCurrBox; filter events for that day into eventsInCurrBox
+    for (let dateIndex = 0; dateIndex < cellCount; dateIndex++){ 
 
-    let newDatesThatPassSunday = []; // array to store events that passed Sun
+        let innerArrayIndex = 0;
+
+        const formattedComparedDate = currComparedDate.toLocaleString("en-CA", {
+        timeZone: "Asia/Singapore",}).substring(5,10)
+
+        const dayEventsArray = monthEvents.filter((event)=>{
+            const comparedEventDate = new Date(event.startdt).toISOString().slice(0, 10).substring(5,10);
+
+            return comparedEventDate === formattedComparedDate;
+        })
+
+        // sorts the events in the box
+        const sortedEventsInCurrDate = [...dayEventsArray].sort((a, b) => {
+            const aDuration = (new Date(a.enddt) - new Date(a.startdt)) / (1000 * 60 * 60 * 24);
+            const bDuration = (new Date(b.enddt) - new Date(b.startdt)) / (1000 * 60 * 60 * 24);
+
+            // Push multi-day events to the front
+            const aIsMultiDay = aDuration >= 1;
+            const bIsMultiDay = bDuration >= 1;
+            if (aIsMultiDay !== bIsMultiDay) {
+                return bIsMultiDay - aIsMultiDay; 
+            }
+
+            // Push ealierest event to the front
+            return new Date(a.startdt) - new Date(b.startdt);
+        });
+
+        sortedEventsInCurrDate.forEach(event => {
+            const diffInDays = event.enddt.substring(8,10) - event.startdt.substring(8,10);
+
+            // If innerArrayIndex is 4 or more, all displayable divs are occupied. Transfer the remaining events in sortedEventsInCurrDate to the 5th element in monthEventsArray (it stores extra events objects for that day)
+            if (innerArrayIndex >= 4){
+                monthEventsArray[4].push(event);
+                return;
+            }
+
+            // Checks for an index that contains a null (not modified into an empty div by previous multi day events)
+            while (monthEventsArray[dateIndex][innerArrayIndex] !== null){
+                innerArrayIndex += 1;
+                if (innerArrayIndex >= 4){
+                monthEventsArray[4].push(event);
+                return;
+                }
+            }
+
+            if (diffInDays == 0){
+                monthEventsArray[dateIndex][innerArrayIndex] = calenderEventsType.case1Event(event);
+            } else if (diffInDays != 0){
+                monthEventsArray[dateIndex][innerArrayIndex] = calenderEventsType.case2Event(event, diffInDays);
+                for (let emptyPopulator = 1; emptyPopulator < diffInDays + 1; emptyPopulator++){
+                    monthEventsArray[emptyPopulator][innerArrayIndex] = calenderEventsType.case8Event(emptyEventSpaceCount);
+                    emptyEventSpaceCount += 1; // increments emptyEventSpaceCount to set keys
+                }
+            }
+            innerArrayIndex += 1;
+        });
+
+        // if there are nulls left after event populating, replace them with empty divs
+        for (let checkForNull = 0; checkForNull < 4; checkForNull++){
+            if (monthEventsArray[dateIndex][checkForNull] == null){
+                monthEventsArray[dateIndex][checkForNull] = calenderEventsType.case8Event(emptyEventSpaceCount);
+                emptyEventSpaceCount += 1; // increments emptyEventSpaceCount to set keys
+            }
+        }
+
+        let displayEvents = monthEventsArray[dateIndex].slice(0,4);
+
+        calendarBoxes.push(
+        <CalendarDateBox 
+            key={currComparedDate} 
+            baseMonth={displayDate.getMonth()} 
+            displayDate={new Date(currComparedDate)} 
+            onClick={onDateBoxClick} 
+            setChosenDate={setChosenDate} 
+            refreshEvents = {refreshEvents} 
+            setrefreshEvents = {setrefreshEvents}
+            refreshMonthEvents = {refreshMonthEvents}
+            setRefreshMonthEvents = {setRefreshMonthEvents}>
+            <div style={{
+                display: 'grid',
+                gap: '3px',
+                padding: '0px',
+                margin: '0px',
+                gridAutoRows: '20px',
+                }}>
+                {displayEvents}
+                {children}
+            </div>
+        </CalendarDateBox>)
+
+        currComparedDate.setDate(currComparedDate.getDate() + 1)
+    }
+
+    //
+
+/*     let newDatesThatPassSunday = []; // array to store events that passed Sun
 
     let emptyEventSpaceCount = 0; //for empty events divs 
 
@@ -46,9 +152,7 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
         currSunDate.setDate(currSunDate.getDate() + 7);
     }
 
-    let calendarBoxes = [] // Creates an empty array to store the calendar boxes that will later be displayed.
     let days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"] // Defining the calendar headers.
-    let displayEventsInCurrBox = [];
 
     for (let i = 0; i < 7; i++){
         calendarBoxes.push(<CalendarDateHeader key={days[i]}>{days[i]}</CalendarDateHeader>) // Add Day Names on the top row
@@ -57,10 +161,10 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
 
     for (let dateIndex = 0; dateIndex < cellCount; dateIndex++){ // eventsInCurrBox; filter events for that day into eventsInCurrBox
         let date = dateIndexValue.toLocaleString("en-CA", {
-        timeZone: "Asia/Singapore",}).substring(5,10)
+            timeZone: "Asia/Singapore",}).substring(5,10)
 
         let eventsInCurrBox = monthEvents.filter((event)=>{
-        const eventDate = new Date(event.startdt).toISOString().slice(0, 10).substring(5,10);
+            const eventDate = new Date(event.startdt).toISOString().slice(0, 10).substring(5,10);
 
         return eventDate === date;
         })
@@ -169,7 +273,7 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
         displayEventsInCurrBox = [] //resets eventsInCurrBox
         newDatesThatPassSunday = [] //reset the values
     } // Next, the CalendarDateBoxes, each displaying the date from the baseDate and incrementally increasing until all 6 rows are filled, are pushed into the calendarBoxes array.
-
+ */
     return (
         <div className='calendar'>
             {calendarBoxes}
