@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
 
 // Components
-import { SimpleBlock } from '../components/simpleBlock.jsx'
+import { SimpleBlock } from '../components/blocks/SimpleBlock.jsx'
 
 function LoginPage() {
 
@@ -23,86 +23,94 @@ function LoginPage() {
     const handleSubmit = async (submitAction) => {
         submitAction.preventDefault() // Prevents the form from being submitted through GET or POST normally
         // TODO, send data to server, authentication, all that jazz
-        const response = await fetch("http://localhost:8888/login", {
-            method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username,
-                password,
+        if (action === "login") {
+            const response = await fetch("http://localhost:8888/login", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username,
+                    password,
+                })
             })
-        })
 
-        const data = await response.json();
+            const data = await response.json();
 
-        if (data.status===true){
-            sessionStorage.setItem("currentUser", username)
-            console.log(response)
-            sessionStorage.setItem("currentUserAccountId", data.userid)
-            navigate('/home')
-        } else {
-            console.log("Log in failed.")
-            setErrorMessage("Log in failed."); // Displays error message when user fails to log in
+            if (data.status === true) {
+                sessionStorage.setItem("currentUser", username)
+                console.log(response)
+                sessionStorage.setItem("currentUserAccountId", data.userid)
+                navigate('/home')
+            } else {
+                console.log("Log in failed.")
+                setErrorMessage("Log in failed."); // Displays error message when user fails to log in
+            }
         }
     }
 
 
-    return (
-        <div>
-            <h1>
-                Sign in to Unify
-            </h1>
-            <p>
-                <SimpleBlock>
-                    <form onSubmit={handleSubmit}> {/* Assigns the functionality for the submit button*/}
-                        <p style={{ fontSize: '1.1rem'}}>
-                            <label htmlFor='username'>
-                                Username:&nbsp;&nbsp;&nbsp;
-                            </label>
-                            <input type='text' placeholder='Username' id='username'
-                                value={username} // Assigns the username state to the value of the <input>, so that the <input> will update as username is modified
-                                onChange={(change) => setUsername(change.target.value)} // Whenever the value of the <input> is modified, username state is updated accordingly
-                            >
-                            </input>
-                            <br></br>
-                            <label htmlFor='password'>
-                                Password:&nbsp;&nbsp;&nbsp;
-                            </label>
-                            <input type='password' placeholder='Password' id='password'
-                                value={password} // Assigns the password state to the value of the <input>, so that the <input> will update as password is modified
-                                onChange={(change) => setPassword(change.target.value)} // Whenever the value of the <input> is modified, password state is updated accordingly
-                            >
-                            </input>
-                            <br></br>
-                            <br></br>
-                            <button type='login' onClick={() => setAction("login")}
-                                style={{ backgroundColor: ' #A78E72', 
-                                color: 'white', 
-                                width: '90%', 
-                                height: '60px', 
-                                borderRadius:'10px', 
-                                margin: 'auto',
-                                fontSize: '1.1rem'}}
->
-                                Login
-                            </button>
+return (
+    <div>
+        <h1>Sign in to Unify</h1>
+        <SimpleBlock>
+            <br></br>
+            <form onSubmit={handleSubmit}>
+                <div style={{ fontSize: '1.1rem' }}>
+                    <label htmlFor='username'>
+                        Username:&nbsp;&nbsp;&nbsp;
+                    </label>
+                    <input
+                        type='text'
+                        placeholder='Username'
+                        id='username'
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
+                    <br />
 
-                            <p style={{ fontSize: '1.1rem', marginTop: '1rem' }}>
-                            Need an account?{'  '}
-                            <Link to="/register" style={{ color: ' #A78E72' , textDecoration: 'underline'}}>
+                    <label htmlFor='password'>
+                        Password:&nbsp;&nbsp;&nbsp;
+                    </label>
+                    <input
+                        type='password'
+                        placeholder='Password'
+                        id='password'
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <br /><br />
+
+                    <button
+                        type='submit'
+                        onClick={() => setAction("login")}
+                        style={{
+                            backgroundColor: '#A78E72',
+                            color: 'white',
+                            width: '90%',
+                            height: '60px',
+                            borderRadius: '10px',
+                            margin: 'auto',
+                            fontSize: '1.1rem'
+                        }}
+                    >
+                        Login
+                    </button>
+
+                    <p style={{ fontSize: '1.1rem', marginTop: '1rem' }}>
+                        Need an account?{' '}
+                        <Link to="/register" style={{ color: '#A78E72', textDecoration: 'underline' }}>
                             Register
-                            </Link>
-                            </p>
+                        </Link>
+                    </p>
+                </div>
+            </form>
 
-
-                        </p>
-                    </form>
-                    <h5 style={{ color: 'tomato' }}>{errorMessage}</h5> {/*Displays errorMessage*/}
-                    <h5 style={{ color: 'green' }}>{message}</h5>
-                </SimpleBlock>
-            </p>
-        </div>
-    )
+            {/* Displays error and success messages */}
+            <h5 style={{ color: 'tomato' }}>{errorMessage}</h5>
+            <h5 style={{ color: 'green' }}>{message}</h5>
+        </SimpleBlock>
+    </div>
+    );
 }
 export default LoginPage // Means that login.jsx only exports LoginPage
