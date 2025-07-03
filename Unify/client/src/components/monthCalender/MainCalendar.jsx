@@ -1,6 +1,7 @@
 import { CalendarDateBox } from './CalendarDateBox.jsx'
 import { CalendarDateHeader } from './CalendarDateBox.jsx'
 import { useState, useEffect } from 'react'
+import calenderEventsType from './monthEventsDisplay.jsx'
 import getBaseDate from './getBaseDate.jsx'
 import '../../styles/MainCalendar.css'
 
@@ -52,10 +53,13 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
     // According to AI, the key specified here is to uniquely identify the CalendarDateHeaders, so that they can be updated efficiently. Code **should** still work without defining the keys.
 
     for (let i = 0; i < cellCount; i++){ // eventsInCurrBox; filter events for that day into eventsInCurrBox
-        let date = dateIndex.toLocaleDateString()
+        let date = dateIndex.toLocaleString("en-CA", {
+        timeZone: "Asia/Singapore",}).substring(5,10)
+
         let eventsInCurrBox = monthEvents.filter((event)=>{
-            const eventDate = new Date(event.startdt).toLocaleDateString();
-            return eventDate === date;
+        const eventDate = new Date(event.startdt).toISOString().slice(0, 10).substring(5,10);
+
+        return eventDate === date;
         })
 
         // adds empty space from previous multiple-days events
@@ -81,14 +85,8 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
             end.setHours(0, 0, 0, 0);
             
             const duration = (end - start) / (1000 * 60 * 60 * 24); // duration in days
-            console.log("event name: ", event.eventname)
-            console.log("end: ", end)
-            console.log("start: ", start)
-            console.log(duration >= 1)
             return duration >= 1;
         }).length;
-
-        console.log("multiple days: ", countMutiDayEvents)
 
         // sorts the events in the box
         const sortedEventsInCurrBox = [...eventsInCurrBox].sort((a, b) => {
@@ -126,6 +124,20 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
             // Returns respective divs if the event is 1 day, or more than 1 day
             if (currSundayPassed & event.enddt > currSundayPassed){
                 newDatesThatPassSunday.push(event);
+                return <div style={{ // Case 3: Event is Multi Day and starts on a Sat
+                    fontSize: '0.9rem',
+                    color: 'blue', 
+                    backgroundColor: 'pink', 
+                    borderColor: 'black',
+                    borderStyle: 'solid',
+                    borderWidth: '1px',
+                    marginRight: `-10px`,
+                    zIndex: '2',
+                    textAlign: 'left',
+                    paddingLeft: '25px',
+                }}
+                key={checkIfEventPassWeekEdge}>{event.eventname}</div>
+            } else if (currSundayPassed) { 
                 return <div style={{
                     fontSize: '0.9rem',
                     color: 'blue', 
@@ -139,46 +151,10 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
                     paddingLeft: '25px',
                 }}
                 key={checkIfEventPassWeekEdge}>{event.eventname}</div>
-            } else if (currSundayPassed) {
-                return <div style={{
-                    fontSize: '0.9rem',
-                    color: 'blue', 
-                    backgroundColor: 'pink', 
-                    borderColor: 'black',
-                    borderStyle: 'solid',
-                    borderWidth: '1px',
-                    marginRight: `-10px`,
-                    zIndex: '2',
-                    textAlign: 'left',
-                    paddingLeft: '25px',
-                }}
-                key={checkIfEventPassWeekEdge}>{event.eventname}</div>
-            } else if (moreThanOneDay) {
-                let eventOverflowCount = new Date(event.enddt).getDate() - new Date(event.startdt).getDate();
-                let eventOffset = eventOverflowCount * 143;
-                return <div style={{
-                    fontSize: '0.9rem',
-                    color: 'blue', 
-                    backgroundColor: 'pink', 
-                    borderColor: 'black',
-                    borderStyle: 'solid',
-                    borderWidth: '1px',
-                    marginRight: `-${eventOffset}px`,
-                    zIndex: '2',
-                    textAlign: 'left',
-                    paddingLeft: '25px',
-                }} 
-                key={event.eventid}>{event.eventname}</div>
-            } else {
-                return <div style={{
-                    fontSize: '0.9rem',
-                    color: 'blue', 
-                    backgroundColor: 'pink', 
-                    borderColor: 'black',
-                    borderStyle: 'solid',
-                    borderWidth: '1px',
-                }} 
-                key={event.eventid}>{event.eventname}</div>
+            } else if (moreThanOneDay) { // Case 2: Single Day event & Muti Day event
+                return calenderEventsType.case2Event(event)
+            } else { // Case 1: No events
+                return calenderEventsType.case1Event(event)
             }
         }))
 
@@ -191,7 +167,7 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
                 borderColor: 'black',
                 borderStyle: 'solid',
                 borderWidth: '1px',
-            }}>Empty</div>);
+            }}></div>);
             emptyEventSpaceCount = emptyEventSpaceCount + 1;
         }
 
@@ -204,6 +180,8 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
             setChosenDate={setChosenDate} 
             refreshEvents = {refreshEvents} 
             setrefreshEvents = {setrefreshEvents}
+            refreshMonthEvents = {refreshMonthEvents}
+            setRefreshMonthEvents = {setRefreshMonthEvents}
             moveableEvent = {moveableEvent}
             setmoveableEvent = {setmoveableEvent}>
             <div style={{

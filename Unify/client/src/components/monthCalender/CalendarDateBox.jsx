@@ -1,6 +1,8 @@
 
+import eventService from '../../services/eventService.jsx';
+
 // CalendarDateBox is a component used by MainCalendar to create the boxes in the Calendar.
-export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, setChosenDate, refreshEvents, setrefreshEvents, moveableEvent, setmoveableEvent }) => {
+export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, setChosenDate, refreshEvents, setrefreshEvents, moveableEvent, setmoveableEvent, refreshMonthEvents, setRefreshMonthEvents }) => {
   // onClick: A function that runs when the DateBox is clicked.
   // children: Any additional labels to be stored on each DateBox.
   // baseMonth: The current month being displayed - to determine the font color
@@ -43,21 +45,48 @@ const dragOver = (e) => {
   e.preventDefault(); // allow drop
 };
 
-const drop = (e) => {
+const drop = (e, displayDate) => {
   e.preventDefault();
   const data = e.dataTransfer.getData('text/plain');
-  if (data === 'dragged-event') {
-    console.log("Matches!")
-    setmoveableEvent(displayDate); // update the event's date to the dropped calendar box
+  const event = JSON.parse(data);
+
+  const eventid = event.eventid;
+  let diffInDays = new Date(event.enddt).getDate() - new Date(event.startdt).getDate();
+
+  const newStartDt = 
+  event.startdt.substring(0, 5) + String(displayDate.getMonth() + 1).padStart(2, '0') +    
+  event.startdt.substring(7, 8) + String(displayDate.getDate()).padStart(2, '0') +   
+  event.startdt.substring(10);
+
+  const newEndDt = 
+  event.enddt.substring(0, 5) + String(displayDate.getMonth() + 1).padStart(2, '0') +    
+  event.enddt.substring(7, 8) + String(displayDate.getDate() + diffInDays).padStart(2, '0') +   
+  event.enddt.substring(10);
+
+  setRefreshMonthEvents(refreshMonthEvents+1)
+
+  try {
+    const result = eventService.updateEvent({
+      eventId : eventid,
+      newStartDt : newStartDt,
+      newEndDt : newEndDt
+    })
+    if (result){
+      console.log("Dragged Event updated!")
+    } else {
+      console.log("Dragged Event fail to update")
+    }
+  } catch (err) {
+    console.log("Error Updating dragged event: ", err)
   }
-};
+}
 
   return (
   <button 
     id={displayDate}
     style={calendarStyle}       
     onDragOver={(e)=>dragOver(e)}
-    onDrop={(e) => drop(e, date)}
+    onDrop={(e) => drop(e, displayDate)}
     onClick={() => {
       onClick();
     }}
