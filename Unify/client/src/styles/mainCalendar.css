@@ -1,12 +1,13 @@
 .calendar {
   width: 1000px;
-  margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   grid-template-rows: min-content;
   gap: 2px;
   padding: 0px;
 
+  /* nic */
   transform: scale(0.8);
   transform-origin: center;
+ 
 }
