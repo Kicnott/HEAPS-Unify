@@ -1,0 +1,22 @@
+.event-block {
+    background-color: lightblue;
+    border-radius: 4px;
+    margin: 1px;
+    padding: 2px 8px;
+    z-index: 2;
+    font-size: 0.8rem;
+    overflow: hidden;
+    width: 80px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #b0d4f1; 
+    transition: border-color 0.2s, box-shadow 0.2s;
+    cursor: pointer; 
+}
+
+.event-block:hover {
+    border-color: #2196f3; 
+    box-shadow: 0 0 8px #90caf9; 
+}

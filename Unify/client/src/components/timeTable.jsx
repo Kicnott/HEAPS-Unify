@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { DateTime } from 'luxon';
 import eventService from '../services/eventService.jsx';
+import '../styles/timetable.css';
 
-export const TimeTable = ({ children, chosenDate, refreshTrigger }) => {
+export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector, setEventDetailsOpen }) => {
     const [eventsForDay, setEventsForDay] = useState([]);
     const [maxLanes, setMaxLanes] = useState(1);
 
@@ -157,14 +158,21 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger }) => {
 
                 {eventsWithLanes.map((e, eIdx) => (
                     <div key={`event-${eIdx}`}
+                        className='event-block'
                         style={{
-                            ...eventBlockStyle,
                             gridRow: `${e.startIdx + 1} / ${e.endIdx + 1}`,
                             gridColumn: e.lane + 2
-                        }}>
+                        }}
+                        onClick={() => {
+                            eventselector(e);
+                            setEventDetailsOpen(true);
+                        }}
+                        >
                         {e.eventname}
                     </div>
                 ))}
+
+
             </div>
         </div>
     );
@@ -191,20 +199,6 @@ const intervalStyle = {
     boxSizing: 'border-box'
 };
 
-const eventBlockStyle = {
-    backgroundColor: 'lightblue',
-    borderRadius: '4px',
-    margin: '1px',      
-    padding: '2px 8px',
-    zIndex: 2,
-    fontSize: '0.8rem',
-    overflow: 'hidden',
-    width: '80px',          // fixed width
-    boxSizing: 'border-box',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-};
 
 const gridContainerStyle = {
     display: 'grid',

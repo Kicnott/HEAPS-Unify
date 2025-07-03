@@ -16,6 +16,8 @@ import { RightDrawerCloseBackground } from '../functions/rightDrawerCloseBackgro
 import { EditAccountForm } from '../components/EditAccounts.jsx'
 import { EditCalendarsForm } from '../components/EditCalendars.jsx'
 import { OverlayBackground } from '../components/OverlayBackground.jsx'
+import { EventDisplay } from '../components/EventDisplay.jsx'
+
 
 function HomePage() {
 
@@ -55,6 +57,8 @@ function HomePage() {
     const [calendarDisplay, changeCalendarDisplay] = useState(new uCalendarDisplay(new Date(), C1, A1))
     const [chosenDate, setChosenDate] = useState(new Date())
     const [eventRefreshTrigger, seteventRefreshTrigger] = useState(0)
+    const [isEventDetailsOpen, setEventDetailsOpen] = useState(false)
+    const [selectedEvent, setSelectedEvent] = useState(null)
     const isOverlayBackgroundHidden = isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen
 
     const hideOverlayBackground = () => {
@@ -63,6 +67,7 @@ function HomePage() {
         setEventFormOpen(false)
         setEditAccountsFormOpen(false)
         setEditCalendarsFormOpen(false)
+        setEventDetailsOpen(false)
     }
 
     // Defining the uCalendarDisplay object that the page will use to update the Main Calendar.
@@ -203,8 +208,7 @@ function HomePage() {
                 isHidden={isEventHidden} // Assigns isEventHidden function
                 onClose={() => toggleEventHidden(!isEventHidden)} // Assigns toggleEventHidden function
             >
-
-                < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger}>
+                < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setSelectedEvent} setEventDetailsOpen={setEventDetailsOpen}>
                 </TimeTable>
                 <button onClick={() => {
                     console.log("Button clicked!")
@@ -212,6 +216,12 @@ function HomePage() {
                 }}>+ Add Event</button>
 
             </OverlayBlock>
+
+            {isEventDetailsOpen && selectedEvent && (
+                <OverlayBlock onClose={() => setEventDetailsOpen(false)}>
+                    <EventDisplay displayedEvent = {selectedEvent}/>
+                </OverlayBlock>
+            )}
 
             {/* ADD event overlay block */}
             {isEventFormOpen && (
