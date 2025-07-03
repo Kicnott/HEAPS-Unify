@@ -1,16 +1,13 @@
-import { useState, useEffect } from 'react'
+
+import eventService from '../../services/eventService.jsx';
 
 // CalendarDateBox is a component used by MainCalendar to create the boxes in the Calendar.
-export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, setChosenDate, refreshEvents, setrefreshEvents, moveableEvent, setmoveableEvent }) => {
+export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, setChosenDate, refreshEvents, setrefreshEvents, moveableEvent, setmoveableEvent, refreshMonthEvents, setRefreshMonthEvents }) => {
   // onClick: A function that runs when the DateBox is clicked.
   // children: Any additional labels to be stored on each DateBox.
   // baseMonth: The current month being displayed - to determine the font color
   // displayDate: The date to be displayed in the DateBox.
   let date = displayDate.getDate() // Converts the displayDate to the day number
-
-  const eventDateUnused = () => {
-    setChosenDate(displayDate);
-  }
 
 
   let isBaseMonth // Stores true or false on whether the current date displayed in part of the base month.
@@ -26,17 +23,18 @@ export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, set
     color: isBaseMonth ? '#5E503F' : '#A78E72', // If the date is part of the base month, the font color is black; otherwise, it is grey.
     height: '8rem', 
     width: '100%',
+    margin: '0px',
+    padding: '20px 10px 0px 10px',
     position: 'relative'
   }
 
   let eventStyle = {
-    fontSize: '0.75rem', 
+    fontSize: '0.8rem', 
     backgroundColor: 'pink',
     color: 'red',
     borderRadius: '1rem', //idk how to curve the eventbox on calendarbox slightly
     cursor: 'grab',
     opacity: 1
-    
   }
 
 const dragStart = (e) => {
@@ -47,21 +45,48 @@ const dragOver = (e) => {
   e.preventDefault(); // allow drop
 };
 
-const drop = (e) => {
+const drop = (e, displayDate) => {
   e.preventDefault();
   const data = e.dataTransfer.getData('text/plain');
-  if (data === 'dragged-event') {
-    console.log("Matches!")
-    setmoveableEvent(displayDate); // update the event's date to the dropped calendar box
+  const event = JSON.parse(data);
+
+  const eventid = event.eventid;
+  let diffInDays = new Date(event.enddt).getDate() - new Date(event.startdt).getDate();
+
+  const newStartDt = 
+  event.startdt.substring(0, 5) + String(displayDate.getMonth() + 1).padStart(2, '0') +    
+  event.startdt.substring(7, 8) + String(displayDate.getDate()).padStart(2, '0') +   
+  event.startdt.substring(10);
+
+  const newEndDt = 
+  event.enddt.substring(0, 5) + String(displayDate.getMonth() + 1).padStart(2, '0') +    
+  event.enddt.substring(7, 8) + String(displayDate.getDate() + diffInDays).padStart(2, '0') +   
+  event.enddt.substring(10);
+
+  setRefreshMonthEvents(refreshMonthEvents+1)
+
+  try {
+    const result = eventService.updateEvent({
+      eventId : eventid,
+      newStartDt : newStartDt,
+      newEndDt : newEndDt
+    })
+    if (result){
+      console.log("Dragged Event updated!")
+    } else {
+      console.log("Dragged Event fail to update")
+    }
+  } catch (err) {
+    console.log("Error Updating dragged event: ", err)
   }
-};
+}
 
   return (
   <button 
     id={displayDate}
     style={calendarStyle}       
     onDragOver={(e)=>dragOver(e)}
-    onDrop={(e) => drop(e, date)}
+    onDrop={(e) => drop(e, displayDate)}
     onClick={() => {
       onClick && onClick(displayDate);
     }}

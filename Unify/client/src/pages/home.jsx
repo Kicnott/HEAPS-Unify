@@ -24,6 +24,7 @@ import { getMyCalendars, getMyEvents, getAllAccounts, getFollowedCalendars } fro
 import { ShowCalendar } from '../components/LeftPanel/ShowCalendar.jsx'
 import { ShowAccount } from '../components/LeftPanel/ShowAccount.jsx'
 import { ShowEvent } from '../components/LeftPanel/ShowEvent.jsx'
+import monthEventsService from '../services/monthEventsService.jsx'
 
 function HomePage() {
 
@@ -52,7 +53,8 @@ function HomePage() {
     const [isShowEventOpen, setShowEventOpen] = useState(false)
     const [showEventID, setShowEventID] = useState('')
 
-    const isOverlayBackgroundHidden = isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen && !isShowCalendarOpen && !isShowAccountsOpen && !isShowEventOpen;
+    const [isOverlayBackgroundHidden, setOverlayBackgroundHidden] = useState(true);
+    // const isOverlayBackgroundHidden = isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen && !isShowCalendarOpen && !isShowAccountsOpen && !isShowEventOpen;
 
     const [myCalendars, setMyCalendars] = useState([]);
 
@@ -78,6 +80,13 @@ function HomePage() {
         }
     }, [currentUserAccountId]);
 
+    useEffect(() => {
+        setOverlayBackgroundHidden(() => {
+            return isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen && !isShowCalendarOpen && !isShowAccountsOpen && !isShowEventOpen;
+        });
+
+    }, [isEventHidden, isRightDrawerOpen, isEventFormOpen, isEditCalendarsFormOpen, isEditAccountsFormOpen, isShowCalendarOpen, isShowAccountsOpen, isShowEventOpen]);
+
     // console.log("Followed Calendars: ", followedCalendars);
     // console.log("My Events: ", myEvents);
     // console.log("My Calendars: ", myCalendars);
@@ -85,6 +94,21 @@ function HomePage() {
 
 
     // console.log("Chosen Date: ", chosenDate);
+    const [refreshMonthEvents, setRefreshMonthEvents] = useState(0)
+    const [monthEvents, setMonthEvents] = useState([])
+
+    useEffect(() => { //refreshes month events; display updated events on month calender
+        const fetchMonthEvents = async () => {
+            try {
+                const currMonth = calendarDisplay.getMonth()
+                const monthEvents = await monthEventsService.getMonthEvents({ currMonth: currMonth });
+                setMonthEvents(monthEvents.data);
+            } catch (err) {
+                console.error("Error fetching month events: ", err);
+            }
+        }
+        fetchMonthEvents();
+    }, [refreshMonthEvents])
 
     const hideOverlayBackground = () => {
         toggleEventHidden(true)
@@ -128,11 +152,11 @@ function HomePage() {
 
 
 
-            <RightDrawerCloseBackground isRightDrawerOpen={isRightDrawerOpen} toggleRightDrawer={toggleRightDrawer}></RightDrawerCloseBackground>
+            {/* <RightDrawerCloseBackground isRightDrawerOpen={isRightDrawerOpen} toggleRightDrawer={toggleRightDrawer}></RightDrawerCloseBackground> */}
 
             <RightDrawer
                 rightDrawerOpen={isRightDrawerOpen} // assigns isRightDrawer state
-                onClose={() => toggleRightDrawer(!isRightDrawerOpen)} // assigns toggleRightDrawer function
+                onClose={() => hideOverlayBackground()} // assigns toggleRightDrawer function
             >
                 <div style={drawerStyle}>
                     <div style={rightDrawerButtonTop}>
@@ -206,7 +230,6 @@ function HomePage() {
                                     buttonData={allAccounts.map((account) => ({
                                         label: account.accountusername,
                                         onClick: () => {
-
                                             setShowAccountID(account.accountid)
                                             setTimeout(() => {
                                                 setShowAccountsOpen(true)
@@ -229,7 +252,6 @@ function HomePage() {
                                             buttonData={myEvents[calendar.calendarid]?.map((event) => ({
                                                 label: event.eventname,
                                                 onClick: () => {
-
                                                     setShowEventID(event.eventid)
                                                     setTimeout(() => {
                                                         setShowEventOpen(true)
@@ -260,8 +282,10 @@ function HomePage() {
                                             calendarDisplay.getFullYear(),
                                             Number(event.target.value),
                                             calendarDisplay.getDate()
-                                        )
-                                    ) // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
+                                    
+                                    )) // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
+                                    setRefreshMonthEvents(refreshMonthEvents + 1);
+                                    console.log("Events Refreshed!");
                                 }}
                             />
                             <DropdownList
@@ -273,8 +297,10 @@ function HomePage() {
                                             Number(event.target.value),
                                             calendarDisplay.getMonth(),
                                             calendarDisplay.getDate()
-                                        )
-                                    ) // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
+                                
+                                    )); // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
+                                    setRefreshMonthEvents(refreshMonthEvents + 1);
+                                    console.log("Events Refreshed!");
                                 }}
                             />
 
@@ -288,6 +314,10 @@ function HomePage() {
                                 }
                                 } // Gives the dateboxes some functionality to open an Overlay block
                                 setChosenDate={setChosenDate}
+                                refreshMonthEvents={refreshMonthEvents}
+                                setRefreshMonthEvents={setRefreshMonthEvents}
+                                monthEvents={monthEvents}
+                                setMonthEvents={setMonthEvents}
                             />
                         </div>
                     </div>
@@ -298,7 +328,7 @@ function HomePage() {
 
             <OverlayBlock
                 isHidden={!isShowEventOpen}
-                onClose={() => setShowEventOpen(false)}>
+                onClose={() => hideOverlayBackground()}>
                 <ShowEvent
                     eventid={showEventID}>
                 </ShowEvent>
@@ -306,7 +336,7 @@ function HomePage() {
 
             <OverlayBlock
                 isHidden={!isShowCalendarOpen}
-                onClose={() => setShowCalendarOpen(false)}>
+                onClose={() => hideOverlayBackground()}>
                 <ShowCalendar
                     calendarid={showCalendarID}
                     accountid={currentUserAccountId}
@@ -323,7 +353,7 @@ function HomePage() {
 
             <OverlayBlock
                 isHidden={!isShowAccountsOpen}
-                onClose={() => setShowAccountsOpen(false)}>
+                onClose={() => hideOverlayBackground()}>
                 <ShowAccount
                     accountid={showAccountID}
                     setShowCalendarID={setShowCalendarID}
@@ -338,7 +368,7 @@ function HomePage() {
 
             <OverlayBlock
                 isHidden={isEventHidden} // Assigns isEventHidden function
-                onClose={() => toggleEventHidden(!isEventHidden)} // Assigns toggleEventHidden function
+                onClose={() => hideOverlayBackground()} // Assigns toggleEventHidden function
             >
 
                 < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger}>
@@ -351,24 +381,26 @@ function HomePage() {
             </OverlayBlock>
 
             {/* ADD event overlay block */}
-            {isEventFormOpen && (
-                <OverlayBlock
-                    isHidden={false}
-                    onClose={() => setEventFormOpen(false)}>
-                    <CreateEvent onClose={() => setEventFormOpen(false)}
-                        onSave={() => {
-                            setEventFormOpen(false);
-                            seteventRefreshTrigger(prev => prev + 1);
-                        }}
-                        chosenDate={chosenDate}
-                        accountid={currentUserAccountId} />
-                </OverlayBlock>
-            )}
+            {
+                isEventFormOpen && (
+                    <OverlayBlock
+                        isHidden={false}
+                        onClose={() => setEventFormOpen(false)}>
+                        <CreateEvent onClose={() => hideOverlayBackground()}
+                            onSave={() => {
+                                setEventFormOpen(false);
+                                seteventRefreshTrigger(prev => prev + 1);
+                            }}
+                            chosenDate={chosenDate}
+                            accountid={currentUserAccountId} />
+                    </OverlayBlock>
+                )
+            }
 
             {/* nic's edit accounts form */}
             <OverlayBlock
                 isHidden={!isEditAccountsFormOpen}>
-                <EditAccountForm onClose={() => setEditAccountsFormOpen(false)} />
+                <EditAccountForm onClose={() => hideOverlayBackground()} />
             </OverlayBlock>
 
             {/* nic's edit accounts form */}
@@ -377,9 +409,9 @@ function HomePage() {
             {/* nic's edit accounts form */}
             <OverlayBlock
                 isHidden={!isEditCalendarsFormOpen}>
-                <EditCalendarsForm onClose={() => setEditCalendarsFormOpen(false)} currentAccountId={currentUserAccountId} />
+                <EditCalendarsForm onClose={() => hideOverlayBackground()} currentAccountId={currentUserAccountId} />
             </OverlayBlock>
-        </div>
+        </div >
     )
 }
 
