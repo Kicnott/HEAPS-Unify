@@ -4,6 +4,7 @@ import '../styles/App.css'
 import '../classes/index.jsx'
 import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
+import '../styles/login.css'
 
 // Components
 import { SimpleBlock } from '../components/blocks/SimpleBlock.jsx'
@@ -52,7 +53,7 @@ function LoginPage() {
 
 return (
     <div>
-        <h1>Sign in to Unify</h1>
+        <h1 className='toptext'>Unify</h1>
         <SimpleBlock>
             <br></br>
             <form onSubmit={handleSubmit}>
