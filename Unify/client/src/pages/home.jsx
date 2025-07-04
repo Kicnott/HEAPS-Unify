@@ -81,7 +81,6 @@ function HomePage() {
             getMyEvents(currentUserAccountId).then(setMyEvents);
 
             getFollowedCalendars(currentUserAccountId).then(setFollowedCalendars);
-
         }
     }, [currentUserAccountId]);
 

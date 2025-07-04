@@ -9,7 +9,7 @@ const case1Event = (event) => {
         fontSize: '0.9rem',
         color: 'black', 
         backgroundColor: '#f6d8ac', 
-        borderColor: 'black',
+        borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
         paddingLeft: '2px',
@@ -35,7 +35,7 @@ const case2Event = (event, diffInDays) => {
         fontSize: '0.9rem',
         color: 'black', 
         backgroundColor: '#f6d8ac', 
-        borderColor: 'black',
+        borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
         marginRight: `-${eventOffset}px`,
@@ -63,7 +63,7 @@ const case3Event = (event, diffInDays) => {
         fontSize: '0.9rem',
         color: 'black', 
         backgroundColor: '#f6d8ac', 
-        borderColor: 'black',
+        borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
         marginRight: `-${eventOffset}px`,
@@ -91,7 +91,7 @@ const case4Event = (event, diffInDays) => {
         fontSize: '0.9rem',
         color: 'black', 
         backgroundColor: '#f6d8ac', 
-        borderColor: 'black',
+        borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
         marginLeft: `-10px`,
@@ -119,7 +119,7 @@ const case5Event = (event) => {
         fontSize: '0.9rem',
         color: 'black', 
         backgroundColor: '#f6d8ac', 
-        borderColor: 'black',
+        borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
         marginLeft: `-10px`,
@@ -140,14 +140,14 @@ const case5Event = (event) => {
     {event.eventname}</div> 
 }
 
-// Case 6: 
+// Case 6: + more button, display excess events
 const case6Event = (event) => { 
     let eventOffset = 6 * 143;
-    return <div style={{
+    return <button style={{
         fontSize: '0.9rem',
         color: 'black', 
         backgroundColor: '#f6d8ac', 
-        borderColor: 'black',
+        borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
         marginLeft: `-10px`,
@@ -159,7 +159,7 @@ const case6Event = (event) => {
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         }} 
-    key={event.eventid}>{event.eventname}</div> 
+    key={event.eventid}>{event.eventname}</button> 
 }
 
 // Case 8: Empty Space

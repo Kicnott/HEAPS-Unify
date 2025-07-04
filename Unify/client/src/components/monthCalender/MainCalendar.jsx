@@ -25,6 +25,7 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
     let emptyEventSpaceCount = 0; // give the keys of empty divs an incremental value
 
     const baseDate = new Date(getBaseDate(displayDate)) // baseDate; needed to determine all sats in the month and currComparedDate ('1st displayed' day of the month)
+    const allEvent = 0
     let currComparedDate = new Date(baseDate) // currComparedDate: copy of baseDate. Serves an index/pointer that goes thru all displayed days in the chosen month. After getBaseDate and new Date(), it becomes a date of the '1st displayed' day of the month. For eg, in july 2025, the value -> Sun Jun 29 2025 00:00:00 GMT+0800 (Singapore Standard Time)
     let sundaysOfTheMonth = []; // sundaysOfTheMonth; used to store all sun (Digit)
     let currSunDate = new Date(baseDate); // currSunDate; copy of baseDate. Used to populate sundaysOfTheMonth
@@ -90,7 +91,7 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
                 return;
             }
 
-            // Checks for an index that contains a null (not modified into an empty div by previous multi day events)
+            // Checks for an index that contains a null (not modified into Case 8 by previous multi day events)
             while (monthEventsArray[dateIndex][innerArrayIndex] !== null){
                 innerArrayIndex += 1;
                 if (innerArrayIndex >= 4){
@@ -155,6 +156,13 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
             }
             innerArrayIndex += 1;
         });
+
+        // if all 4 positions of the currComparedDate in monthEventsArray is non-null, and the fifth element array is not empty (contains the 5th event), we push the fourth event into the fifth element array and replace it with a button that displays (+..) all extra events
+        for (let checkForEvents = 0; checkForEvents < 4; checkForEvents++){
+            if (monthEventsArray[dateIndex][checkForEvents] != null){
+                break;
+            }
+        }
 
         // if there are nulls left after event populating, replace them with empty divs
         for (let checkForNull = 0; checkForNull < 4; checkForNull++){
