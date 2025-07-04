@@ -33,7 +33,7 @@
 
 /* Optional: Style the <option> tags */
 .dropdown-container option {
-  background-color: #ffffff;
+  background-color: #f9f9f9;
   color: #000;
   font-size: 1rem;
 }

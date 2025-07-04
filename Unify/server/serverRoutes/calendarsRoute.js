@@ -1,5 +1,5 @@
 import express from 'express'
-import pool from '../db.js'; 
+import pool from '../db.js';
 const router = express.Router()
 
 //Display Calendars
@@ -8,9 +8,9 @@ router.get('/home/showAllCalendars', async (req, res) => {
     const result = await pool.query( // searches for all calendarstable in the database
       'SELECT * FROM calendarstable'
     );
-    
+
     return res.json(result)
-  } catch (e){
+  } catch (e) {
     console.log("ShowAllAccounts: Server Error")
     console.log(e)
     return res.json(e)
@@ -51,16 +51,16 @@ router.post('/home/createCalendar', async (req, res) => {
 
     console.log(currentAccountId)
 
-    if (calendarName == ''){
-      return res.json({ status : "Input Something!"}) // returns error message if username or password is empty
+    if (calendarName == '') {
+      return res.json({ status: "Input Something!" }) // returns error message if username or password is empty
     }
 
     const checkCalendarInsideDbResult = await pool.query( // Gets the db object of the calendar name if it's already there
       'SELECT calendarstable FROM calendarstable where calendarname = ($1)', [calendarName]
     );
 
-    if (checkCalendarInsideDbResult.rows.length > 0){ // Checks inside the db object if any rows are returned from db
-      return res.json({ status : "Calendar already exists"}) // If rows > 0, the calendar already exists in db 
+    if (checkCalendarInsideDbResult.rows.length > 0) { // Checks inside the db object if any rows are returned from db
+      return res.json({ status: "Calendar already exists" }) // If rows > 0, the calendar already exists in db 
     }
 
     const latestResult = await pool.query( // searches the highest calendar id in the db
@@ -72,9 +72,9 @@ router.post('/home/createCalendar', async (req, res) => {
     const result = await pool.query( // Inserts the oncoming created calendar into db
       'INSERT INTO calendarstable (calendarid,calendarname,calendardescription, accountid) VALUES ($1, $2, $3, $4)', [newCalendarId, calendarName, calendarDescription, currentAccountId]
     );
-    
+
     return res.json({ status: 'Calendar created' })
-  } catch (e){
+  } catch (e) {
     console.log("createAccount: Server Error")
     console.log(e)
     return res.json({ status: 'Failed to create calendar' })
@@ -87,8 +87,8 @@ router.delete('/home/deleteCalendar', async (req, res) => {
 
     const calendarid = req.body.calendarid
 
-    if (calendarid == '' ){ // returns error message if mycalendarid from req is empty
-      return res.json({ status : "calendarid contains nothing!"})
+    if (calendarid == '') { // returns error message if mycalendarid from req is empty
+      return res.json({ status: "calendarid contains nothing!" })
     }
 
     console.log(res)
@@ -97,12 +97,12 @@ router.delete('/home/deleteCalendar', async (req, res) => {
       'DELETE FROM calendarstable WHERE calendarid = ($1)', [calendarid]
     );
 
-    if (result.rowCount === 0){ // if result constant has no rows, it means no rows are deleted
-      return res.json({ status : "No such calendar in Database"})
+    if (result.rowCount === 0) { // if result constant has no rows, it means no rows are deleted
+      return res.json({ status: "No such calendar in Database" })
     } else {
-      return res.json({ status : "Calendar Deleted"})
+      return res.json({ status: "Calendar Deleted" })
     }
-  } catch (e){
+  } catch (e) {
     console.log("deleteCalendar: Server Error")
     console.log(e)
     return res.json(e)
@@ -163,10 +163,11 @@ router.post('/home/followCalendar', async (req, res) => {
     console.log("FollowCalendar: Server Error");
     console.log(e);
     return res.status(500).json({ error: 'Server error' });
-  }})
+  }
+})
 
 router.get('/home/checkFollowedCalendar', async (req, res) => {
-  try{
+  try {
     const calendarid = req.query.calendarid
     const accountid = req.query.accountid
 
@@ -181,15 +182,16 @@ router.get('/home/checkFollowedCalendar', async (req, res) => {
     );
 
     if (result.rows.length > 0) {
-      return res.json({status: true});
+      return res.json({ status: true });
     } else {
-      return res.json({status: false});
+      return res.json({ status: false });
     }
   } catch (e) {
     console.log("CheckFollowedCalendar: Server Error");
     console.log(e);
     return res.status(500).json({ error: 'Server error' });
-  }})
+  }
+})
 
 router.get('/home/getFollowedCalendars', async (req, res) => {
   try {
@@ -237,6 +239,114 @@ router.delete('/home/unfollowCalendar', async (req, res) => {
     console.log("UnfollowCalendar: Server Error");
     console.log(e);
     return res.status(500).json({ error: 'Server error' });
-  }})
+  }
+})
+
+router.get('/home/getMyDisplayedCalendars', async (req, res) => {
+  try {
+    const accountid = req.query.accountid
+
+    if (!accountid) {
+      return res.status(400).json({ error: 'Missing accountid parameter' });
+    }
+
+    console.log("GetMyDisplayedCalendars: Connected!");
+
+    const result = await pool.query(
+      'SELECT * FROM displayedcalendarstable WHERE accountid = $1', [accountid]
+    );
+
+    return res.json({ rows: result.rows });
+  } catch (e) {
+    console.log("GetMyDisplayedCalendars: Server Error");
+    console.log(e);
+    return res.status(500).json({ error: 'Server error' });
+  }
+})
+
+router.get('/home/checkDisplayedCalendar', async (req, res) => {
+  try {
+    const calendarid = req.query.calendarid
+    const accountid = req.query.accountid
+
+    if (!calendarid || !accountid) {
+      return res.status(400).json({ error: 'Missing calendarid or accountid parameter' });
+    }
+
+    console.log("CheckDisplayedCalendar: Connected!");
+
+    const result = await pool.query(
+      'SELECT * FROM displayedcalendarstable WHERE calendarid = $1 AND accountid = $2', [calendarid, accountid]
+    );
+
+    if (result.rows.length > 0) {
+      return res.json({ status: true });
+    } else {
+      return res.json({ status: false });
+    }
+  } catch (e) {
+    console.log("CheckDisplayedCalendar: Server Error");
+    console.log(e);
+    return res.status(500).json({ error: 'Server error' });
+  }
+})
+
+router.post('/home/displayCalendar', async (req, res) => {
+  try {
+    const calendarid = req.body.calendarid
+    const accountid = req.body.accountid
+
+    if (!calendarid || !accountid) {
+      return res.status(400).json({ status: false });
+    }
+
+    console.log("DisplayCalendar: Connected!");
+
+    const checkDisplayed = await pool.query(
+      'SELECT * FROM displayedcalendarstable WHERE calendarid = $1 AND accountid = $2', [calendarid, accountid]
+    );
+
+    if (checkDisplayed.rows.length > 0) {
+      return res.json({ status: false });
+    }
+
+    await pool.query(
+      'INSERT INTO displayedcalendarstable (calendarid, accountid) VALUES ($1, $2)', [calendarid, accountid]
+    );
+
+    return res.json({ status: true });
+  } catch (e) {
+    console.log("DisplayCalendar: Server Error");
+    console.log(e);
+    return res.status(500).json({ status: false });
+  }
+})
+
+router.delete('/home/undisplayCalendar', async (req, res) => {
+  try {
+    const calendarid = req.body.calendarid
+    const accountid = req.body.accountid
+
+    if (!calendarid || !accountid) {
+      return res.status(400).json({ status: false});
+    }
+
+    console.log("UndisplayCalendar: Connected!");
+
+    const result = await pool.query(
+      'DELETE FROM displayedcalendarstable WHERE calendarid = $1 AND accountid = $2', [calendarid, accountid]
+    );
+
+    if (result.rowCount === 0) {
+      return res.json({ status: false });
+    } else {
+      return res.json({ status: true });
+    }
+  } catch (e) {
+    console.log("UndisplayCalendar: Server Error");
+    console.log(e);
+    return res.status(500).json({ status: false });
+  }
+})
 
 export default router

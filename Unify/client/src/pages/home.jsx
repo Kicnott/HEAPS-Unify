@@ -20,11 +20,12 @@ import { OverlayBackground } from '../components/overlay/OverlayBackground.jsx'
 import { LeftTabPanel } from '../components/LeftPanel/LeftTabPanel.jsx'
 import { ScrollBlock } from '../components/blocks/ScrollBlock.jsx'
 import MainLayout from '../components/blocks/MainLayout.jsx'
-import { getMyCalendars, getMyEvents, getAllAccounts, getFollowedCalendars } from '../components/LeftPanel/LeftPanelFunctions.jsx'
+import { getMyCalendars, getMyEvents, getAllAccounts, getFollowedCalendars, getMyDisplayedCalendars } from '../components/LeftPanel/LeftPanelFunctions.jsx'
 import { ShowCalendar } from '../components/LeftPanel/ShowCalendar.jsx'
 import { ShowAccount } from '../components/LeftPanel/ShowAccount.jsx'
 import { ShowEvent } from '../components/LeftPanel/ShowEvent.jsx'
 import monthEventsService from '../services/monthEventsService.jsx'
+import calendarService from '../services/calendarService.jsx'
 import { EventDisplay } from '../components/EventDisplay.jsx'
 
 
@@ -33,7 +34,6 @@ function HomePage() {
     const currentUser = sessionStorage.getItem("currentUser"); //Gets Username in sessionStorage from login
     const currentUserAccountId = sessionStorage.getItem("currentUserAccountId"); //Gets Username in sessionStorage from login
     // console.log("Current User: " + currentUser + " Account ID: " + currentUserAccountId)
-
 
     // useState creates variables that are saved even when the page re-renders
     // [variable, function to change variable] is the format
@@ -57,6 +57,8 @@ function HomePage() {
 
     const [isShowEventOpen, setShowEventOpen] = useState(false)
     const [showEventID, setShowEventID] = useState('')
+
+    const [myDisplayedCalendarIds, setMyDisplayedCalendarIds] = useState([])
 
     const [isOverlayBackgroundHidden, setOverlayBackgroundHidden] = useState(true);
     // const isOverlayBackgroundHidden = isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen && !isShowCalendarOpen && !isShowAccountsOpen && !isShowEventOpen;
@@ -82,6 +84,8 @@ function HomePage() {
 
             getFollowedCalendars(currentUserAccountId).then(setFollowedCalendars);
 
+            getMyDisplayedCalendars(currentUserAccountId).then(setMyDisplayedCalendarIds)
+
         }
     }, [currentUserAccountId]);
 
@@ -92,6 +96,7 @@ function HomePage() {
 
     }, [isEventHidden, isRightDrawerOpen, isEventFormOpen, isEditCalendarsFormOpen, isEditAccountsFormOpen, isShowCalendarOpen, isShowAccountsOpen, isShowEventOpen]);
 
+    console.log("Displayed Calendar IDs: ", myDisplayedCalendarIds)
     // console.log("Followed Calendars: ", followedCalendars);
     // console.log("My Events: ", myEvents);
     // console.log("My Calendars: ", myCalendars);
@@ -126,6 +131,27 @@ function HomePage() {
         setShowEventOpen(false)
         setEventDetailsOpen(false)
 
+    }
+
+    async function onCalendarCheckboxChange(calendarid, accountid) {
+        if (myDisplayedCalendarIds.includes(calendarid)) {
+            const res = await calendarService.undisplayCalendar(calendarid, accountid)
+            if (res.data.status) {
+                getMyDisplayedCalendars(currentUserAccountId).then(setMyDisplayedCalendarIds)
+            }
+            else {
+                console.error("Error undisplaying calendar!")
+            }
+        }
+        else {
+            const res = await calendarService.displayCalendar(calendarid, accountid)
+            if (res.data.status) {
+                getMyDisplayedCalendars(currentUserAccountId).then(setMyDisplayedCalendarIds)
+            }
+            else {
+                console.error("Error displaying calendar!")
+            }
+        }
     }
 
     // Defining the uCalendarDisplay object that the page will use to update the Main Calendar.
@@ -209,31 +235,42 @@ function HomePage() {
                         {
                             1:
                                 <>
-                                    <ScrollBlock height='48%'
+                                    <ScrollBlock
+                                        height='48%'
                                         buttonData={myCalendars.map((calendar) => ({
                                             label: calendar.calendarname,
+                                            id: calendar.calendarid,
                                             onClick: () => {
-
                                                 setShowCalendarID(calendar.calendarid)
                                                 setTimeout(() => {
                                                     setShowCalendarOpen(true)
                                                 }, 100)
                                             }
                                         }))}
-                                    >
+                                        checkboxButton={true}
+                                        checkboxName='myCalendars'
+                                        accountid={currentUserAccountId}
+                                        onCheckboxChange={onCalendarCheckboxChange}
+                                        myDisplayedCalendarIds={myDisplayedCalendarIds} >
                                         <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>My Calendars</h2>
                                     </ScrollBlock>
                                     <br></br>
                                     <ScrollBlock height='48%'
                                         buttonData={followedCalendars.map((calendar) => ({
                                             label: calendar.calendarname,
+                                            id: calendar.calendarid,
                                             onClick: () => {
                                                 setShowCalendarID(calendar.calendarid)
                                                 setTimeout(() => {
                                                     setShowCalendarOpen(true)
                                                 }, 100)
                                             }
-                                        }))}>
+                                        }))}
+                                        checkboxButton={true}
+                                        checkboxName='myCalendars'
+                                        accountid={currentUserAccountId}
+                                        onCheckboxChange={onCalendarCheckboxChange}
+                                        myDisplayedCalendarIds={myDisplayedCalendarIds}>
                                         <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>Followed Calendars</h2>
                                     </ScrollBlock>
                                 </>
@@ -256,14 +293,16 @@ function HomePage() {
                                 </ScrollBlock>
                             ,
                             3:
-                                <ScrollBlock>
+                                <ScrollBlock
+                                    height='100%'>
                                     <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>My Events</h2>
                                     {myCalendars.map((calendar) => (
                                         <ScrollBlock
+                                            maxHeight='30%'
+                                            height = 'auto'
                                             key={calendar.calendarid}
-                                            height='40%'
                                             buttonData={myEvents[calendar.calendarid]?.map((event) => ({
-                                                label: event.eventname,
+                                                label: event.eventname + " - " + (new Date(event.startdt).toLocaleString()),
                                                 onClick: () => {
                                                     setShowEventID(event.eventid)
                                                     setTimeout(() => {
@@ -294,8 +333,8 @@ function HomePage() {
                                             calendarDisplay.getFullYear(),
                                             Number(event.target.value),
                                             calendarDisplay.getDate()
-                                    
-                                    )) // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
+
+                                        )) // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
                                     setRefreshMonthEvents(refreshMonthEvents + 1);
                                     console.log("Events Refreshed!");
                                 }}
@@ -309,8 +348,8 @@ function HomePage() {
                                             Number(event.target.value),
                                             calendarDisplay.getMonth(),
                                             calendarDisplay.getDate()
-                                
-                                    )); // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
+
+                                        )); // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
                                     setRefreshMonthEvents(refreshMonthEvents + 1);
                                     console.log("Events Refreshed!");
                                 }}
@@ -385,7 +424,6 @@ function HomePage() {
                 < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setSelectedEvent} setEventDetailsOpen={setEventDetailsOpen}>
                 </TimeTable>
                 <button onClick={() => {
-                    // console.log("Button clicked!")
                     setEventFormOpen(true)
                 }}>+ Add Event</button>
 

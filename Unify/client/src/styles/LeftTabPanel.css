@@ -1,6 +1,6 @@
 .left-tab-panel {
   box-sizing: border-box;
-  height: 100vh;
+  /* height: 100vh; */
   width: 30vh;
   min-width: 10rem;
   max-width: 15rem;
@@ -13,6 +13,8 @@
   left: 0.5%;
   padding-top: 2px;
   padding-bottom:7%;
+  height: 100%;
+
 }
 
 .tabs {
@@ -22,10 +24,13 @@
   padding: 0; 
   width: 98%;
 }
+
 .panel-content {
   padding: 15px;
   flex-grow: 1;
+  overflow-y: auto;
 }
+
 .tab-button {
   flex-grow: 1;
   min-width: 0; 
@@ -35,6 +40,7 @@
   cursor: pointer;
   text-align: center;
 }
+
 .tab-button.active {
   background: #5E503F;
   color: white;

@@ -12,6 +12,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -36,11 +37,13 @@ body {
   background-repeat: no-repeat;   /* Prevents tiling */
   background-attachment: fixed;   /* Optional: parallax-style background */
   background-color: light-dark(#EBE6D6, #3c3c3c); /* Fallback color */
+
 }
 
 h1 {
   font-size: 3em;
   line-height: 1.1;
+  
   
 }
 
@@ -69,7 +72,7 @@ button:focus-visible {
     background-color: #ffffff;
   }
   a:hover {
-    color: #A78E72;
+    color: 
   }
   button {
     background-color: #f9f9f9;

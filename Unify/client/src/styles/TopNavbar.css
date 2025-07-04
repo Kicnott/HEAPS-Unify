@@ -14,6 +14,11 @@
 }
 
 
+@font-face {
+  font-family: 'ShootingStar';
+  src: url('../assets/ShootingStar.ttf') format('truetype');
+}
+
 .topnavbar h1 {
     margin: 0;
     padding-left: 8px;
@@ -21,6 +26,11 @@
     font-size: 2rem;
     color: white;
     
+    margin-top: -8px;
+    font-size: 2.8rem;
+    flex-shrink: 5;
+    color: white;
+    font-family:'ShootingStar';
 }
 
 
