@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react'
 import eventService from '../../services/eventService.jsx'
 import {getMyCalendars} from '../LeftPanel/LeftPanelFunctions.jsx'
 
+//make events be able to end at 12:00am
+
+
 export const CreateEvent = ({ onClose, chosenDate, onSave, accountid }) => {
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")

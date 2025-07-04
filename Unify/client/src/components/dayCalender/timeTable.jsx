@@ -3,6 +3,10 @@ import { DateTime } from 'luxon';
 import eventService from '../../services/eventService.jsx';
 import '../../styles/timetable.css';
 
+//add drag and drop & event extension
+//allow div to be created at last block 11pm-12am
+//make all day event block? or highlight all day
+
 export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector, setEventDetailsOpen }) => {
     const [eventsForDay, setEventsForDay] = useState([]);
     const [maxLanes, setMaxLanes] = useState(1);

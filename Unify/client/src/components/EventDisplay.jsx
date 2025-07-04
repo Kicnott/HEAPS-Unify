@@ -1,11 +1,25 @@
 import { DateTime } from 'luxon';
+import eventService from '../services/eventService';
 
-export const EventDisplay = ({displayedEvent}) => {
+export const EventDisplay = ({displayedEvent, onClose, onDelete}) => {
     const start = DateTime.fromISO(displayedEvent.startdt);
     const end = DateTime.fromISO(displayedEvent.enddt);
 
     const startStr = start.toFormat('hh:mm a');
     const endStr = end.toFormat('hh:mm a');    
+
+    const deleteTs = async () => {
+        try {
+            const res = await eventService.deleteEvent(displayedEvent.eventid);
+            console.log("Event status:", res.data.status);
+            onClose();
+            onDelete();
+        } catch (e) {
+            console.error("Error deleting events", e);
+        }
+    }
+
+//add modify function 
     
     return (
         <div style={containerStyle}>
@@ -22,7 +36,8 @@ export const EventDisplay = ({displayedEvent}) => {
             <span style={labelStyle}>Duration:</span> {startStr} - {endStr}
         </div>
         <div style={rowStyle}>
-            <button>Delete</button>
+            <button onClick={deleteTs}>Delete</button>
+            <button>Modify</button>
         </div>
         </div>
     )
@@ -52,5 +67,4 @@ const rowStyle = {
     marginBottom: '0.7em',
     textAlign: 'left',
     wordBreak: 'break-word'
-
 };
