@@ -66,26 +66,9 @@ const case3Event = (event, diffInDays) => {
     {event.eventname}</div>
 }
 
-// Case 4: part of an event that crossed week edge, ends on Sun
-const case4Event = (event) => {
-    return <div style={{
-        fontSize: '0.9rem',
-        color: 'blue', 
-        backgroundColor: 'pink', 
-        borderColor: 'black',
-        borderStyle: 'solid',
-        borderWidth: '1px',
-        marginLeft: `-10px`,
-        zIndex: '2',
-        textAlign: 'left',
-        paddingLeft: '25px',
-        }} 
-    key={event.eventid} id={event.eventid}>{event.eventname}</div>
-}
-
-// Case 5: part of an event that crossed week edge, ends on a Non-Sun
-const case5Event = (event, endDate) => { 
-    let eventOverflowCount = new Date(endDate).getDate() - new Date(event.startdt).getDate();
+// Case 4: part of an event that crossed week edge, final week
+const case4Event = (event, diffInDays) => {
+    let eventOverflowCount = diffInDays;
     let eventOffset = eventOverflowCount * 143;
     return <div style={{
         fontSize: '0.9rem',
@@ -96,6 +79,25 @@ const case5Event = (event, endDate) => {
         borderWidth: '1px',
         marginLeft: `-10px`,
         marginRight: `-${eventOffset}px`,
+        zIndex: '2',
+        textAlign: 'left',
+        paddingLeft: '25px',
+        }} 
+    key={event.eventid}>{event.eventname}</div> 
+}
+
+// Case 5: part of an event that crossed week edge, full week
+const case5Event = (event) => { 
+
+    return <div style={{
+        fontSize: '0.9rem',
+        color: 'blue', 
+        backgroundColor: 'pink', 
+        borderColor: 'black',
+        borderStyle: 'solid',
+        borderWidth: '1px',
+        marginLeft: `-10px`,
+        marginRight: `-400px`,
         zIndex: '2',
         textAlign: 'left',
         paddingLeft: '25px',
