@@ -2,7 +2,7 @@
 import eventService from '../../services/eventService.jsx';
 
 // CalendarDateBox is a component used by MainCalendar to create the boxes in the Calendar.
-export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, refreshEvents, setrefreshEvents, moveableEvent, setmoveableEvent, refreshMonthEvents, setRefreshMonthEvents }) => {
+export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, setChosenDate, refreshEvents, setrefreshEvents, refreshMonthEvents, setRefreshMonthEvents }) => {
   // onClick: A function that runs when the DateBox is clicked.
   // children: Any additional labels to be stored on each DateBox.
   // baseMonth: The current month being displayed - to determine the font color
@@ -37,10 +37,6 @@ export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, ref
     opacity: 1
   }
 
-const dragStart = (e) => {
-  e.dataTransfer.setData('text/plain', 'dragged-event'); // can be any string since only one event
-};
-
 const dragOver = (e) => {
   e.preventDefault(); // allow drop
 };
@@ -58,19 +54,33 @@ const drop = (e, displayDate) => {
   event.startdt.substring(7, 8) + String(displayDate.getDate()).padStart(2, '0') +   
   event.startdt.substring(10);
 
+  // Following code allows event to be dragged to previous months
+  const yearCheck = new Date(event.enddt).getYear()
+  const monthCheck = displayDate.getMonth() + 1;
+  let newEndDtValue = displayDate.getDate() + diffInDays;
+
+  if ([2].includes(monthCheck) && !isLeapYear(yearCheck) && newEndDtValue > 28){ // 28 days, Feb
+    newEndDtValue = newEndDtValue - 28;
+  } else if ([2].includes(monthCheck) && isLeapYear(yearCheck) && newEndDtValue > 28){ // 29 days, Feb, Leap Year
+    newEndDtValue = newEndDtValue - 29;
+  } else if ([4, 6, 9, 11].includes(monthCheck) && newEndDtValue > 30){ // 30 days, Apr Jun Sep Nov
+    newEndDtValue = newEndDtValue - 30;
+  } else if ([1, 3, 5, 7, 8, 10, 12].includes(monthCheck) && newEndDtValue > 31){ // 31 days, Jan Mar May Jul Aug Oct Dec
+    newEndDtValue = newEndDtValue - 31;
+  }
+
   const newEndDt = 
   event.enddt.substring(0, 5) + String(displayDate.getMonth() + 1).padStart(2, '0') +    
-  event.enddt.substring(7, 8) + String(displayDate.getDate() + diffInDays).padStart(2, '0') +   
+  event.enddt.substring(7, 8) + String(newEndDtValue).padStart(2, '0') +   
   event.enddt.substring(10);
-
-  setRefreshMonthEvents(refreshMonthEvents+1)
 
   try {
     const result = eventService.updateEvent({
       eventId : eventid,
       newStartDt : newStartDt,
       newEndDt : newEndDt
-    })
+    });
+    setRefreshMonthEvents(refreshMonthEvents+1);
     if (result){
       console.log("Dragged Event updated!")
     } else {
@@ -80,7 +90,7 @@ const drop = (e, displayDate) => {
     console.log("Error Updating dragged event: ", err)
   }
 }
-
+          
   return (
   <button 
     id={displayDate}
@@ -92,21 +102,6 @@ const drop = (e, displayDate) => {
     }}
   >
     {children}
-
-    {moveableEvent == displayDate && (
-      <div 
-        id="1"
-        draggable
-        onDragStart={(e) => dragStart(e)}
-        style={eventStyle}
-        onClick={(event) => {
-          console.log("Event Clicked");
-          event.stopPropagation();
-        }}
-      >
-        Moveable Event
-      </div>
-    )}
     
     <span style={{
       color: isBaseMonth ? 'black' : 'grey',
@@ -141,4 +136,12 @@ export const CalendarDateHeader = ({ onClick, children }) => {
       {children}
     </button>
   )
+}
+
+function isLeapYear(year){
+  if ((year % 4 == 0 & year % 100 != 0) || (year % 400 == 0)){
+    return true;
+  } else {
+    return false;
+  }
 }
