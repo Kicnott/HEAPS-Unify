@@ -7,14 +7,16 @@ const dragStart = (e, event) => {
 const case1Event = (event) => {
     return <div style={{
         fontSize: '0.9rem',
-        color: 'blue', 
-        backgroundColor: 'pink', 
+        color: 'black', 
+        backgroundColor: '#f6d8ac', 
         borderColor: 'black',
         borderStyle: 'solid',
         borderWidth: '1px',
         }} 
         draggable
         onDragStart = {(e) => {dragStart(e, event)}}
+        onDrop={(e) => e.preventDefault()}    
+        onDragOver={(e) => e.preventDefault()} 
         event={event}
         key={event.eventid}>
     {event.eventname}</div>
@@ -26,8 +28,8 @@ const case2Event = (event, diffInDays) => {
     let eventOffset = eventOverflowCount * 143;
     return <div style={{
         fontSize: '0.9rem',
-        color: 'blue', 
-        backgroundColor: 'pink', 
+        color: 'black', 
+        backgroundColor: '#f6d8ac', 
         borderColor: 'black',
         borderStyle: 'solid',
         borderWidth: '1px',
@@ -38,6 +40,8 @@ const case2Event = (event, diffInDays) => {
         }}
         draggable
         onDragStart = {(e) => {dragStart(e, event)}}
+        onDrop={(e) => e.preventDefault()}    
+        onDragOver={(e) => e.preventDefault()} 
         event={event}
         key={event.eventid}>
     {event.eventname}</div> 
@@ -49,8 +53,8 @@ const case3Event = (event, diffInDays) => {
     let eventOffset = eventOverflowCount * 143 + 10;
     return <div style={{
         fontSize: '0.9rem',
-        color: 'blue', 
-        backgroundColor: 'pink', 
+        color: 'black', 
+        backgroundColor: '#f6d8ac', 
         borderColor: 'black',
         borderStyle: 'solid',
         borderWidth: '1px',
@@ -61,6 +65,8 @@ const case3Event = (event, diffInDays) => {
         }} 
         draggable
         onDragStart = {(e) => {dragStart(e, event)}}
+        onDrop={(e) => e.preventDefault()}    
+        onDragOver={(e) => e.preventDefault()} 
         event={event}
         key={event.eventid}>
     {event.eventname}</div>
@@ -68,15 +74,12 @@ const case3Event = (event, diffInDays) => {
 
 // Case 4: part of an event that crossed week edge, final week
 const case4Event = (event, diffInDays) => {
-    if (event.eventname == "1 week event"){
-        console.log("HELLLOOOOdiffInDays: ", diffInDays)
-    }
     let eventOverflowCount = diffInDays;
     let eventOffset = eventOverflowCount * 143;
     return <div style={{
         fontSize: '0.9rem',
-        color: 'blue', 
-        backgroundColor: 'pink', 
+        color: 'black', 
+        backgroundColor: '#f6d8ac', 
         borderColor: 'black',
         borderStyle: 'solid',
         borderWidth: '1px',
@@ -88,6 +91,8 @@ const case4Event = (event, diffInDays) => {
         }} 
         draggable
         onDragStart = {(e) => {dragStart(e, event)}}
+        onDrop={(e) => e.preventDefault()}    
+        onDragOver={(e) => e.preventDefault()} 
         event={event}
         key={event.eventid}>
     {event.eventname}</div> 
@@ -98,27 +103,33 @@ const case5Event = (event) => {
 
     return <div style={{
         fontSize: '0.9rem',
-        color: 'blue', 
-        backgroundColor: 'pink', 
+        color: 'black', 
+        backgroundColor: '#f6d8ac', 
         borderColor: 'black',
         borderStyle: 'solid',
         borderWidth: '1px',
         marginLeft: `-10px`,
-        marginRight: `-1000px`,
+        marginRight: `-869px`,
         zIndex: '2',
         textAlign: 'left',
         paddingLeft: '25px',
         }} 
-    key={event.eventid}>{event.eventname}</div> 
+        draggable
+        onDragStart = {(e) => {dragStart(e, event)}}
+        onDrop={(e) => e.preventDefault()}    
+        onDragOver={(e) => e.preventDefault()} 
+        event={event}
+        key={event.eventid}>
+    {event.eventname}</div> 
 }
 
-// Case 6: part of an event that crossed week edge, and passed the next week edge, occupying the whole week
+// Case 6: 
 const case6Event = (event) => { 
     let eventOffset = 6 * 143;
     return <div style={{
         fontSize: '0.9rem',
-        color: 'blue', 
-        backgroundColor: 'pink', 
+        color: 'black', 
+        backgroundColor: '#f6d8ac', 
         borderColor: 'black',
         borderStyle: 'solid',
         borderWidth: '1px',
@@ -135,12 +146,6 @@ const case6Event = (event) => {
 const case8Event = (emptyEventSpaceCount) => {
     return(
     <div key={`empty-${emptyEventSpaceCount}`} style={{
-        fontSize: '0.9rem',
-        color: 'blue', 
-        backgroundColor: 'brown', 
-        borderColor: 'black',
-        borderStyle: 'solid',
-        borderWidth: '1px',
     }}></div>
 )}
 

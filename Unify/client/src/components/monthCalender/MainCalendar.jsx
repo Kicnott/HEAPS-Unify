@@ -44,8 +44,9 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
         currComparedDate.setDate(currComparedDate.getDate() - 1);
     }
 
+    // sundaysOfTheMonth; stores [[sun Date A, sun Month A], [sun Date B, sun Month B],...]
     for (let i = 0; i < cellCount / 7 ; i++){
-        sundaysOfTheMonth.push(new Date(currSunDate).getDate());
+        sundaysOfTheMonth.push([new Date(currSunDate).getDate(), new Date(currSunDate).getMonth() + 1]);
         currSunDate.setDate(currSunDate.getDate() + 7);
     }
 
@@ -124,17 +125,11 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
 
                     for (let passedEdge = 1; passedEdge < noSunsPassed + 1; passedEdge++){ 
                         const workingIndexSun = dateIndex - diffInDaysToSunStart + (passedEdge * 7);
-/*                         if (event.eventname == "1 week event"){
-                            console.log(event.startdt)
-                            console.log("diffInDaysToSunStart: ", diffInDaysToSunStart)
-                            console.log("diffInDaysToSunEnd: ", diffInDaysToSunEnd)
-                            console.log("workingIndexSun: ", workingIndexSun)
-                            console.log("passedEdge + 1 == noSunsPassed: ", passedEdge + 1 == noSunsPassed)
-                            console.log("event.enddt: ",event.enddt)
-                            console.log("passedEdge: ",passedEdge)
-                        } */
                         if (dateIndex - diffInDaysToSunStart + (passedEdge * 7) >= cellCount){ break; } // prevents index overflow
                         if (passedEdge == noSunsPassed){ // case 4: passed edge, final week
+                                if (event.eventname == "2 day stack B"){
+                                    console.log("Case 4 ran")
+                                } 
                             monthEventsArray[workingIndexSun][innerArrayIndex] = calenderEventsType.case4Event(event, diffInDaysToSunEnd);
                             const noOfEmptyDivFinalWeek = diffInDays - (diffInDaysToSatStart + 1) - ((noSunsPassed - 1) * 7);
                             for (let emptyPopulator = 1; emptyPopulator < noOfEmptyDivFinalWeek; emptyPopulator++){
@@ -143,6 +138,11 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
                                 emptyEventSpaceCount += 1; // increments emptyEventSpaceCount to set keys
                             }
                         } else { // case 5: passed edge, full week
+                                if (event.eventname == "2 day stack B"){
+                                    console.log("passedEdge: ", passedEdge)
+                                    console.log("noSunsPassed: ", noSunsPassed)
+                                    console.log("Case 5 ran")
+                                } 
                             monthEventsArray[workingIndexSun][innerArrayIndex] = calenderEventsType.case5Event(event);
                             for (let emptyPopulator = 1; emptyPopulator < diffInDaysToSatStart + 1; emptyPopulator++){
                                 if (workingIndexSun + emptyPopulator == cellCount) { break; } // prevents index overflow
@@ -346,11 +346,17 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
 // Returns number of times an event passes the week edge into the next week
 function noOfWeekEdgePasses(event, sundaysOfTheMonth) {
     const eventStartDate = event.startdt.substring(8, 10);
+    const eventStartMonth = event.startdt.substring(5, 7);
     const eventEndDate = event.enddt.substring(8, 10);
+    const eventEndMonth = event.enddt.substring(5, 7);
     let noOfWeekEdgePasses = 0;
     sundaysOfTheMonth.forEach((sun) => {
-        if (eventStartDate < sun && sun <= eventEndDate) {
+        if ((eventStartDate < sun[0] && eventStartMonth == sun[1]) && (sun[0] <= eventEndDate && eventEndMonth == sun[1])) {
             noOfWeekEdgePasses += 1;
+                                if (event.eventname == "2 day stack B"){
+                                    console.log("sun: ", sun)
+                                    console.log("noOfWeekEdgePasses: ", noOfWeekEdgePasses)
+                                } 
         }
     });
     return noOfWeekEdgePasses;

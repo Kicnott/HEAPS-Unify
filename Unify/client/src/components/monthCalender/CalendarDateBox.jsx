@@ -58,21 +58,6 @@ const drop = (e, displayDate) => {
   const yearCheck = new Date(event.enddt).getYear()
   const monthCheck = displayDate.getMonth() + 1;
   let newEndDtValue = displayDate.getDate() + diffInDays;
-  if (event.eventanme = "one week test"){
-    console.log("event: ", event)
-
-    console.log("expected enddt: ", new Date(event.enddt))
-    console.log("actual enddt: ", new Date(event.enddt).getDate())
-
-    console.log("expected startdt: ", new Date(event.startdt))
-    console.log("actual startdt: ", new Date(event.startdt).getDate())
-
-    console.log("inputted displayDate: ", displayDate)
-    console.log("inputted startdate: ", displayDate.getDate())
-
-    console.log("diffInDays: ", diffInDays)
-    console.log("newEndDtValue: ", newEndDtValue)
-  }
 
   if ([2].includes(monthCheck) && !isLeapYear(yearCheck) && newEndDtValue > 28){ // 28 days, Feb
     newEndDtValue = newEndDtValue - 28;
