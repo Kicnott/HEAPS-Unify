@@ -68,6 +68,9 @@ const case3Event = (event, diffInDays) => {
 
 // Case 4: part of an event that crossed week edge, final week
 const case4Event = (event, diffInDays) => {
+    if (event.eventname == "1 week event"){
+        console.log("HELLLOOOOdiffInDays: ", diffInDays)
+    }
     let eventOverflowCount = diffInDays;
     let eventOffset = eventOverflowCount * 143;
     return <div style={{
@@ -83,7 +86,11 @@ const case4Event = (event, diffInDays) => {
         textAlign: 'left',
         paddingLeft: '25px',
         }} 
-    key={event.eventid}>{event.eventname}</div> 
+        draggable
+        onDragStart = {(e) => {dragStart(e, event)}}
+        event={event}
+        key={event.eventid}>
+    {event.eventname}</div> 
 }
 
 // Case 5: part of an event that crossed week edge, full week
@@ -97,7 +104,7 @@ const case5Event = (event) => {
         borderStyle: 'solid',
         borderWidth: '1px',
         marginLeft: `-10px`,
-        marginRight: `-400px`,
+        marginRight: `-1000px`,
         zIndex: '2',
         textAlign: 'left',
         paddingLeft: '25px',

@@ -58,14 +58,29 @@ const drop = (e, displayDate) => {
   const yearCheck = new Date(event.enddt).getYear()
   const monthCheck = displayDate.getMonth() + 1;
   let newEndDtValue = displayDate.getDate() + diffInDays;
+  if (event.eventanme = "one week test"){
+    console.log("event: ", event)
 
-  if ([2].includes(monthCheck) & !isLeapYear(yearCheck) & newEndDtValue > 28){ // 28 days, Feb
+    console.log("expected enddt: ", new Date(event.enddt))
+    console.log("actual enddt: ", new Date(event.enddt).getDate())
+
+    console.log("expected startdt: ", new Date(event.startdt))
+    console.log("actual startdt: ", new Date(event.startdt).getDate())
+
+    console.log("inputted displayDate: ", displayDate)
+    console.log("inputted startdate: ", displayDate.getDate())
+
+    console.log("diffInDays: ", diffInDays)
+    console.log("newEndDtValue: ", newEndDtValue)
+  }
+
+  if ([2].includes(monthCheck) && !isLeapYear(yearCheck) && newEndDtValue > 28){ // 28 days, Feb
     newEndDtValue = newEndDtValue - 28;
-  } else if ([2].includes(monthCheck) & isLeapYear(yearCheck) & newEndDtValue > 28){ // 29 days, Feb, Leap Year
+  } else if ([2].includes(monthCheck) && isLeapYear(yearCheck) && newEndDtValue > 28){ // 29 days, Feb, Leap Year
     newEndDtValue = newEndDtValue - 29;
-  } else if ([4, 6, 9, 11].includes(monthCheck) & newEndDtValue > 30){ // 30 days, Apr Jun Sep Nov
+  } else if ([4, 6, 9, 11].includes(monthCheck) && newEndDtValue > 30){ // 30 days, Apr Jun Sep Nov
     newEndDtValue = newEndDtValue - 30;
-  } else if ([1, 3, 5, 7, 8, 10, 12].includes(monthCheck) & newEndDtValue > 31){ // 31 days, Jan Mar May Jul Aug Oct Dec
+  } else if ([1, 3, 5, 7, 8, 10, 12].includes(monthCheck) && newEndDtValue > 31){ // 31 days, Jan Mar May Jul Aug Oct Dec
     newEndDtValue = newEndDtValue - 31;
   }
 
@@ -90,7 +105,7 @@ const drop = (e, displayDate) => {
     console.log("Error Updating dragged event: ", err)
   }
 }
-
+          
   return (
   <button 
     id={displayDate}

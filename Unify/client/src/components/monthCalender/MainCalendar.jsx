@@ -28,6 +28,11 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
     let currComparedDate = new Date(baseDate) // currComparedDate: copy of baseDate. Serves an index/pointer that goes thru all displayed days in the chosen month. After getBaseDate and new Date(), it becomes a date of the '1st displayed' day of the month. For eg, in july 2025, the value -> Sun Jun 29 2025 00:00:00 GMT+0800 (Singapore Standard Time)
     let sundaysOfTheMonth = []; // sundaysOfTheMonth; used to store all sun (Digit)
     let currSunDate = new Date(baseDate); // currSunDate; copy of baseDate. Used to populate sundaysOfTheMonth
+    let days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"] // Defining the calendar headers.
+
+    for (let i = 0; i < 7; i++){
+        calendarBoxes.push(<CalendarDateHeader key={days[i]}>{days[i]}</CalendarDateHeader>) // Add Day Headers
+    } 
 
     // initilize master month array
     for (let i = 0; i < cellCount; i++){
@@ -106,10 +111,11 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
                         emptyEventSpaceCount += 1; // increments emptyEventSpaceCount to set keys
                     }
                 } else { // case 3: multi day event, crosses week, first week
-                    const diffInDaysToSat = noOfDaysToNextClosestSat(event);
-                    const diffInDaysToSun = noOfDaysToNextClosestSun(event);
+                    const diffInDaysToSatStart = noOfDaysToNextClosestSat(event.startdt);
+                    const diffInDaysToSunStart = noOfDaysToNextClosestSun(event.startdt);
+                    const diffInDaysToSunEnd = noOfDaysToNextClosestSun(event.enddt);
 
-                    monthEventsArray[dateIndex][innerArrayIndex] = calenderEventsType.case3Event(event, diffInDaysToSat);
+                    monthEventsArray[dateIndex][innerArrayIndex] = calenderEventsType.case3Event(event, diffInDaysToSatStart);
                     for (let emptyPopulator = 1; emptyPopulator < diffInDays + 1; emptyPopulator++){
                         if (dateIndex + emptyPopulator == cellCount) { break; } // prevents index overflow
                         monthEventsArray[dateIndex + emptyPopulator][innerArrayIndex] = calenderEventsType.case8Event(emptyEventSpaceCount);
@@ -117,27 +123,30 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, setChosenDa
                     }
 
                     for (let passedEdge = 1; passedEdge < noSunsPassed + 1; passedEdge++){ 
-                        const workingSunOfTheEvent = dateIndex - diffInDaysToSun + (passedEdge * 7);
-                        if (event.eventname == "3 day tester"){
+                        const workingIndexSun = dateIndex - diffInDaysToSunStart + (passedEdge * 7);
+/*                         if (event.eventname == "1 week event"){
                             console.log(event.startdt)
-                            console.log("diffInDaysToSun: ", diffInDaysToSun)
-                            console.log("workingSunOfTheEvent: ", workingSunOfTheEvent)
-                            console.log("noSunsPassed + 1: ", noSunsPassed + 1)
+                            console.log("diffInDaysToSunStart: ", diffInDaysToSunStart)
+                            console.log("diffInDaysToSunEnd: ", diffInDaysToSunEnd)
+                            console.log("workingIndexSun: ", workingIndexSun)
+                            console.log("passedEdge + 1 == noSunsPassed: ", passedEdge + 1 == noSunsPassed)
+                            console.log("event.enddt: ",event.enddt)
                             console.log("passedEdge: ",passedEdge)
-                        }
-                        if (dateIndex - diffInDaysToSun + (passedEdge * 7) >= cellCount){ break; } // prevents index overflow
-                        if (passedEdge + 1 == noSunsPassed){ // case 4: passed edge, final week
-                            monthEventsArray[workingSunOfTheEvent][innerArrayIndex] = calenderEventsType.case4Event(event, diffInDaysToSun);
-                            for (let emptyPopulator = 1; emptyPopulator < diffInDaysToSat + 1; emptyPopulator++){
-                                if (workingSunOfTheEvent + emptyPopulator == cellCount) { break; } // prevents index overflow
-                                monthEventsArray[workingSunOfTheEvent + emptyPopulator][innerArrayIndex] = calenderEventsType.case8Event(emptyEventSpaceCount);
+                        } */
+                        if (dateIndex - diffInDaysToSunStart + (passedEdge * 7) >= cellCount){ break; } // prevents index overflow
+                        if (passedEdge == noSunsPassed){ // case 4: passed edge, final week
+                            monthEventsArray[workingIndexSun][innerArrayIndex] = calenderEventsType.case4Event(event, diffInDaysToSunEnd);
+                            const noOfEmptyDivFinalWeek = diffInDays - (diffInDaysToSatStart + 1) - ((noSunsPassed - 1) * 7);
+                            for (let emptyPopulator = 1; emptyPopulator < noOfEmptyDivFinalWeek; emptyPopulator++){
+                                if (workingIndexSun + emptyPopulator == cellCount) { break; } // prevents index overflow
+                                monthEventsArray[workingIndexSun + emptyPopulator][innerArrayIndex] = calenderEventsType.case8Event(emptyEventSpaceCount);
                                 emptyEventSpaceCount += 1; // increments emptyEventSpaceCount to set keys
                             }
                         } else { // case 5: passed edge, full week
-                            monthEventsArray[workingSunOfTheEvent][innerArrayIndex] = calenderEventsType.case5Event(event);
-                            for (let emptyPopulator = 1; emptyPopulator < diffInDaysToSat + 1; emptyPopulator++){
-                                if (workingSunOfTheEvent + emptyPopulator == cellCount) { break; } // prevents index overflow
-                                monthEventsArray[workingSunOfTheEvent + emptyPopulator][innerArrayIndex] = calenderEventsType.case8Event(emptyEventSpaceCount);
+                            monthEventsArray[workingIndexSun][innerArrayIndex] = calenderEventsType.case5Event(event);
+                            for (let emptyPopulator = 1; emptyPopulator < diffInDaysToSatStart + 1; emptyPopulator++){
+                                if (workingIndexSun + emptyPopulator == cellCount) { break; } // prevents index overflow
+                                monthEventsArray[workingIndexSun + emptyPopulator][innerArrayIndex] = calenderEventsType.case8Event(emptyEventSpaceCount);
                                 emptyEventSpaceCount += 1; // increments emptyEventSpaceCount to set keys
                             }                        
                         }
@@ -348,8 +357,8 @@ function noOfWeekEdgePasses(event, sundaysOfTheMonth) {
 }
 
 // Returns the next closest Sat
-function noOfDaysToNextClosestSat(event) {
-    const eventStartDate = new Date(event.startdt).getDay();
+function noOfDaysToNextClosestSat(dt) {
+    const eventStartDate = new Date(dt).getUTCDay();
 
     let diffInDaysToSat = 6 - eventStartDate; // sat (6) - currentDay (?) = diffInDays
 
@@ -357,8 +366,8 @@ function noOfDaysToNextClosestSat(event) {
 }
 
 // Returns the next closest Sun
-function noOfDaysToNextClosestSun(event) {
-    const eventEndDate = new Date(event.startdt).getDay();
+function noOfDaysToNextClosestSun(dt) {
+    const eventEndDate = new Date(dt).getUTCDay();
 
     let diffInDaysToSun = eventEndDate; // sun (6) - currentDay (?) = diffInDays
 
