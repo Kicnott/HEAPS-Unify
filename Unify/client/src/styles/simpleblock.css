@@ -2,3 +2,13 @@
 
 body{
     background-color: light-dark(black, white);}
+
+.login-box {
+  width: 350px;
+  max-width: 90vw;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}

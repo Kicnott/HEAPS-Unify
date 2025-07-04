@@ -1,6 +1,7 @@
 
 import eventService from '../../services/eventService.jsx';
 
+
 // CalendarDateBox is a component used by MainCalendar to create the boxes in the Calendar.
 export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, setChosenDate, refreshEvents, setrefreshEvents, refreshMonthEvents, setRefreshMonthEvents }) => {
   // onClick: A function that runs when the DateBox is clicked.
@@ -25,7 +26,8 @@ export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, set
     width: '100%',
     margin: '0px',
     padding: '20px 10px 0px 10px',
-    position: 'relative'
+    position: 'relative',
+    borderRadius: '2px'
   }
 
   let eventStyle = {

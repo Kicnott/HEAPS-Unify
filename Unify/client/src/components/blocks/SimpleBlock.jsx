@@ -1,4 +1,5 @@
 import React from 'react'
+import "../../styles/simpleblock.css"
 
 // The SimpleBlock component is really just a simple block to store some text and elements nicely.
 export const SimpleBlock = ({
@@ -25,7 +26,7 @@ export const SimpleBlock = ({
         ...style, // Allows for additional inline styles
     }
     return (
-        <div style={blockStyle}>
+         <div className="login-box">
             {children}
         </div>
 
