@@ -12,6 +12,11 @@ const case1Event = (event) => {
         borderColor: 'black',
         borderStyle: 'solid',
         borderWidth: '1px',
+        paddingLeft: '2px',
+        textAlign: 'left',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
         }} 
         draggable
         onDragStart = {(e) => {dragStart(e, event)}}
@@ -35,8 +40,11 @@ const case2Event = (event, diffInDays) => {
         borderWidth: '1px',
         marginRight: `-${eventOffset}px`,
         zIndex: '2',
+        paddingLeft: '2px',
         textAlign: 'left',
-        paddingLeft: '25px',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
         }}
         draggable
         onDragStart = {(e) => {dragStart(e, event)}}
@@ -60,8 +68,11 @@ const case3Event = (event, diffInDays) => {
         borderWidth: '1px',
         marginRight: `-${eventOffset}px`,
         zIndex: '2',
+        paddingLeft: '2px',
         textAlign: 'left',
-        paddingLeft: '25px',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
         }} 
         draggable
         onDragStart = {(e) => {dragStart(e, event)}}
@@ -86,8 +97,11 @@ const case4Event = (event, diffInDays) => {
         marginLeft: `-10px`,
         marginRight: `-${eventOffset}px`,
         zIndex: '2',
+        paddingLeft: '2px',
         textAlign: 'left',
-        paddingLeft: '25px',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
         }} 
         draggable
         onDragStart = {(e) => {dragStart(e, event)}}
@@ -111,8 +125,11 @@ const case5Event = (event) => {
         marginLeft: `-10px`,
         marginRight: `-869px`,
         zIndex: '2',
+        paddingLeft: '2px',
         textAlign: 'left',
-        paddingLeft: '25px',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
         }} 
         draggable
         onDragStart = {(e) => {dragStart(e, event)}}
@@ -136,8 +153,11 @@ const case6Event = (event) => {
         marginLeft: `-10px`,
         marginRight: `-${eventOffset}px`,
         zIndex: '2',
+        paddingLeft: '2px',
         textAlign: 'left',
-        paddingLeft: '25px',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
         }} 
     key={event.eventid}>{event.eventname}</div> 
 }
