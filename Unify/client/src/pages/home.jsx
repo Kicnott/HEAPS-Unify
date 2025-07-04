@@ -160,6 +160,7 @@ function HomePage() {
     // These are all styles for the contents of the right drawer. It's not really what I want but I am too lazy to do more css.
     const drawerStyle = {
         height: '100%',
+        width: '100%',
         display: 'flex',
         flexDirection: 'column',
         padding: 0,
@@ -170,7 +171,7 @@ function HomePage() {
     }
     const rightDrawerButtonBottom = {
         marginTop: 'auto',
-        padding: 0
+        padding: 30
     }
 
     return (
@@ -194,24 +195,29 @@ function HomePage() {
                 <div style={drawerStyle}>
                     <div style={rightDrawerButtonTop}>
                         <br></br>
+                        {/*FOR BEV TO EDIT*/}
+                        <h3>Current User: {currentUser} &nbsp; 
                         <br></br>
-                        <button>Account (TODO)</button>
-                        <br></br>
-                        <br></br>
-                        <button>Settings (TODO)</button>
-                        <br></br>
-                        <br></br>
-                        <button>Events (TODO)</button>
-                        <br></br>
-                        <br></br>
+                            Account ID: {currentUserAccountId}</h3>
+                        
+                        {/*
+                        NOT NEEDED ANYMORE 
                         <button onClick={() => setEditAccountsFormOpen(!isEditAccountsFormOpen)}>Edit Account (Admin use)</button>
                         <br></br>
                         <br></br>
                         <button onClick={() => setEditCalendarsFormOpen(!isEditCalendarsFormOpen)}>Edit Calendar</button>
-                    </div> {/* TODO all these buttons */}
+                        */}
+                    </div> 
 
                     <div style={rightDrawerButtonBottom}>
-                        <button><Link to="/">Sign Out</Link></button> {/* Button at the bottom to return to login page */}
+
+                        <button style={{
+                            backgroundColor: '#A78E72', // Dark brown color
+                            padding: '10px 20px',
+                            border: 'none',
+                            borderRadius: '8px',
+                            cursor: 'pointer'
+                        }}><Link to="/" style={{color:'white'}}>Sign Out</Link></button> {/* Button at the bottom to return to login page */}
                     </div>
                 </div>
             </RightDrawer>
@@ -318,7 +324,6 @@ function HomePage() {
                 mainContent={
                     <div className='calendar-wrapper'>
                         <div className='main-content-centered'>
-                            <h3>Current User: {currentUser} &nbsp; Account ID: {currentUserAccountId}</h3>
                             <DropdownList
                                 optionArray={monthOptionsArray} // Assigns the options to the month dropdown list
                                 value={calendarDisplay.getMonth()} // Assigns the default value of the list to the current month
