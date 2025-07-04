@@ -44,6 +44,22 @@ const unfollowCalendar = (calendarid, accountid) => {
     return http.delete('/home/unfollowCalendar', { data: { calendarid, accountid } })
 }
 
+const getMyDisplayedCalendars = (accountid) => {
+    return http.get('/home/getMyDisplayedCalendars', { params: { accountid: accountid } })
+}
+
+const checkDisplayedCalendar = (calendarid, accountid) => {
+    return http.get('/home/checkDisplayedCalendar', { params: { calendarid, accountid } })
+}
+
+const displayCalendar = (calendarid, accountid) => {
+    return http.post('/home/displayCalendar', { calendarid, accountid });
+}
+
+const undisplayCalendar = (calendarid, accountid) => {
+    return http.delete('/home/unDisplayCalendar', { data: { calendarid, accountid } })
+}
+
 export default {
     showAllCalendars,
     createCalendar,
@@ -53,5 +69,9 @@ export default {
     followCalendar,
     checkFollowedCalendar,
     getFollowedCalendars,
-    unfollowCalendar
+    unfollowCalendar,
+    getMyDisplayedCalendars,
+    checkDisplayedCalendar,
+    displayCalendar,
+    undisplayCalendar
 }
