@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react"
+import { PhotoshopPicker } from "react-color";
 
 export const ScrollBlock = ({ buttonData, children, width = '100%', height = '100%', checkboxButton = false, checkboxName, myDisplayedCalendarIds, onCheckboxChange, accountid, refreshTrigger, maxHeight='100%' }) => {
     
@@ -24,6 +24,7 @@ export const ScrollBlock = ({ buttonData, children, width = '100%', height = '10
                 style={{ width: "100%", marginBottom: "8px", padding: "12px", textOverflow: "ellipsis", whiteSpace: "nowrap",   overflow: "hidden", }}
                 onClick={btn.onClick}
             >
+                {/* <PhotoshopPicker></PhotoshopPicker> */}
                 {btn.label}
                 {checkboxButton && (
                     <input

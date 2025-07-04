@@ -296,7 +296,7 @@ function HomePage() {
                                             height = 'auto'
                                             key={calendar.calendarid}
                                             buttonData={myEvents[calendar.calendarid]?.map((event) => ({
-                                                label: event.eventname,
+                                                label: event.eventname + " - " + (new Date(event.startdt).toLocaleString()),
                                                 onClick: () => {
                                                     setShowEventID(event.eventid)
                                                     setTimeout(() => {
@@ -419,7 +419,6 @@ function HomePage() {
                 < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setSelectedEvent} setEventDetailsOpen={setEventDetailsOpen}>
                 </TimeTable>
                 <button onClick={() => {
-                    // console.log("Button clicked!")
                     setEventFormOpen(true)
                 }}>+ Add Event</button>
 
