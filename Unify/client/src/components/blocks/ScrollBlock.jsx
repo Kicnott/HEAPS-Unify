@@ -1,7 +1,9 @@
 import React from "react";
+import { useState } from "react"
 
-
-export const ScrollBlock = ({buttonData, children, width='100%', height='100%'}) => (
+export const ScrollBlock = ({ buttonData, children, width = '100%', height = '100%', checkboxButton = false, checkboxName, myDisplayedCalendarIds, onCheckboxChange, accountid, refreshTrigger }) => {
+    
+    return(
     <div
         style={{
             //   height: "100%",   
@@ -17,13 +19,26 @@ export const ScrollBlock = ({buttonData, children, width='100%', height='100%'})
     >   {children}
         {Array.isArray(buttonData) && buttonData.map((btn, idx) => (
             <button
-                key={idx}
+                key={btn.id || idx}
                 style={{ width: "100%", marginBottom: "8px", padding: "12px" }}
                 onClick={btn.onClick}
             >
                 {btn.label}
+                {checkboxButton && (
+                    <input
+                        type='checkbox'
+                        name={checkboxName}
+                        value={btn.id}
+                        checked={(myDisplayedCalendarIds || []).includes(btn.id)}
+                        onChange={() => onCheckboxChange(btn.id, accountid)}
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            
+                        }}
+                    ></input>
+                )}
             </button>
         ))}
     </div>
-);
+)};
 
