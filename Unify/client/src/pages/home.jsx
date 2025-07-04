@@ -280,12 +280,14 @@ function HomePage() {
                                 </ScrollBlock>
                             ,
                             3:
-                                <ScrollBlock>
+                                <ScrollBlock
+                                    height='100%'>
                                     <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>My Events</h2>
                                     {myCalendars.map((calendar) => (
                                         <ScrollBlock
+                                            maxHeight='30%'
+                                            height = 'auto'
                                             key={calendar.calendarid}
-                                            height='40%'
                                             buttonData={myEvents[calendar.calendarid]?.map((event) => ({
                                                 label: event.eventname,
                                                 onClick: () => {
