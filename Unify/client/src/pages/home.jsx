@@ -324,6 +324,7 @@ function HomePage() {
                                 setRefreshMonthEvents={setRefreshMonthEvents}
                                 monthEvents={monthEvents}
                                 setMonthEvents={setMonthEvents}
+                                setChosenDate={setChosenDate}
                             />
                         </div>
                     </div>
