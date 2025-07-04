@@ -21,6 +21,9 @@ export const EventDisplay = ({displayedEvent}) => {
         <div style={rowStyle}>
             <span style={labelStyle}>Duration:</span> {startStr} - {endStr}
         </div>
+        <div style={rowStyle}>
+            <button>Delete</button>
+        </div>
         </div>
     )
 }
