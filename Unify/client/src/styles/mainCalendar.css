@@ -5,9 +5,12 @@
   grid-template-rows: min-content;
   gap: 2px;
   padding: 0px;
+  position: absolute; 
+  top: 32%;
+  left: 23%;
 
   /* nic */
-  transform: scale(0.8);
+  transform: scale(0.9);
   transform-origin: center;
  
 }
