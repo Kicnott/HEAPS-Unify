@@ -5,6 +5,8 @@ import '../../styles/timetable.css';
 
 //add drag and drop & event extension
 //allow div to be created at last block 11pm-12am
+    //automatically assigned endidx to be last block if endidx is ever smaller than startidx. dont think this will work for multi day events 
+
 //make all day event block? or highlight all day
 
 export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector, setEventDetailsOpen }) => {
@@ -37,7 +39,12 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                     const start = DateTime.fromISO(e.startdt);
                     const end = DateTime.fromISO(e.enddt);
                     const startIdx = start.hour * 4 + Math.floor(start.minute / 15);
-                    const endIdx = end.hour * 4 + Math.floor(end.minute / 15);
+                    let endIdx = end.hour * 4 + Math.floor(end.minute / 15);
+
+                    if (endIdx <= startIdx) {
+                        endIdx = 96;
+                    }
+
                     for (let i = startIdx; i < endIdx && i < 96; i++) {
                         laneCounts[i]++;
                     }
@@ -65,7 +72,12 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
             const start = DateTime.fromISO(e.startdt);
             const end = DateTime.fromISO(e.enddt);
             const startIdx = start.hour * 4 + Math.floor(start.minute / 15);
-            const endIdx = end.hour * 4 + Math.floor(end.minute / 15);
+            let endIdx = end.hour * 4 + Math.floor(end.minute / 15);
+
+            if (endIdx <= startIdx) {
+                endIdx = 96;
+            }
+
             let laneIndex = 0;
 
             while (laneIndex < maxLanes) {
