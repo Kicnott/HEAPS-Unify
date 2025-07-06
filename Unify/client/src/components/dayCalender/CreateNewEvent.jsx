@@ -109,7 +109,7 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid }) => {
       </div>
 
       <div style={{ marginTop: '12px' }}>
-        <label>📍 Location</label>
+        <label>Location</label>
         <input type="text" value={location} onChange={e => setLocation(e.target.value)} style={inputStyle} />
       </div>
 
