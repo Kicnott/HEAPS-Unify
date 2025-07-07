@@ -77,13 +77,22 @@ function HomePage() {
 
     useEffect(() => {
         if (currentUserAccountId) {
-            getMyCalendars(currentUserAccountId).then(setMyCalendars);
+            getMyCalendars(currentUserAccountId).then((calendars) => {
+                const sortedCalendars = calendars.sort((a, b) => a.calendarid - b.calendarid);
+                setMyCalendars(sortedCalendars);
+            });
 
-            getAllAccounts(currentUserAccountId).then(setAllAccounts);
+            getAllAccounts(currentUserAccountId).then((accounts) => {
+                const sortedAccounts = accounts.sort((a, b) => a.accountid - b.accountid);
+                setAllAccounts(sortedAccounts);
+            });
 
             getMyEvents(currentUserAccountId).then(setMyEvents);
 
-            getFollowedCalendars(currentUserAccountId).then(setFollowedCalendars);
+            getFollowedCalendars(currentUserAccountId).then((calendars) => {
+                const sortedCalendars = calendars.sort((a, b) => a.calendarid - b.calendarid);
+                setFollowedCalendars(sortedCalendars);
+            });
 
             getMyDisplayedCalendars(currentUserAccountId).then(setMyDisplayedCalendarIds)
 
@@ -100,7 +109,7 @@ function HomePage() {
     // console.log("Displayed Calendar IDs: ", myDisplayedCalendarIds)
     // console.log("Followed Calendars: ", followedCalendars);
     // console.log("My Events: ", myEvents);
-    console.log("My Calendars: ", myCalendars);
+    // console.log("My Calendars: ", myCalendars);
     // console.log("All Accounts: ", allAccounts);
 
 
@@ -155,7 +164,7 @@ function HomePage() {
         }
     }
 
-    async function colorChangeComplete(color, calendarid){
+    async function colorChangeComplete(color, calendarid) {
         const res = await calendarService.changeCalendarColor(color, calendarid)
     }
     // Defining the uCalendarDisplay object that the page will use to update the Main Calendar.
@@ -200,10 +209,10 @@ function HomePage() {
                     <div style={rightDrawerButtonTop}>
                         <br></br>
                         {/*FOR BEV TO EDIT*/}
-                        <h3>Current User: {currentUser} &nbsp; 
-                        <br></br>
+                        <h3>Current User: {currentUser} &nbsp;
+                            <br></br>
                             Account ID: {currentUserAccountId}</h3>
-                        
+
                         {/*
                         NOT NEEDED ANYMORE 
                         <button onClick={() => setEditAccountsFormOpen(!isEditAccountsFormOpen)}>Edit Account (Admin use)</button>
@@ -211,7 +220,7 @@ function HomePage() {
                         <br></br>
                         <button onClick={() => setEditCalendarsFormOpen(!isEditCalendarsFormOpen)}>Edit Calendar</button>
                         */}
-                    </div> 
+                    </div>
 
                     <div style={rightDrawerButtonBottom}>
 
@@ -221,7 +230,7 @@ function HomePage() {
                             border: 'none',
                             borderRadius: '8px',
                             cursor: 'pointer'
-                        }}><Link to="/" style={{color:'white'}}>Sign Out</Link></button> {/* Button at the bottom to return to login page */}
+                        }}><Link to="/" style={{ color: 'white' }}>Sign Out</Link></button> {/* Button at the bottom to return to login page */}
                     </div>
                 </div>
             </RightDrawer>
@@ -275,6 +284,8 @@ function HomePage() {
                                             }
                                         }))}
                                         checkboxButton={true}
+                                        gotColour={true}
+                                        colorChangeComplete={colorChangeComplete}
                                         checkboxName='myCalendars'
                                         accountid={currentUserAccountId}
                                         onCheckboxChange={onCalendarCheckboxChange}
@@ -307,7 +318,7 @@ function HomePage() {
                                     {myCalendars.map((calendar) => (
                                         <ScrollBlock
                                             maxHeight='30%'
-                                            height = 'auto'
+                                            height='auto'
                                             key={calendar.calendarid}
                                             buttonData={myEvents[calendar.calendarid]?.map((event) => ({
                                                 label: event.eventname + " - " + (new Date(event.startdt).toLocaleString()),
@@ -439,7 +450,7 @@ function HomePage() {
 
             {isEventDetailsOpen && selectedEvent && (
                 <OverlayBlock onClose={() => setEventDetailsOpen(false)}>
-                    <EventDisplay displayedEvent = {selectedEvent}/>
+                    <EventDisplay displayedEvent={selectedEvent} />
                 </OverlayBlock>
             )}
 
