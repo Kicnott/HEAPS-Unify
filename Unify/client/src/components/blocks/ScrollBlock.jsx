@@ -1,11 +1,23 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { ColorPopover } from "./ColorPopover";
 
 export const ScrollBlock = ({ buttonData, children, width = '100%', height = '100%', checkboxButton = false, checkboxName, myDisplayedCalendarIds, onCheckboxChange, accountid, refreshTrigger, maxHeight = '100%', gotColour = false }) => {
     // Store color state for each button by index
-    const [colors, setColors] = useState(
-        buttonData ? buttonData.map(() => "#3498db") : []
-    );
+    const [colors, setColors] = useState([]);
+
+    useEffect(() => {
+        if (buttonData && buttonData.length > 0) {
+            setColors(buttonData.map(btn => btn.color || "#3498db"));
+        }
+    }, [buttonData]);
+    
+    useEffect(() => {
+        if (gotColour) {
+            console.log("ScrollBlock colors: ", colors)
+        }
+
+
+    }, [colors, setColors, gotColour])
 
     const handleColorChange = (idx, newColor) => {
         setColors(prev => {

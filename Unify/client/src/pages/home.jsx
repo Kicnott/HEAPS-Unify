@@ -97,10 +97,10 @@ function HomePage() {
 
     }, [isEventHidden, isRightDrawerOpen, isEventFormOpen, isEditCalendarsFormOpen, isEditAccountsFormOpen, isShowCalendarOpen, isShowAccountsOpen, isShowEventOpen]);
 
-    console.log("Displayed Calendar IDs: ", myDisplayedCalendarIds)
+    // console.log("Displayed Calendar IDs: ", myDisplayedCalendarIds)
     // console.log("Followed Calendars: ", followedCalendars);
     // console.log("My Events: ", myEvents);
-    // console.log("My Calendars: ", myCalendars);
+    console.log("My Calendars: ", myCalendars);
     // console.log("All Accounts: ", allAccounts);
 
 
@@ -241,6 +241,7 @@ function HomePage() {
                                         buttonData={myCalendars.map((calendar) => ({
                                             label: calendar.calendarname,
                                             id: calendar.calendarid,
+                                            color: calendar.calendarcolour,
                                             onClick: () => {
                                                 setShowCalendarID(calendar.calendarid)
                                                 setTimeout(() => {
@@ -261,6 +262,7 @@ function HomePage() {
                                         buttonData={followedCalendars.map((calendar) => ({
                                             label: calendar.calendarname,
                                             id: calendar.calendarid,
+                                            color: calendar.calendarcolour,
                                             onClick: () => {
                                                 setShowCalendarID(calendar.calendarid)
                                                 setTimeout(() => {
