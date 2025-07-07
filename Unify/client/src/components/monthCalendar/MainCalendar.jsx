@@ -6,7 +6,7 @@ import '../../styles/MainCalendar.css'
 
 
 // MainCalendar component used to display the big calendar in the Home page.
-export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEvents, setrefreshEvents, refreshMonthEvents,setRefreshMonthEvents, monthEvents, setChosenDate, setMonthEvents,                               isOverlayBackgroundHidden, hideOverlayBackground, setExtraEventsPopUp, setExtraEvents}) => {
+export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEvents, setrefreshEvents, refreshMonthEvents,setRefreshMonthEvents, monthEvents, setChosenDate, setMonthEvents, isOverlayBackgroundHidden, hideOverlayBackground, setExtraEventsPopUp, setExtraEvents}) => {
     // children: Any additional labels to be stored on each DateBox. To be passed to the children variable in CalendarDateBox
     // displayDate: The date the user wants to display. As of now, the month of that date will be displayed by the calendar.
     // onDateBoxClick: The function to be run when a DateBox is clicked. To be passed to the onClick variable in CalendarDateBox.
@@ -151,15 +151,15 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
         });
 
         // if all 4 positions of the currComparedDate in monthEventsArray is non-null, and the fifth element array is not empty (contains the 5th event), we push the fourth event into the fifth element array and replace it with a button that displays (+..) all extra events
-        if (dateIndex === 12){
-            console.log("Check current array date", monthEventsArray[dateIndex], " of index", dateIndex)
-            console.log("monthEventsArray[dateIndex][4].length !== 0 : ", monthEventsArray[dateIndex][4].length !== 0)
-        }
+        // if (dateIndex === 12){
+        //     console.log("Check current array date", monthEventsArray[dateIndex], " of index", dateIndex)
+        //     console.log("monthEventsArray[dateIndex][4].length !== 0 : ", monthEventsArray[dateIndex][4].length !== 0)
+        // }
         
         if (monthEventsArray[dateIndex][4].length !== 0 && monthEventsArray[dateIndex][0] !== null && monthEventsArray[dateIndex][1] !== null && monthEventsArray[dateIndex][2] !== null && monthEventsArray[dateIndex][3] !== null){
-            console.log("TRIGGER")
             monthEventsArray[dateIndex][4].push(monthEventsArray[dateIndex][3]);
-            monthEventsArray[dateIndex][3] = extraEventsPopUpCall(dateIndex, setExtraEventsPopUp);
+            const currDayExtraEvents= monthEventsArray[dateIndex][4];
+            monthEventsArray[dateIndex][3] = extraEventsPopUpCall(dateIndex, currDayExtraEvents, setExtraEvents, setExtraEventsPopUp);
         } else {
             // if there are nulls left after event populating, replace them with empty divs
             for (let checkForNull = 0; checkForNull < 4; checkForNull++){
@@ -206,7 +206,7 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
 }
 
 // Returns a clickable div to store extra events
-function extraEventsPopUpCall(dateIndex, setExtraEventsPopUp){
+function extraEventsPopUpCall(dateIndex, currDayExtraEvents, setExtraEvents, setExtraEventsPopUp){
     return (
         <div 
             key = {`${dateIndex} ` + "extraButton"}
@@ -219,8 +219,9 @@ function extraEventsPopUpCall(dateIndex, setExtraEventsPopUp){
                 display: 'inline-block',
             }} 
             onClick={(e) => {
-                setExtraEventsPopUp(true);
-                e.stopPropagation();
+                    setExtraEvents(currDayExtraEvents);
+                    setExtraEventsPopUp(true);
+                    e.stopPropagation();
                 }               
             }
             >

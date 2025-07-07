@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CalendarDateBox } from "../components/monthCalender/CalendarDateBox";
+import { CalendarDateBox } from "../components/monthCalendar/CalendarDateBox";
 
 const http = axios.create({
     baseURL: "http://localhost:8888",
