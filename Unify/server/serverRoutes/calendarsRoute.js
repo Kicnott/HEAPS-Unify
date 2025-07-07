@@ -31,8 +31,6 @@ router.get('/home/getMyCalendars', async (req, res) => {
       'SELECT * FROM calendarstable WHERE accountid = $1', [accountid]
     );
 
-    console.log(result)
-
     return res.json(result)
   } catch (e) {
     console.log("GetMyCalendars: Server Error");
@@ -91,8 +89,6 @@ router.delete('/home/deleteCalendar', async (req, res) => {
       return res.json({ status: "calendarid contains nothing!" })
     }
 
-    console.log(res)
-
     const result = await pool.query( // result constant contains db object of any rows that are deleted
       'DELETE FROM calendarstable WHERE calendarid = ($1)', [calendarid]
     );
@@ -117,7 +113,7 @@ router.get('/home/getCalendar', async (req, res) => {
       return res.status(400).json({ error: 'Missing calendarid parameter' });
     }
 
-    console.log("GetCalendar: Connected!");
+    // console.log("GetCalendar: Connected!");
 
     const result = await pool.query(
       'SELECT * FROM calendarstable WHERE calendarid = $1', [calendarid]
@@ -144,7 +140,7 @@ router.post('/home/followCalendar', async (req, res) => {
       return res.status(400).json({ error: 'Missing calendarid or accountid parameter' });
     }
 
-    console.log("FollowCalendar: Connected!");
+    // console.log("FollowCalendar: Connected!");
 
     const checkFollowed = await pool.query(
       'SELECT * FROM followedcalendarstable WHERE calendarid = $1 AND accountid = $2', [calendarid, accountid]
@@ -175,7 +171,7 @@ router.get('/home/checkFollowedCalendar', async (req, res) => {
       return res.status(400).json({ error: 'Missing calendarid or accountid parameter' });
     }
 
-    console.log("CheckFollowedCalendar: Connected!");
+    // console.log("CheckFollowedCalendar: Connected!");
 
     const result = await pool.query(
       'SELECT * FROM followedcalendarstable WHERE calendarid = $1 AND accountid = $2', [calendarid, accountid]
@@ -201,7 +197,7 @@ router.get('/home/getFollowedCalendars', async (req, res) => {
       return res.status(400).json({ error: 'Missing accountid parameter' });
     }
 
-    console.log("GetFollowedCalendars: Connected!");
+    // console.log("GetFollowedCalendars: Connected!");
 
     const result = await pool.query(
       'SELECT * FROM followedcalendarstable WHERE accountid = $1', [accountid]
@@ -224,7 +220,7 @@ router.delete('/home/unfollowCalendar', async (req, res) => {
       return res.status(400).json({ error: 'Missing calendarid or accountid parameter' });
     }
 
-    console.log("UnfollowCalendar: Connected!");
+    // console.log("UnfollowCalendar: Connected!");
 
     const result = await pool.query(
       'DELETE FROM followedcalendarstable WHERE calendarid = $1 AND accountid = $2', [calendarid, accountid]
@@ -250,7 +246,7 @@ router.get('/home/getMyDisplayedCalendars', async (req, res) => {
       return res.status(400).json({ error: 'Missing accountid parameter' });
     }
 
-    console.log("GetMyDisplayedCalendars: Connected!");
+    // console.log("GetMyDisplayedCalendars: Connected!");
 
     const result = await pool.query(
       'SELECT * FROM displayedcalendarstable WHERE accountid = $1', [accountid]
@@ -273,7 +269,7 @@ router.get('/home/checkDisplayedCalendar', async (req, res) => {
       return res.status(400).json({ error: 'Missing calendarid or accountid parameter' });
     }
 
-    console.log("CheckDisplayedCalendar: Connected!");
+    // console.log("CheckDisplayedCalendar: Connected!");
 
     const result = await pool.query(
       'SELECT * FROM displayedcalendarstable WHERE calendarid = $1 AND accountid = $2', [calendarid, accountid]
@@ -300,7 +296,7 @@ router.post('/home/displayCalendar', async (req, res) => {
       return res.status(400).json({ status: false });
     }
 
-    console.log("DisplayCalendar: Connected!");
+    // console.log("DisplayCalendar: Connected!");
 
     const checkDisplayed = await pool.query(
       'SELECT * FROM displayedcalendarstable WHERE calendarid = $1 AND accountid = $2', [calendarid, accountid]
@@ -331,7 +327,7 @@ router.delete('/home/undisplayCalendar', async (req, res) => {
       return res.status(400).json({ status: false});
     }
 
-    console.log("UndisplayCalendar: Connected!");
+    // console.log("UndisplayCalendar: Connected!");
 
     const result = await pool.query(
       'DELETE FROM displayedcalendarstable WHERE calendarid = $1 AND accountid = $2', [calendarid, accountid]

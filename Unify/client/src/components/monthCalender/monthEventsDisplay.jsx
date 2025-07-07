@@ -22,7 +22,6 @@ const case1Event = (event) => {
         onDragStart = {(e) => {dragStart(e, event)}}
         onDrop={(e) => e.preventDefault()}    
         onDragOver={(e) => e.preventDefault()} 
-        event={event}
         key={event.eventid}>
     {event.eventname}</div>
 }
@@ -50,7 +49,6 @@ const case2Event = (event, diffInDays) => {
         onDragStart = {(e) => {dragStart(e, event)}}
         onDrop={(e) => e.preventDefault()}    
         onDragOver={(e) => e.preventDefault()} 
-        event={event}
         key={event.eventid}>
     {event.eventname}</div> 
 }
@@ -78,7 +76,6 @@ const case3Event = (event, diffInDays) => {
         onDragStart = {(e) => {dragStart(e, event)}}
         onDrop={(e) => e.preventDefault()}    
         onDragOver={(e) => e.preventDefault()} 
-        event={event}
         key={event.eventid}>
     {event.eventname}</div>
 }
@@ -107,7 +104,6 @@ const case4Event = (event, diffInDays) => {
         onDragStart = {(e) => {dragStart(e, event)}}
         onDrop={(e) => e.preventDefault()}    
         onDragOver={(e) => e.preventDefault()} 
-        event={event}
         key={event.eventid}>
     {event.eventname}</div> 
 }
@@ -135,7 +131,6 @@ const case5Event = (event) => {
         onDragStart = {(e) => {dragStart(e, event)}}
         onDrop={(e) => e.preventDefault()}    
         onDragOver={(e) => e.preventDefault()} 
-        event={event}
         key={event.eventid}>
     {event.eventname}</div> 
 }
