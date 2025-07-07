@@ -27,7 +27,7 @@ import { ShowEvent } from '../components/LeftPanel/ShowEvent.jsx'
 import monthEventsService from '../services/monthEventsService.jsx'
 import calendarService from '../services/calendarService.jsx'
 import { EventDisplay } from '../components/EventDisplay.jsx'
-import { SimplePopover } from '../components/blocks/SimplePopover.jsx'
+import { ColorPopover } from '../components/blocks/ColorPopover.jsx'
 
 
 function HomePage() {
@@ -248,6 +248,7 @@ function HomePage() {
                                                 }, 100)
                                             }
                                         }))}
+                                        gotColour={true}
                                         checkboxButton={true}
                                         checkboxName='myCalendars'
                                         accountid={currentUserAccountId}
@@ -314,7 +315,6 @@ function HomePage() {
                                         >
 
                                             <h3>{calendar.calendarname}</h3>
-                                            <SimplePopover></SimplePopover>
 
                                         </ScrollBlock>
                                     ))}
