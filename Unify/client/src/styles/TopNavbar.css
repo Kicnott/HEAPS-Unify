@@ -1,7 +1,7 @@
 .topnavbar {
     height: 7%;
     max-height: 7%;
-    background: light-dark(#5E503F, #292929);
+    background: light-dark(#5E503F, #5E503F);
     display: flex;
     position: fixed;
     top: 0;
@@ -23,11 +23,10 @@
     margin: 0;
     padding-left: 8px;
     top: auto;
-    font-size: 2rem;
+    font-size: 2.3rem;
     color: white;
     
-    margin-top: -8px;
-    font-size: 2.8rem;
+    margin-top: -7px;
     flex-shrink: 5;
     color: white;
     font-family:'ShootingStar';

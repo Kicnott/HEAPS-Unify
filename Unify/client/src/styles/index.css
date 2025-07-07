@@ -2,8 +2,8 @@
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
   color-scheme: light dark;
+  
   
 
   font-synthesis: none;
@@ -28,21 +28,24 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  font-family: 'Times New Roman', Times, serif;
 
-  color: light-dark( #5E503F, #abd2e1);
 
-  background-image: url('../assets/LoginBG.png'); /* Replace with your image path */
-  background-size: cover;         /* Makes the image cover the entire screen */
-  background-position: center;    /* Keeps it centered */
-  background-repeat: no-repeat;   /* Prevents tiling */
-  background-attachment: fixed;   /* Optional: parallax-style background */
-  background-color: light-dark(#EBE6D6, #3c3c3c); /* Fallback color */
+  color: light-dark( #5E503F, #5E503F);
+
+  background-image: url('../assets/LoginBG.png'); 
+  background-size: cover;       
+  background-position: center;   
+  background-repeat: no-repeat; 
+  background-attachment: fixed;   
+  background-color: light-dark(#EBE6D6, #EBE6D6); 
 
 }
 
 h1 {
-  font-size: 3em;
+  font-size: 3em ;
   line-height: 1.1;
+  
   
   
 }
@@ -54,7 +57,7 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: light-dark(#000000, #d0e0e6);
+  background-color: light-dark(#000000, #ffffff);
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -72,7 +75,7 @@ button:focus-visible {
     background-color: #ffffff;
   }
   a:hover {
-    color: 
+    color:  #213547;
   }
   button {
     background-color: #f9f9f9;
