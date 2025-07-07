@@ -27,6 +27,7 @@ import { ShowEvent } from '../components/LeftPanel/ShowEvent.jsx'
 import monthEventsService from '../services/monthEventsService.jsx'
 import calendarService from '../services/calendarService.jsx'
 import { EventDisplay } from '../components/EventDisplay.jsx'
+import { SimplePopover } from '../components/blocks/SimplePopover.jsx'
 
 
 function HomePage() {
@@ -307,6 +308,7 @@ function HomePage() {
                                         >
 
                                             <h3>{calendar.calendarname}</h3>
+                                            <SimplePopover></SimplePopover>
 
                                         </ScrollBlock>
                                     ))}

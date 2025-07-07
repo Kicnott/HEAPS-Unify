@@ -15,6 +15,7 @@ export const ScrollBlock = ({ buttonData, children, width = '100%', height = '10
             border: "1px solid #ccc",
             padding: "8px",
             boxSizing: "border-box",
+            overflow: 'visible'
         }}
 
     >   {children}
