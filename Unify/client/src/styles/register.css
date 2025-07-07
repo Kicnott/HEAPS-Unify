@@ -1,3 +1,10 @@
+
+@font-face {
+  font-family: 'Sophiecomic';
+  src: url('../assets/Sophiecomic-Regular.ttf') format('truetype');
+}
+
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -9,6 +16,7 @@
   font-weight: 600;
   color: #5E503F ;
   font-size: 1em;
+  font-family: 'Sophiecomic';
 }
 
 .form-group input {
