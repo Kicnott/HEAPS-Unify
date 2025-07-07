@@ -4,7 +4,7 @@ import { SliderPicker } from 'react-color';
 import { useRef, useState } from 'react';
 
 const ColorCircle = React.forwardRef(({ size = 24, color = "#3498db", ...rest }, ref) => {
-    console.log("ColorCircle color: " + color)
+    // console.log("ColorCircle color: " + color)
     return(
     <span
         ref={ref}
@@ -19,7 +19,7 @@ const ColorCircle = React.forwardRef(({ size = 24, color = "#3498db", ...rest },
     />)
 });
 
-export function ColorPopover({ children, content, side = "right", color, setColor, ...props }) {
+export function ColorPopover({ children, content, side = "right", color, setColor, colorChangeComplete, calendarid, ...props }) {
     // const [color, setColor] = useState("#3498db");
     const circleRef = useRef(null)
 
@@ -48,6 +48,10 @@ export function ColorPopover({ children, content, side = "right", color, setColo
                     <SliderPicker
                         color={color}
                         onChange={c => setColor(c.hex)}
+                        onChangeComplete={(c) => {
+                            colorChangeComplete(c.hex, calendarid)
+                            console.log("Updating calendar color in database!")
+                        }}
                     />
                     {content}
                     <Popover.Arrow style={{ fill: "#fff" }} />

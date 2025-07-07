@@ -155,6 +155,9 @@ function HomePage() {
         }
     }
 
+    async function colorChangeComplete(color, calendarid){
+        const res = await calendarService.changeCalendarColor(color, calendarid)
+    }
     // Defining the uCalendarDisplay object that the page will use to update the Main Calendar.
     // the date object is the current time
 
@@ -254,6 +257,7 @@ function HomePage() {
                                         checkboxName='myCalendars'
                                         accountid={currentUserAccountId}
                                         onCheckboxChange={onCalendarCheckboxChange}
+                                        colorChangeComplete={colorChangeComplete}
                                         myDisplayedCalendarIds={myDisplayedCalendarIds} >
                                         <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>My Calendars</h2>
                                     </ScrollBlock>

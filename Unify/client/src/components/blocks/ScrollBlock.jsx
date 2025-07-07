@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ColorPopover } from "./ColorPopover";
 
-export const ScrollBlock = ({ buttonData, children, width = '100%', height = '100%', checkboxButton = false, checkboxName, myDisplayedCalendarIds, onCheckboxChange, accountid, refreshTrigger, maxHeight = '100%', gotColour = false }) => {
+export const ScrollBlock = ({ buttonData, children, width = '100%', height = '100%', checkboxButton = false, checkboxName, myDisplayedCalendarIds, onCheckboxChange, accountid, refreshTrigger, maxHeight = '100%', gotColour = false, colorChangeComplete }) => {
     // Store color state for each button by index
     const [colors, setColors] = useState([]);
 
@@ -10,7 +10,7 @@ export const ScrollBlock = ({ buttonData, children, width = '100%', height = '10
             setColors(buttonData.map(btn => btn.color || "#3498db"));
         }
     }, [buttonData]);
-    
+
     useEffect(() => {
         if (gotColour) {
             console.log("ScrollBlock colors: ", colors)
@@ -72,9 +72,11 @@ export const ScrollBlock = ({ buttonData, children, width = '100%', height = '10
                                 style={{ display: "flex", alignItems: "center" }}
                             >
                                 <ColorPopover
+                                    calendarid = {btn.id}
                                     side="left"
                                     color={colors[idx]}
                                     setColor={c => handleColorChange(idx, c)}
+                                    colorChangeComplete={colorChangeComplete}
                                 />
                             </span>
                         )}

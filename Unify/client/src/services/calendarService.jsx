@@ -59,6 +59,9 @@ const displayCalendar = (calendarid, accountid) => {
 const undisplayCalendar = (calendarid, accountid) => {
     return http.delete('/home/unDisplayCalendar', { data: { calendarid, accountid } })
 }
+const changeCalendarColor = (color, calendarid) => {
+    return http.post('/home/changeCalendarColor', { calendarid, color })
+}
 
 export default {
     showAllCalendars,
@@ -73,5 +76,6 @@ export default {
     getMyDisplayedCalendars,
     checkDisplayedCalendar,
     displayCalendar,
-    undisplayCalendar
+    undisplayCalendar,
+    changeCalendarColor
 }
