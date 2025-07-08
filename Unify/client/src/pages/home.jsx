@@ -400,7 +400,11 @@ function HomePage() {
                 isHidden={!isShowEventOpen}
                 onClose={() => hideOverlayBackground()}>
                 <ShowEvent
-                    eventid={showEventID}>
+                    eventid={showEventID}
+                    setShowCalendarID={setShowCalendarID}
+                    setShowCalendarOpen={setShowCalendarOpen}
+                    setShowEventOpen={setShowEventOpen}
+                    >
                 </ShowEvent>
             </OverlayBlock>
 
