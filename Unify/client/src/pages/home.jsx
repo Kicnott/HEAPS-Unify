@@ -487,7 +487,10 @@ function HomePage() {
 
             {isEventDetailsOpen && selectedEvent && (
                 <OverlayBlock onClose={() => setEventDetailsOpen(false)}>
-                    <EventDisplay displayedEvent={selectedEvent} />
+                    <EventDisplay 
+                    displayedEvent = {selectedEvent} 
+                    onClose={() => setEventDetailsOpen(false)}
+                    onDelete = {() => seteventRefreshTrigger(prev => prev + 1)}/>
                 </OverlayBlock>
             )}
 

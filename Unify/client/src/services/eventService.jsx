@@ -31,10 +31,17 @@ const getEvent = (eventid) => {
     return http.get('/home/getEvent', {params: { eventid: eventid }})
 }
 
+const deleteEvent = (eventid) => {
+    return http.delete(`/home/deleteEvent/${eventid}`);
+}
+
+// add delete and modify routes
+
 export default {
     createEvent,
     getEvents,
     getMyEvents,
     getEvent,
-    updateEvent
+    updateEvent,
+    deleteEvent
 }

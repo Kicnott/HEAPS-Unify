@@ -136,4 +136,26 @@ router.put('/home/updateEvent', async (req, res) => {
     return res.json(false);}
 })
 
+
+//add modify and delete route
+router.delete('/home/deleteEvent/:id', async(req, res) => {
+  try {
+    const eventid = req.params.id;
+
+    const result = await pool.query(
+      'DELETE FROM eventstable WHERE eventid = ($1)', [eventid]
+    )
+
+    if (result.rowCount === 0){ // if result constant has no rows, it means no rows are deleted
+      return res.json({ status : "Failed to delete event"});
+    } else {
+      return res.json({ status : "Event deleted"});
+    }
+  } catch (e){
+    console.log("deleteEvent: Server Error");
+    console.log(e);
+    return res.json(e);
+  }
+})
+
 export default router
