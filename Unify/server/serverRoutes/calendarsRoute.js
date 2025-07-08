@@ -31,11 +31,8 @@ router.get('/home/getMyCalendars', async (req, res) => {
       'SELECT * FROM calendarstable WHERE accountid = $1', [accountid]
     );
 
-<<<<<<< HEAD
-=======
     // console.log(result)
 
->>>>>>> main
     return res.json(result)
   } catch (e) {
     console.log("GetMyCalendars: Server Error");
@@ -94,11 +91,8 @@ router.delete('/home/deleteCalendar', async (req, res) => {
       return res.json({ status: "calendarid contains nothing!" })
     }
 
-<<<<<<< HEAD
-=======
     // console.log(res)
 
->>>>>>> main
     const result = await pool.query( // result constant contains db object of any rows that are deleted
       'DELETE FROM calendarstable WHERE calendarid = ($1)', [calendarid]
     );
