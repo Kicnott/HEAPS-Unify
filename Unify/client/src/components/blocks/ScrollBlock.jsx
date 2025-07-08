@@ -44,36 +44,6 @@ export const ScrollBlock = ({
         }
     }, [buttonData, pendingColorChanges]);
 
-
-
-
-
-    // const [colors, setColors] = useState(() =>
-    //     (buttonData && buttonData.length > 0)
-    //         ? buttonData.map(btn => btn.color || "#3498db")
-    //         : []
-    // );
-
-    // useEffect(() => {
-    //     if (buttonData && buttonData.length > 0) {
-    //         setColors(buttonData.map(btn => btn.color || "#3498db"));
-    //     }
-    // }, [buttonData]);
-
-    // // useEffect(() => {
-    // //     if (gotColour) {
-    // //         // console.log("ScrollBlock colors: ", colors)
-    // //     }
-    // // }, [colors, setColors, gotColour])
-
-    // const handleColorChange = (idx, newColor) => {
-    //     setColors(prev => {
-    //         const updated = [...prev];
-    //         updated[idx] = newColor;
-    //         return updated;
-    //     });
-    // };
-
     return (
         <div
             style={{
@@ -130,8 +100,8 @@ export const ScrollBlock = ({
                         )}
                         <span
                             style={{
-                                flex: 1,                 // take up remaining space
-                                minWidth: 0,             // allow flex shrink
+                                flex: 1,          
+                                minWidth: 0,          
                                 overflow: "hidden",
                                 whiteSpace: "nowrap",
                                 textOverflow: "ellipsis",

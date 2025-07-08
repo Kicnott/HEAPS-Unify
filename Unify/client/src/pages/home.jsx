@@ -90,12 +90,12 @@ function HomePage() {
                 setAllAccounts(sortedAccounts);
             });
 
-            getMyEvents(currentUserAccountId).then(setMyEvents);
-
             getFollowedCalendars(currentUserAccountId).then((calendars) => {
                 const sortedCalendars = calendars.sort((a, b) => a.calendarid - b.calendarid);
                 setFollowedCalendars(sortedCalendars);
             });
+
+            getMyEvents(currentUserAccountId).then(setMyEvents);
 
             getMyDisplayedCalendars(currentUserAccountId).then(setMyDisplayedCalendarIds)
 
@@ -256,8 +256,57 @@ function HomePage() {
                         {
                             1:
                                 <>
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        borderBottom: '2px solid black',
+                                        paddingBottom: '8px',
+                                        marginBottom: '16px'
+                                    }}>
+                                        <h2 style={{
+                                            fontSize: '24px',
+                                            fontWeight: 'bold',
+                                            margin: 0,
+                                            flex: 1,
+                                            lineHeight: 1
+                                        }}>
+                                            My Calendars
+                                        </h2>
+                                        <button
+                                            style={{
+                                                width: '24px',
+                                                height: '24px',
+                                                padding: 0,
+                                                borderRadius: '50%',
+                                                background: '#fff',
+                                                border: '1.5px solid #d1d5db',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                outline: 'none',
+                                                cursor: 'pointer',
+                                                transition: 'background 0.15s, border 0.15s, box-shadow 0.15s',
+                                            }}
+                                            onMouseOver={e => {
+                                                e.currentTarget.style.background = '#f3f4f6';
+                                                e.currentTarget.style.border = '1.5px solid #a3a3a3';
+                                                e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.07)';
+                                            }}
+                                            onMouseOut={e => {
+                                                e.currentTarget.style.background = '#fff';
+                                                e.currentTarget.style.border = '1.5px solid #d1d5db';
+                                                e.currentTarget.style.boxShadow = 'none';
+                                            }}
+                                            onClick={() => { setCreateCalendarOpen(true) }}
+                                        >
+                                            <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+                                                <rect x="6" y="2" width="2" height="10" rx="1" fill="#222" />
+                                                <rect x="2" y="6" width="10" height="2" rx="1" fill="#222" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                     <ScrollBlock
-                                        height='48%'
+                                        height='40.5%'
                                         buttonData={myCalendars.map((calendar) => ({
                                             label: calendar.calendarname,
                                             id: calendar.calendarid,
@@ -277,58 +326,27 @@ function HomePage() {
                                         colorChangeComplete={colorChangeComplete}
                                         refreshTrigger={setMainRefreshTrigger}
                                         myDisplayedCalendarIds={myDisplayedCalendarIds} >
-                                        <div style={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            borderBottom: '2px solid black',
-                                            paddingBottom: '8px',
-                                            marginBottom: '16px'
-                                        }}>
-                                            <h2 style={{
-                                                fontSize: '24px',
-                                                fontWeight: 'bold',
-                                                margin: 0,
-                                                flex: 1,
-                                                lineHeight: 1
-                                            }}>
-                                                My Calendars
-                                            </h2>
-                                            <button
-                                                style={{
-                                                    width: '24px',
-                                                    height: '24px',
-                                                    padding: 0,
-                                                    borderRadius: '50%',
-                                                    background: '#fff',
-                                                    border: '1.5px solid #d1d5db',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    outline: 'none',
-                                                    cursor: 'pointer',
-                                                    transition: 'background 0.15s, border 0.15s, box-shadow 0.15s',
-                                                }}
-                                                onMouseOver={e => {
-                                                    e.currentTarget.style.background = '#f3f4f6';
-                                                    e.currentTarget.style.border = '1.5px solid #a3a3a3';
-                                                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.07)';
-                                                }}
-                                                onMouseOut={e => {
-                                                    e.currentTarget.style.background = '#fff';
-                                                    e.currentTarget.style.border = '1.5px solid #d1d5db';
-                                                    e.currentTarget.style.boxShadow = 'none';
-                                                }}
-                                                onClick={() => { setCreateCalendarOpen(true) }}
-                                            >
-                                                <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
-                                                    <rect x="6" y="2" width="2" height="10" rx="1" fill="#222" />
-                                                    <rect x="2" y="6" width="10" height="2" rx="1" fill="#222" />
-                                                </svg>
-                                            </button>
-                                        </div>
+
                                     </ScrollBlock>
                                     <br></br>
-                                    <ScrollBlock height='48%'
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        borderBottom: '2px solid black',
+                                        paddingBottom: '8px',
+                                        marginBottom: '16px'
+                                    }}>
+                                        <h2 style={{
+                                            fontSize: '24px',
+                                            fontWeight: 'bold',
+                                            margin: 0,
+                                            flex: 1,
+                                            lineHeight: 1
+                                        }}>
+                                            Followed Calendars
+                                        </h2>
+                                    </div>
+                                    <ScrollBlock height='40.5%'
                                         buttonData={followedCalendars.map((calendar) => ({
                                             label: calendar.calendarname,
                                             id: calendar.calendarid,
@@ -348,23 +366,6 @@ function HomePage() {
                                         onCheckboxChange={onCalendarCheckboxChange}
                                         refreshTrigger={setMainRefreshTrigger}
                                         myDisplayedCalendarIds={myDisplayedCalendarIds}>
-                                        <div style={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            borderBottom: '2px solid black',
-                                            paddingBottom: '8px',
-                                            marginBottom: '16px'
-                                        }}>
-                                            <h2 style={{
-                                                fontSize: '24px',
-                                                fontWeight: 'bold',
-                                                margin: 0,
-                                                flex: 1,
-                                                lineHeight: 1
-                                            }}>
-                                                Followed Calendars
-                                            </h2>
-                                        </div>
                                     </ScrollBlock>
                                 </>
                             ,
@@ -386,31 +387,170 @@ function HomePage() {
                                 </ScrollBlock>
                             ,
                             3:
-                                <ScrollBlock
-                                    height='100%'>
+                                <>
                                     <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>My Events</h2>
-                                    {myCalendars.map((calendar) => (
-                                        <ScrollBlock
-                                            maxHeight='30%'
-                                            height='auto'
-                                            key={calendar.calendarid}
-                                            buttonData={myEvents[calendar.calendarid]?.map((event) => ({
-                                                label: event.eventname + " - " + (new Date(event.startdt).toLocaleString()),
-                                                onClick: () => {
-                                                    setShowEventID(event.eventid)
-                                                    setTimeout(() => {
-                                                        setShowEventOpen(true)
-                                                    }, 100)
-                                                }
-                                            }))}
-                                        >
+                                    <ScrollBlock
+                                        height='40%'>
+                                        {myCalendars.map((calendar) => (
+                                            <>
+                                                <div
+                                                    style={{
+                                                        display: 'grid',
+                                                        gridTemplateColumns: '1fr auto',
+                                                        alignItems: 'center',
+                                                        borderBottom: '2px solid black',
+                                                        paddingBottom: '8px',
+                                                        marginBottom: '16px',
+                                                        position: 'relative',
+                                                    }}
+                                                >
+                                                    <h3
+                                                        style={{
+                                                            fontSize: '24px',
+                                                            fontWeight: 'bold',
+                                                            margin: 0,
+                                                            textAlign: 'center',
+                                                            width: '100%',
+                                                            gridColumn: '1 / -1',
+                                                            whiteSpace: 'nowrap',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                        }}
+                                                        title={calendar.calendarname}
+                                                    >
+                                                        {calendar.calendarname}
+                                                    </h3>
+                                                    <button
+                                                        style={{
+                                                            width: '24px',
+                                                            height: '24px',
+                                                            padding: 0,
+                                                            borderRadius: '50%',
+                                                            background: '#fff',
+                                                            border: '1.5px solid #d1d5db',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            outline: 'none',
+                                                            cursor: 'pointer',
+                                                            transition: 'background 0.15s, border 0.15s, box-shadow 0.15s',
+                                                            gridColumn: '2',
+                                                            gridRow: '1',
+                                                            justifySelf: 'end',
+                                                        }}
+                                                        onMouseOver={e => {
+                                                            e.currentTarget.style.background = '#f3f4f6';
+                                                            e.currentTarget.style.border = '1.5px solid #a3a3a3';
+                                                            e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.07)';
+                                                        }}
+                                                        onMouseOut={e => {
+                                                            e.currentTarget.style.background = '#fff';
+                                                            e.currentTarget.style.border = '1.5px solid #d1d5db';
+                                                            e.currentTarget.style.boxShadow = 'none';
+                                                        }}
+                                                        onClick={() => {
+                                                            setChosenDate(new Date())
+                                                            setShowCalendarID(calendar.calendarid)
+                                                            setEventFormOpen(true);
+                                                        }}
+                                                    >
+                                                        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+                                                            <rect x="6" y="2" width="2" height="10" rx="1" fill="#222" />
+                                                            <rect x="2" y="6" width="10" height="2" rx="1" fill="#222" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                                <ScrollBlock
+                                                    maxHeight='30%'
+                                                    height='auto'
+                                                    key={calendar.calendarid}
+                                                    buttonData={
+                                                        myEvents[calendar.calendarid] && myEvents[calendar.calendarid].length > 0
+                                                            ? myEvents[calendar.calendarid].map((event) => ({
+                                                                label: event.eventname + " - " + new Date(event.startdt).toLocaleString(),
+                                                                onClick: () => {
+                                                                    setShowEventID(event.eventid);
+                                                                    setTimeout(() => {
+                                                                        setShowEventOpen(true);
+                                                                    }, 100);
+                                                                },
+                                                            }))
+                                                            : [
+                                                                {
+                                                                    label: "No events",
+                                                                    onClick: () => { },
+                                                                },
+                                                            ]
+                                                    }
+                                                >
+                                                </ScrollBlock>
+                                            </>
+                                        ))}
 
-                                            <h3>{calendar.calendarname}</h3>
+                                    </ScrollBlock>
 
-                                        </ScrollBlock>
-                                    ))}
+                                    <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>Followed Events</h2>
+                                    <ScrollBlock
+                                        height='40%'>
+                                        {followedCalendars.map((calendar) => (
+                                            <>
+                                                <div
+                                                    style={{
+                                                        display: 'grid',
+                                                        gridTemplateColumns: '1fr auto',
+                                                        alignItems: 'center',
+                                                        borderBottom: '2px solid black',
+                                                        paddingBottom: '8px',
+                                                        marginBottom: '16px',
+                                                        position: 'relative',
+                                                    }}
+                                                >
+                                                    <h3
+                                                        style={{
+                                                            fontSize: '24px',
+                                                            fontWeight: 'bold',
+                                                            margin: 0,
+                                                            textAlign: 'center',
+                                                            width: '100%',
+                                                            gridColumn: '1 / -1',
+                                                            whiteSpace: 'nowrap',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                        }}
+                                                        title={calendar.calendarname}
+                                                    >
+                                                        {calendar.calendarname}
+                                                    </h3>
+                                                </div>
+                                                <ScrollBlock
+                                                    maxHeight='30%'
+                                                    height='auto'
+                                                    key={calendar.calendarid}
+                                                    buttonData={
+                                                        myEvents[calendar.calendarid] && myEvents[calendar.calendarid].length > 0
+                                                            ? myEvents[calendar.calendarid].map((event) => ({
+                                                                label: event.eventname + " - " + new Date(event.startdt).toLocaleString(),
+                                                                onClick: () => {
+                                                                    setShowEventID(event.eventid);
+                                                                    setTimeout(() => {
+                                                                        setShowEventOpen(true);
+                                                                    }, 100);
+                                                                },
+                                                            }))
+                                                            : [
+                                                                {
+                                                                    label: "No events",
+                                                                    onClick: () => { }, 
+                                                                },
+                                                            ]
+                                                    }
+                                                >
+                                                </ScrollBlock>
+                                            </>
+                                        ))}
 
-                                </ScrollBlock>
+                                    </ScrollBlock>
+                                </>
                         }
                     }
                 />}
@@ -568,13 +708,21 @@ function HomePage() {
                 <OverlayBlock
                     isHidden={false}
                     onClose={() => setEventFormOpen(false)}>
-                    <CreateEvent onClose={() => hideOverlayBackground()}
+                    <CreateEvent onClose={() => {
+                        hideOverlayBackground()
+                        setChosenDate(new Date())
+                        setShowCalendarID('')
+                    }}
                         onSave={() => {
-                            setEventFormOpen(false);
+                            hideOverlayBackground()
+                            setChosenDate(new Date())
+                            setShowCalendarID('')
+                            setMainRefreshTrigger(prev => prev + 1)
                             seteventRefreshTrigger(prev => prev + 1);
                         }}
                         chosenDate={chosenDate}
-                        accountid={currentUserAccountId} />
+                        accountid={currentUserAccountId}
+                        calendarid={showCalendarID} />
                 </OverlayBlock>
             )
             }

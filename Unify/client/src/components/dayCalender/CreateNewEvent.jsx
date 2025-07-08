@@ -119,6 +119,10 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
 
   return (
     <div style={{ width: '100%' }}>
+      <h2>
+        New Event
+      </h2>
+      <hr></hr>
 
       <div style={{ marginTop: '12px' }}>
         <label>Event Name</label>

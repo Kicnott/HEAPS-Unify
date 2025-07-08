@@ -50,7 +50,7 @@ router.get('/home/getMyEvents', async (req, res) => {
     console.log("GetMyEvents: Connected!");
 
     const result = await pool.query(
-      'SELECT * FROM eventstable WHERE calendarid = $1', [calendarid])
+      'SELECT * FROM eventstable WHERE calendarid = $1 ORDER BY startdt ASC', [calendarid])
 
     return res.json({ rows: result.rows });
   } catch (e) {

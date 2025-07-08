@@ -28,7 +28,7 @@
 .panel-content {
   padding: 15px;
   flex-grow: 1;
-  overflow-y: auto;
+  overflow-y: visible;
 }
 
 .tab-button {
