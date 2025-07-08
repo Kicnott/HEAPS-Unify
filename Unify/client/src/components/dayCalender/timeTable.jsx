@@ -113,7 +113,10 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
 
                     // 5. Single-day timed event (within this day)
                     if (start >= dayStart && end <= dayEnd) {
-                        timed.push(e);
+                        timed.push({
+                            ...e,
+                            originalEvent: e
+                        });
                         return;
                     }
                 });
@@ -312,7 +315,7 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                             gridColumn: e.lane + 2
                         }}
                         onClick={() => {
-                            eventselector(e);
+                            eventselector(e.originalEvent || e);
                             setEventDetailsOpen(true);
                         }}
                         >
