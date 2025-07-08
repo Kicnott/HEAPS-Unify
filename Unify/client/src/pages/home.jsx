@@ -69,7 +69,7 @@ function HomePage() {
 
     const [extraEvents, setExtraEvents] = useState([]);
     const [popUpPosition, setPopUpPosition] = useState({ x: 0, y: 0 }); 
-
+    
     const [isOverlayBackgroundHidden, setOverlayBackgroundHidden] = useState(true);
     // const isOverlayBackgroundHidden = isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen && !isShowCalendarOpen && !isShowAccountsOpen && !isShowEventOpen;
 

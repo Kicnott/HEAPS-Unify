@@ -48,11 +48,9 @@ const drop = (e, displayDate) => {
   let startHours = displayDate.toISOString().substring(11,13);
   let startMin = draggedEvent.startdt.substring(14,16);
   let startSec = draggedEvent.startdt.substring(17,19);
-  let endHours = draggedEvent.enddt.substring(11,13);
+  let endHours = displayDate.toISOString().substring(11,13);
   let endMin = draggedEvent.enddt.substring(14,16);
   let endSec = draggedEvent.enddt.substring(17,19);
-
-  console.log("STARTTTT HOURSS: ", startHours)
 
   // account for timezone
   if (Number(draggedEvent.startdt.substring(8,10)) === new Date(draggedEvent.newStartDt).getDate()){ 
@@ -66,8 +64,9 @@ const drop = (e, displayDate) => {
 
   const eventid = draggedEvent.eventid;
 
-  // Calculate time in millistartSeconds of each date since 1970, and divide to get the diff in days
-  let diffInDays =  (Date.UTC(draggedEventEndDt.getFullYear(), draggedEventEndDt.getMonth(), draggedEventEndDt.getDate()) - Date.UTC(draggedEventStartDt.getFullYear(), draggedEventStartDt.getMonth(), draggedEventStartDt.getDate())) / (60 * 60 * 24 * 1000);
+  const msInDay = 24 * 60 * 60 * 1000; // milliseconds in a day
+
+  let diffInDays =  Math.floor((draggedEventEndDt - draggedEventStartDt) / msInDay);
 
   const newStartDt = 
   draggedEvent.startdt.substring(0, 5) + String(displayDate.getMonth() + 1).padStart(2, '0') +    
@@ -89,35 +88,31 @@ const drop = (e, displayDate) => {
   const yearCheck = new Date(draggedEventStartDt).getYear()
   const monthCheck = displayDate.getMonth() + 1;
   let newEndDtValue = displayDate.getUTCDate() + diffInDays;
+  let newEndMonthValue = displayDate.getMonth() + 1;
 
   if ([2].includes(monthCheck) && !isLeapYear(yearCheck) && newEndDtValue > 28){ // 28 days, Feb
+    newEndMonthValue += 1;
     newEndDtValue = newEndDtValue - 28;
   } else if ([2].includes(monthCheck) && isLeapYear(yearCheck) && newEndDtValue > 28){ // 29 days, Feb, Leap Year
+    newEndMonthValue += 1;
     newEndDtValue = newEndDtValue - 29;
   } else if ([4, 6, 9, 11].includes(monthCheck) && newEndDtValue > 30){ // 30 days, Apr Jun Sep Nov
+    newEndMonthValue += 1;
     newEndDtValue = newEndDtValue - 30;
   } else if ([1, 3, 5, 7, 8, 10, 12].includes(monthCheck) && newEndDtValue > 31){ // 31 days, Jan Mar May Jul Aug Oct Dec
+    newEndMonthValue += 1;
     newEndDtValue = newEndDtValue - 31;
   }
 
-  // account for timezone
-  if (Number(draggedEvent.enddt.substring(8,10)) === new Date(draggedEvent.enddt).getDate()){ 
-    newEndDtValue = displayDate.toISOString().substring(8,10);
-  } else{
-    newEndDtValue = displayDate.getDate();
-    if (draggedEvent.enddt.substring(11,13) < 8){
-    endHours = 24 - (8 - draggedEvent.enddt.substring(11,13));
-    } else {
-    endHours = draggedEvent.enddt.substring(11,13) - 8;
-    }
-  }
-
   const newEndDt = 
-  draggedEvent.enddt.substring(0, 5) + String(displayDate.getMonth() + 1).padStart(2, '0') +    
+  draggedEvent.enddt.substring(0, 5) + String(newEndMonthValue).padStart(2, '0') +    
   draggedEvent.enddt.substring(7, 8) + String(newEndDtValue).padStart(2, '0') +   
   draggedEvent.enddt.substring(10, 11) + String(endHours).padStart(2, '0') + ':' + String(endMin).padStart(2, '0') + ':' + String(endSec).padStart(2, '0');
 
-  // console.log("new enddate: ", new newStartDateValue(newEndDt))
+  console.log("newEndMonthValue: ", newEndMonthValue)
+  console.log("Initial enddt: ", draggedEvent.enddt)
+  console.log("newEndDtValue: ", newEndDtValue)
+  console.log("newEndDt: ", newEndDt)
 
   try {
     const result = eventService.updateEvent({
