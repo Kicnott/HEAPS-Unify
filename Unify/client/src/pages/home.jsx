@@ -60,6 +60,7 @@ function HomePage() {
     const [showEventID, setShowEventID] = useState('')
 
     const [isCreateCalendarOpen, setCreateCalendarOpen] = useState(false)
+    const [mainRefreshTrigger, setMainRefreshTrigger] = useState(0)
 
     const [myDisplayedCalendarIds, setMyDisplayedCalendarIds] = useState([])
 
@@ -99,7 +100,7 @@ function HomePage() {
             getMyDisplayedCalendars(currentUserAccountId).then(setMyDisplayedCalendarIds)
 
         }
-    }, [currentUserAccountId]);
+    }, [currentUserAccountId, mainRefreshTrigger]);
 
     useEffect(() => {
         setOverlayBackgroundHidden(() => {
@@ -168,8 +169,12 @@ function HomePage() {
     }
 
     async function colorChangeComplete(color, calendarid) {
-        const res = await calendarService.changeCalendarColor(color, calendarid)
+        const res = await calendarService.changeCalendarColor(color, calendarid);
+        if (res.data.status) {
+            setTimeout(() => { setMainRefreshTrigger(prev => prev + 1); }, 100);
+        }
     }
+
     // Defining the uCalendarDisplay object that the page will use to update the Main Calendar.
     // the date object is the current time
 
@@ -270,6 +275,7 @@ function HomePage() {
                                         accountid={currentUserAccountId}
                                         onCheckboxChange={onCalendarCheckboxChange}
                                         colorChangeComplete={colorChangeComplete}
+                                        refreshTrigger={setMainRefreshTrigger}
                                         myDisplayedCalendarIds={myDisplayedCalendarIds} >
                                         <div style={{
                                             display: 'flex',
@@ -340,6 +346,7 @@ function HomePage() {
                                         checkboxName='myCalendars'
                                         accountid={currentUserAccountId}
                                         onCheckboxChange={onCalendarCheckboxChange}
+                                        refreshTrigger={setMainRefreshTrigger}
                                         myDisplayedCalendarIds={myDisplayedCalendarIds}>
                                         <div style={{
                                             display: 'flex',
@@ -516,6 +523,7 @@ function HomePage() {
                     }}
                     onSave={() => {
                         setCreateCalendarOpen(false)
+                        setMainRefreshTrigger(mainRefreshTrigger + 1)
                         hideOverlayBackground()
                     }}
                 >
