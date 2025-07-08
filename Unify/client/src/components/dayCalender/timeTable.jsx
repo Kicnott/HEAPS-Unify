@@ -7,35 +7,120 @@ import '../../styles/timetable.css';
 //allow div to be created at last block 11pm-12am
     //automatically assigned endidx to be last block if endidx is ever smaller than startidx. dont think this will work for multi day events 
 
-//make all day event block? or highlight all day
+//make all day event block
 
 export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector, setEventDetailsOpen }) => {
-    const [eventsForDay, setEventsForDay] = useState([]);
+    // const [eventsForDay, setEventsForDay] = useState([]);
     const [maxLanes, setMaxLanes] = useState(1);
+    const [timedEvents, setTimedEvents] = useState([]);
+    const [allDayEvents, setAllDayEvents] = useState([]);
+
 
     useEffect(() => {
-        setEventsForDay([]);
+        setTimedEvents([]);
+        setAllDayEvents([]);
+
         setMaxLanes(1);
 
         const getEvents = async () => {
-            const jsDay = chosenDate.getDate();
-            const jsMonth = chosenDate.getMonth() + 1;
-            const jsYear = chosenDate.getFullYear();
-
+            const dayStart = DateTime.fromJSDate(chosenDate).startOf('day');
+            const dayEnd = dayStart.plus({ days: 1});
             try {
                 const response = await eventService.getEvents();
                 const eventRows = response.data.rows;
-                const matches = eventRows.filter(event => {
-                    const startObject = DateTime.fromISO(event.startdt);
-                    return (
-                        startObject.day === jsDay &&
-                        startObject.month === jsMonth &&
-                        startObject.year === jsYear
-                    );
+
+                const timed = [];
+                const allDay = [];  
+
+                eventRows.forEach(e => {
+                    const start = DateTime.fromISO(e.startdt);
+                    const end = DateTime.fromISO(e.enddt);
+
+                    if (end <= dayStart || start >= dayEnd) return;
+
+                    // 1. Single-day all-day event (12:00am to 11:45pm same day)
+                    if (
+                        start.equals(dayStart) &&
+                        end.equals(dayStart.plus({ hours: 23, minutes: 45 })) &&
+                        start.hour === 0 && start.minute === 0 &&
+                        end.hour === 23 && end.minute === 45
+                    ) {
+                        allDay.push({
+                            ...e,
+                            startdt: dayStart.toISO(),
+                            enddt: dayEnd.toISO(),
+                            originalEvent: e
+                        });
+                        return;
+                    }
+
+                    // 2. In-between days of multi-day event (all-day)
+                    if (start < dayStart && end > dayEnd) {
+                        allDay.push({
+                            ...e,
+                            startdt: dayStart.toISO(),
+                            enddt: dayEnd.toISO(),
+                            originalEvent: e
+                        });
+                        return;
+                    }
+
+                    // 3. First day of multi-day event
+                    if (start >= dayStart && start < dayEnd && end > dayEnd) {
+                        if (
+                            start.hour === 0 && start.minute === 0 &&
+                            (end > dayEnd || end.equals(dayStart.plus({ hours: 23, minutes: 45 })))
+                        ) {
+                            allDay.push({
+                                ...e,
+                                startdt: dayStart.toISO(),
+                                enddt: dayEnd.toISO(),
+                                originalEvent: e
+                            });
+                        } else {
+                            timed.push({
+                                ...e,
+                                startdt: e.startdt,
+                                enddt: dayEnd.toISO(),
+                                originalEvent: e
+                            });
+                        }
+                        return;
+                    }
+
+                    // 4. Last day of multi-day event
+                    if (start < dayStart && end > dayStart && end <= dayEnd) {
+                        // If the event covers the whole day, treat as all-day
+                        if (
+                            end.equals(dayStart.plus({ hours: 23, minutes: 45 }))
+                        ) {
+                            allDay.push({
+                                ...e,
+                                startdt: dayStart.toISO(),
+                                enddt: dayEnd.toISO(),
+                                originalEvent: e
+                            });
+                        } else {
+                            timed.push({
+                                ...e,
+                                startdt: dayStart.toISO(),
+                                enddt: e.enddt,
+                                originalEvent: e
+                            });
+                        }
+                        return;
+                    }
+
+                    // 5. Single-day timed event (within this day)
+                    if (start >= dayStart && end <= dayEnd) {
+                        timed.push(e);
+                        return;
+                    }
                 });
 
+
                 const laneCounts = Array(96).fill(0);
-                matches.forEach(e => {
+                timed.forEach(e => {
                     const start = DateTime.fromISO(e.startdt);
                     const end = DateTime.fromISO(e.enddt);
                     const startIdx = start.hour * 4 + Math.floor(start.minute / 15);
@@ -51,18 +136,25 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                 });
                 const newMaxLanes = Math.max(1, ...laneCounts);
                 setMaxLanes(newMaxLanes);
-                setEventsForDay(matches);
+                // setEventsForDay(matches);
+                setTimedEvents(timed);
+                setAllDayEvents(allDay);
 
             } catch (e) {
                 console.error('error fetching events:', e);
-                setEventsForDay([]);
+                // setEventsForDay([]);
+                setTimedEvents([]);
+                setAllDayEvents([]);
             }
         };
         getEvents();
     }, [chosenDate, refreshTrigger]);
 
+    
+
+
     const eventsWithLanes = useMemo(() => {
-        const sortedEvents = [...eventsForDay].sort((a, b) => {
+        const sortedEvents = [...timedEvents].sort((a, b) => {
             return DateTime.fromISO(a.startdt) - DateTime.fromISO(b.startdt);
         });
 
@@ -107,7 +199,17 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
         });
 
         return assignedEvents;
-    }, [eventsForDay, maxLanes]);
+    }, [timedEvents, maxLanes]);
+
+    const allDayEventsLanes = useMemo(() => {
+        return allDayEvents.map((e, idx) => ({
+            ...e,
+            lane: idx
+        }))
+    }, [allDayEvents])
+
+    const maxAllDayLanes = allDayEventsLanes.length || 1;
+    const totalMaxLanes = Math.max(maxLanes, maxAllDayLanes);
 
     const hoursCreator = () => {
         const hours = [];
@@ -124,17 +226,17 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
 
     const MIN_TOTAL_WIDTH = 300;
     const LANE_WIDTH = 82; // Lane is 82px, event is 80px
-
     let gridCols = '60px ';
-    if (maxLanes === 1) {
+    if (totalMaxLanes === 1) {
         gridCols += `minmax(${MIN_TOTAL_WIDTH}px, 1fr)`;
     } else {
-        const fixedLanes = Math.max(0, maxLanes - 1);
+        const fixedLanes = Math.max(0, totalMaxLanes - 1);
         gridCols += `${`${LANE_WIDTH}px `.repeat(fixedLanes)}`;
         const lastLaneMin = Math.max(MIN_TOTAL_WIDTH - fixedLanes * LANE_WIDTH, LANE_WIDTH);
         gridCols += `minmax(${lastLaneMin}px, 1fr)`;
     }
 
+    const gridTemplateRows = `80px repeat(96, 20px)`;
     const luxonDate = DateTime.fromJSDate(chosenDate);
     const formattedDate = luxonDate.toFormat("cccc - d LLLL");
 
@@ -145,27 +247,57 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
             <div style={{
                 ...gridContainerStyle,
                 gridTemplateColumns: gridCols,
+                gridTemplateRows: gridTemplateRows,
                 overflowX: 'auto'
             }}>
+                <div
+                    style={{
+                        ...hourLabelStyle,
+                        gridRow: '1',
+                        gridColumn: '1'
+                    }}>
+                All Day</div>
+
+                <div
+                    style={{
+                        gridRow: 1,
+                        gridColumn: `2 / span ${totalMaxLanes}`
+                    }}
+                ></div>
+
+                {allDayEventsLanes.map((e, eIdx) => (
+                    <div key={`event-allday-${eIdx}`}
+                        className='event-block'
+                        style={{
+                            gridRow: 1,
+                            gridColumn: e.lane + 2,
+                        }}
+                        onClick={() => {
+                            eventselector(e.originalEvent || e);
+                            setEventDetailsOpen(true);
+                        }}
+                        >
+                        {e.eventname}</div>
+                ))}
                 
                 {hoursCreator().map((hourData, hourIdx) => (
                     <div key={`hour-${hourIdx}`}
                         style={{
                             ...hourLabelStyle,
-                            gridRow: `${hourIdx * 4 + 1} / span 4`,
+                            gridRow: `${hourIdx * 4 + 2} / span 4`,
                             gridColumn: '1'
-                        }}>
+                        }}>     
                         {hourData.hourLabel}
                     </div>
                 ))}
 
                 {Array.from({ length: 96 }).map((_, idx) => (
-                    Array.from({ length: maxLanes }).map((_, laneIdx) => (
+                    Array.from({ length: totalMaxLanes }).map((_, laneIdx) => (
                         <div
                             key={`interval-${idx}-${laneIdx}`}
                             style={{
                                 ...intervalStyle,
-                                gridRow: idx + 1,
+                                gridRow: idx + 2,
                                 gridColumn: laneIdx + 2
                             }}
                         />
@@ -176,7 +308,7 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                     <div key={`event-${eIdx}`}
                         className='event-block'
                         style={{
-                            gridRow: `${e.startIdx + 1} / ${e.endIdx + 1}`,
+                            gridRow: `${e.startIdx + 2} / ${e.endIdx + 2}`,
                             gridColumn: e.lane + 2
                         }}
                         onClick={() => {
@@ -218,7 +350,7 @@ const intervalStyle = {
 
 const gridContainerStyle = {
     display: 'grid',
-    gridAutoRows: '20px',
+    // gridAutoRows: '20px',
     position: 'relative',
     border: '1px solid black',
     background: '#fff'

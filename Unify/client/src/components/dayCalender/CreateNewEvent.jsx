@@ -38,10 +38,6 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid }) => {
     startDateTime.setHours(startHours, startMinutes);
     endDateTime.setHours(endHours, endMinutes);
 
-    //if 1200am chosen for end time, treat it as start of next day
-    if (endHours === 0 && endMinutes === 0) {
-      endDateTime.setDate(endDateTime.getDate() + 1);
-    }
 
     const errors = [];
     if (!name) errors.push("Event name is required");
@@ -52,12 +48,16 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid }) => {
     if (!calendarID) errors.push("Calendar is required");
 
     if (startTime && endTime) {
-      if (startDateTime.getTime() === endDateTime.getTime()) {
+      
+      if (endTime === "00:00") {
+        errors.push("End Time cannot be 12:00am. Please select up to 11:45pm.");
+      } else if (startDateTime.getTime() === endDateTime.getTime()) {
         errors.push("Events must be at least 15 minutes long");
       } else if (startDateTime >= endDateTime) {
         errors.push("End Time must be after Start Time");
-      }
-    }
+      }  
+    }  
+
 
     if (errors.length > 0) {
       setErrors(errors);

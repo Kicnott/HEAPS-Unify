@@ -5,8 +5,12 @@ export const EventDisplay = ({displayedEvent, onClose, onDelete}) => {
     const start = DateTime.fromISO(displayedEvent.startdt);
     const end = DateTime.fromISO(displayedEvent.enddt);
 
-    const startStr = start.toFormat('hh:mm a');
-    const endStr = end.toFormat('hh:mm a');    
+    const sameDay = start.hasSame(end, 'day');
+
+    const startStr = start.toFormat('d LLLL h:mm a'); // e.g., 9 July 4:15 PM
+    const endStr = sameDay
+    ? end.toFormat('h:mm a') // just time if same day
+    : end.toFormat('d LLLL h:mm a'); // full date+time if different day
 
     const deleteTs = async () => {
         try {
