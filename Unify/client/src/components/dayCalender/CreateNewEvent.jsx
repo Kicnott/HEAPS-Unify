@@ -17,7 +17,7 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid }) => {
     getMyCalendars(accountid).then(setMyCalendars);
   }, [accountid])
 
-  console.log("myCalendars State:", myCalendars)
+  // console.log("myCalendars State:", myCalendars)
 
   const handleSave = async (e) => {
     setErrors([]);

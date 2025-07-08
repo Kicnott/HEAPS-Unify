@@ -27,7 +27,7 @@ import { ShowEvent } from '../components/LeftPanel/ShowEvent.jsx'
 import monthEventsService from '../services/monthEventsService.jsx'
 import calendarService from '../services/calendarService.jsx'
 import { EventDisplay } from '../components/EventDisplay.jsx'
-import { ColorPopover } from '../components/blocks/ColorPopover.jsx'
+import { CreateCalendar } from '../components/LeftPanel/CreateCalendar.jsx'
 
 
 function HomePage() {
@@ -58,6 +58,8 @@ function HomePage() {
 
     const [isShowEventOpen, setShowEventOpen] = useState(false)
     const [showEventID, setShowEventID] = useState('')
+
+    const [isCreateCalendarOpen, setCreateCalendarOpen] = useState(false)
 
     const [myDisplayedCalendarIds, setMyDisplayedCalendarIds] = useState([])
 
@@ -101,10 +103,10 @@ function HomePage() {
 
     useEffect(() => {
         setOverlayBackgroundHidden(() => {
-            return isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen && !isShowCalendarOpen && !isShowAccountsOpen && !isShowEventOpen;
+            return isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen && !isShowCalendarOpen && !isShowAccountsOpen && !isShowEventOpen && !isCreateCalendarOpen;
         });
 
-    }, [isEventHidden, isRightDrawerOpen, isEventFormOpen, isEditCalendarsFormOpen, isEditAccountsFormOpen, isShowCalendarOpen, isShowAccountsOpen, isShowEventOpen]);
+    }, [isEventHidden, isRightDrawerOpen, isEventFormOpen, isEditCalendarsFormOpen, isEditAccountsFormOpen, isShowCalendarOpen, isShowAccountsOpen, isShowEventOpen, isCreateCalendarOpen]);
 
     // console.log("Displayed Calendar IDs: ", myDisplayedCalendarIds)
     // console.log("Followed Calendars: ", followedCalendars);
@@ -140,6 +142,7 @@ function HomePage() {
         setShowAccountsOpen(false)
         setShowEventOpen(false)
         setEventDetailsOpen(false)
+        setCreateCalendarOpen(false)
 
     }
 
@@ -268,7 +271,55 @@ function HomePage() {
                                         onCheckboxChange={onCalendarCheckboxChange}
                                         colorChangeComplete={colorChangeComplete}
                                         myDisplayedCalendarIds={myDisplayedCalendarIds} >
-                                        <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>My Calendars</h2>
+                                        <div style={{
+                                            display: 'flex',
+                                            alignItems: 'center', 
+                                            borderBottom: '2px solid black',
+                                            paddingBottom: '8px',
+                                            marginBottom: '16px'
+                                        }}>
+                                            <h2 style={{
+                                                fontSize: '24px',
+                                                fontWeight: 'bold',
+                                                margin: 0,
+                                                flex: 1,
+                                                lineHeight: 1
+                                            }}>
+                                                My Calendars
+                                            </h2>
+                                            <button
+                                                style={{
+                                                    width: '24px',
+                                                    height: '24px',
+                                                    padding: 0,
+                                                    borderRadius: '50%',
+                                                    background: '#fff',
+                                                    border: '1.5px solid #d1d5db',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    outline: 'none',
+                                                    cursor: 'pointer',
+                                                    transition: 'background 0.15s, border 0.15s, box-shadow 0.15s',
+                                                }}
+                                                onMouseOver={e => {
+                                                    e.currentTarget.style.background = '#f3f4f6';
+                                                    e.currentTarget.style.border = '1.5px solid #a3a3a3';
+                                                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.07)';
+                                                }}
+                                                onMouseOut={e => {
+                                                    e.currentTarget.style.background = '#fff';
+                                                    e.currentTarget.style.border = '1.5px solid #d1d5db';
+                                                    e.currentTarget.style.boxShadow = 'none';
+                                                }}
+                                                onClick={() => {setCreateCalendarOpen(true)}}
+                                            >
+                                                <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+                                                    <rect x="6" y="2" width="2" height="10" rx="1" fill="#222" />
+                                                    <rect x="2" y="6" width="10" height="2" rx="1" fill="#222" />
+                                                </svg>
+                                            </button>
+                                        </div>
                                     </ScrollBlock>
                                     <br></br>
                                     <ScrollBlock height='48%'
@@ -290,7 +341,23 @@ function HomePage() {
                                         accountid={currentUserAccountId}
                                         onCheckboxChange={onCalendarCheckboxChange}
                                         myDisplayedCalendarIds={myDisplayedCalendarIds}>
-                                        <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>Followed Calendars</h2>
+                                        <div style={{
+                                            display: 'flex',
+                                            alignItems: 'center', 
+                                            borderBottom: '2px solid black',
+                                            paddingBottom: '8px',
+                                            marginBottom: '16px'
+                                        }}>
+                                            <h2 style={{
+                                                fontSize: '24px',
+                                                fontWeight: 'bold',
+                                                margin: 0,
+                                                flex: 1,
+                                                lineHeight: 1 
+                                            }}>
+                                                Followed Calendars
+                                            </h2>
+                                        </div>
                                     </ScrollBlock>
                                 </>
                             ,
@@ -404,7 +471,7 @@ function HomePage() {
                     setShowCalendarID={setShowCalendarID}
                     setShowCalendarOpen={setShowCalendarOpen}
                     setShowEventOpen={setShowEventOpen}
-                    >
+                >
                 </ShowEvent>
             </OverlayBlock>
 
@@ -435,10 +502,26 @@ function HomePage() {
                     setShowAccountOpen={setShowAccountsOpen}
                 >
                 </ShowAccount>
-
             </OverlayBlock>
 
+            <OverlayBlock
+                isHidden={!isCreateCalendarOpen}
+                onClose={() => hideOverlayBackground()}
+            >
+                <CreateCalendar
+                    accountid={currentUserAccountId}
+                    onClose={()=>{
+                        setCreateCalendarOpen(false)
+                        hideOverlayBackground()
+                    }}
+                    onSave={()=>{
+                        setCreateCalendarOpen(false)
+                        hideOverlayBackground()
+                    }}
+                >
 
+                </CreateCalendar>
+            </OverlayBlock>
 
             <OverlayBlock
                 isHidden={isEventHidden} // Assigns isEventHidden function

@@ -3,7 +3,7 @@ import React from 'react';
 import { SliderPicker } from 'react-color';
 import { useRef, useState } from 'react';
 
-const ColorCircle = React.forwardRef(({ size = 24, color = "#3498db", ...rest }, ref) => {
+const ColorCircle = React.forwardRef(({ size = 24, color = "#3498db", borderRadius='50%', ...rest }, ref) => {
     // console.log("ColorCircle color: " + color)
     return(
     <span
@@ -12,14 +12,14 @@ const ColorCircle = React.forwardRef(({ size = 24, color = "#3498db", ...rest },
             display: "inline-block",
             width: size,
             height: size,
-            borderRadius: "50%",
+            borderRadius: borderRadius,
             background: color,
         }}
         {...rest}
     />)
 });
 
-export function ColorPopover({ children, content, side = "right", color, setColor, colorChangeComplete, calendarid, ...props }) {
+export function ColorPopover({ children, content, side = "right", color, setColor, colorChangeComplete, calendarid, iconSize=24, iconBorderRadius='50%',  ...props }) {
     // const [color, setColor] = useState("#3498db");
     const circleRef = useRef(null)
 
@@ -27,7 +27,7 @@ export function ColorPopover({ children, content, side = "right", color, setColo
         <Popover.Root>
             <Popover.Trigger asChild>
                 <span ref={circleRef} style={{ cursor: "pointer" }} data-colorcircle="true">
-                    <ColorCircle color={color} />
+                    <ColorCircle color={color} size={iconSize} borderRadius={iconBorderRadius} />
                 </span>
             </Popover.Trigger>
             <Popover.Portal>
@@ -50,7 +50,6 @@ export function ColorPopover({ children, content, side = "right", color, setColo
                         onChange={c => setColor(c.hex)}
                         onChangeComplete={(c) => {
                             colorChangeComplete(c.hex, calendarid)
-                            console.log("Updating calendar color in database!")
                         }}
                     />
                     {content}

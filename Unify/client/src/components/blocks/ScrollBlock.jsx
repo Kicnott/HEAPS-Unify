@@ -22,13 +22,11 @@ export const ScrollBlock = ({
         }
     }, [buttonData]);
 
-    useEffect(() => {
-        if (gotColour) {
-            console.log("ScrollBlock colors: ", colors)
-        }
-
-
-    }, [colors, setColors, gotColour])
+    // useEffect(() => {
+    //     if (gotColour) {
+    //         // console.log("ScrollBlock colors: ", colors)
+    //     }
+    // }, [colors, setColors, gotColour])
 
     const handleColorChange = (idx, newColor) => {
         setColors(prev => {
