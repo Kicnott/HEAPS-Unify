@@ -1,13 +1,13 @@
 import { CalendarDateBox } from './CalendarDateBox.jsx'
 import { CalendarDateHeader } from './CalendarDateBox.jsx'
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import calenderEventsType from './monthEventsDisplay.jsx'
 import getBaseDate from './getBaseDate.jsx'
 import '../../styles/MainCalendar.css'
 
 
 // MainCalendar component used to display the big calendar in the Home page.
-export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEvents, setrefreshEvents, refreshMonthEvents,setRefreshMonthEvents, monthEvents, setChosenDate, setMonthEvents, isOverlayBackgroundHidden, hideOverlayBackground, setExtraEventsPopUp, setExtraEvents}) => {
+export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEvents, setrefreshEvents, refreshMonthEvents,setRefreshMonthEvents, monthEvents, setChosenDate, setMonthEvents, isOverlayBackgroundHidden, hideOverlayBackground, setExtraEventsPopUp, setExtraEvents, setPopUpPosition, extraEvents}) => {
     // children: Any additional labels to be stored on each DateBox. To be passed to the children variable in CalendarDateBox
     // displayDate: The date the user wants to display. As of now, the month of that date will be displayed by the calendar.
     // onDateBoxClick: The function to be run when a DateBox is clicked. To be passed to the onClick variable in CalendarDateBox.
@@ -17,6 +17,8 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const cellCount = Math.ceil((firstDay + daysInMonth) / 7) * 7;
+    const boxRefArray = useRef([]); // used to store calendarBox, mainly for extra events display
+    const [selectedDateExtraEventsIndex, setSelectedDateExtraEventsIndex] = useState(null); // used to store dateIndex for extra events box
 
     let monthEventsArray = [] // master array
     let calendarBoxes = [] // used as the final return
@@ -51,13 +53,22 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
     // filter events for each day into masterarray and return that day's calendar box display
     for (let dateIndex = 0; dateIndex < cellCount; dateIndex++){ 
 
+        // Update boxref for extra events box
+        useEffect(() => {
+                const boxRef = boxRefArray.current[selectedDateExtraEventsIndex];
+                console.log("AHHHH")
+            if (boxRef) {
+                const { x, y } = boxRef.getBoundingClientRect();
+                setPopUpPosition({ x, y });
+            }
+        }, [extraEvents]); 
+
         let innerArrayIndex = 0;
         let store4thEvent = ''; // needed to be replaced by extra events button if events >= 5
 
         // Intial filter of events for that day (currComparedDate)
         const comparedDate = currComparedDate.getDate();
         const comparedMonth = currComparedDate.getMonth();
-        const boxRef = useRef(null); // it gets the ref of each calendar box
 
         const dayEventsArray = monthEvents.filter((event)=>{
             const dbComparedEventDate = new Date(event.startdt).getDate();
@@ -156,12 +167,10 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
         });
 
         // if all 4 positions of the currComparedDate in monthEventsArray is non-null, and the fifth element array is not empty (contains the 5th event), we push the fourth event into the fifth element array and replace it with a button that displays (+..) all extra events
-
-        
         if (monthEventsArray[dateIndex][4].length !== 0 && monthEventsArray[dateIndex][0] !== null && monthEventsArray[dateIndex][1] !== null && monthEventsArray[dateIndex][2] !== null && monthEventsArray[dateIndex][3] !== null){
             monthEventsArray[dateIndex][4].push(store4thEvent);
             const currDayExtraEvents = monthEventsArray[dateIndex][4];
-            monthEventsArray[dateIndex][3] = extraEventsPopUpCall(dateIndex, currDayExtraEvents, setExtraEvents, setExtraEventsPopUp, boxRef);
+            monthEventsArray[dateIndex][3] = extraEventsPopUpCall(dateIndex, currDayExtraEvents, setExtraEvents, setExtraEventsPopUp, setSelectedDateExtraEventsIndex);
         } else {
             // if there are nulls left after event populating, replace them with empty divs
             for (let checkForNull = 0; checkForNull < 4; checkForNull++){
@@ -176,7 +185,7 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
 
         calendarBoxes.push(
         <CalendarDateBox 
-            ref={boxRef}
+            ref={(el) => (boxRefArray.current[dateIndex] = el)}
             key={currComparedDate} 
             baseMonth={displayDate.getMonth()} 
             displayDate={new Date(currComparedDate)} 
@@ -198,7 +207,7 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
             </div>
         </CalendarDateBox>)
 
-        currComparedDate.setDate(currComparedDate.getDate() + 1)
+        currComparedDate.setDate(currComparedDate.getDate() + 1);
     }
     // Simply displays the calendarBoxes in the style defined in MainCalendar.css.
     return (
@@ -209,28 +218,29 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
 }
 
 // Returns a clickable div to store extra events
-function extraEventsPopUpCall(dateIndex, currDayExtraEvents, setExtraEvents, setExtraEventsPopUp, boxRef){
+function extraEventsPopUpCall(dateIndex, currDayExtraEvents, setExtraEvents, setExtraEventsPopUp, setSelectedDateExtraEventsIndex){
     const noOfExtraDays = currDayExtraEvents.length;
-    console.log("boxRef: ", boxRef)
     
     return (
         <div 
             key = {`${dateIndex} ` + "extraButton"}
             style={{
                 color: 'black', 
-                backgroundColor: 'grey', 
+                backgroundColor: '#D3B683', 
                 borderColor: 'black',
                 borderStyle: 'solid',
                 borderWidth: '1px',
-                display: 'block',
+                display: 'flex',
                 paddingLeft: '5px',
                 textAlign: 'left',
                 alignItems: 'center',
-                marginRight: `90px`,
+                width: `25px`,
+                borderRadius: '10px'
             }} 
             onClick={(e) => {
                     setExtraEvents(currDayExtraEvents);
                     setExtraEventsPopUp(true);
+                    setSelectedDateExtraEventsIndex(dateIndex);
                     e.stopPropagation();
                 }               
             }>

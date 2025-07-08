@@ -66,6 +66,7 @@ function HomePage() {
     // const isOverlayBackgroundHidden = !isExtraEventsPopUpOpen
 
     const [extraEvents, setExtraEvents] = useState([]);
+    const [popUpPosition, setPopUpPosition] = useState({ x: 0, y: 0 }); 
 
     const [isOverlayBackgroundHidden, setOverlayBackgroundHidden] = useState(true);
     // const isOverlayBackgroundHidden = isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen && !isShowCalendarOpen && !isShowAccountsOpen && !isShowEventOpen;
@@ -110,12 +111,13 @@ function HomePage() {
 
     }, [isEventHidden, isExtraEventsPopUpOpen, isRightDrawerOpen, isEventFormOpen, isEditCalendarsFormOpen, isEditAccountsFormOpen, isShowCalendarOpen, isShowAccountsOpen, isShowEventOpen]);
 
+
+
     // console.log("Displayed Calendar IDs: ", myDisplayedCalendarIds)
     // console.log("Followed Calendars: ", followedCalendars);
     // console.log("My Events: ", myEvents);
     // console.log("My Calendars: ", myCalendars);
     // console.log("All Accounts: ", allAccounts);
-
 
     // console.log("Chosen Date: ", chosenDate);
     const [refreshMonthEvents, setRefreshMonthEvents] = useState(0)
@@ -190,7 +192,8 @@ function HomePage() {
             {isExtraEventsPopUpOpen && (
                 <ExtraEventsPopUp
                     onClose={() => hideOverlayBackground()}
-                    extraEvents={extraEvents}>
+                    extraEvents={extraEvents}
+                    popUpPosition={popUpPosition}>
                 </ExtraEventsPopUp>
                 )
             }
@@ -402,6 +405,8 @@ function HomePage() {
                                 hideOverlayBackground={hideOverlayBackground}
                                 setExtraEventsPopUp={setExtraEventsPopUp}
                                 setExtraEvents={setExtraEvents}
+                                setPopUpPosition={setPopUpPosition}
+                                extraEvents={extraEvents}
                             />
                         </div>
                     </div>
