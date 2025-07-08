@@ -8,24 +8,29 @@ import { uAccount, uCalendar, uCalendarDisplay, uEvent, uTimeslot } from '../cla
 // Components
 import { TopNavbar } from "../components/blocks/TopNavbar.jsx"
 import { RightDrawer } from "../components/rightDrawer/RightDrawer.jsx"
-import { MainCalendar } from '../components/monthCalender/MainCalendar.jsx'
+import { MainCalendar } from '../components/monthCalendar/MainCalendar.jsx'
 import { OverlayBlock } from '../components/blocks/OverlayBlock.jsx'
-import { DropdownList } from '../components/monthCalender/DropdownList.jsx'
+import { DropdownList } from '../components/monthCalendar/DropdownList.jsx'
 import { TimeTable } from '../components/dayCalender/timeTable.jsx'
 import { CreateEvent } from '../components/dayCalender/CreateNewEvent.jsx'
 import { RightDrawerCloseBackground } from '../components/rightDrawer/rightDrawerCloseBackground.jsx'
 import { EditAccountForm } from '../components/rightDrawer/EditAccounts.jsx'
-import { EditCalendarsForm } from '../components/monthCalender/EditCalendars.jsx'
+import { EditCalendarsForm } from '../components/monthCalendar/EditCalendars.jsx'
 import { OverlayBackground } from '../components/overlay/OverlayBackground.jsx'
 import { LeftTabPanel } from '../components/LeftPanel/LeftTabPanel.jsx'
 import { ScrollBlock } from '../components/blocks/ScrollBlock.jsx'
 import MainLayout from '../components/blocks/MainLayout.jsx'
-import { getMyCalendars, getMyEvents, getAllAccounts, getFollowedCalendars } from '../components/LeftPanel/LeftPanelFunctions.jsx'
+import { getMyCalendars, getMyEvents, getAllAccounts, getFollowedCalendars, getMyDisplayedCalendars } from '../components/LeftPanel/LeftPanelFunctions.jsx'
 import { ShowCalendar } from '../components/LeftPanel/ShowCalendar.jsx'
 import { ShowAccount } from '../components/LeftPanel/ShowAccount.jsx'
 import { ShowEvent } from '../components/LeftPanel/ShowEvent.jsx'
 import monthEventsService from '../services/monthEventsService.jsx'
+import calendarService from '../services/calendarService.jsx'
 import { EventDisplay } from '../components/EventDisplay.jsx'
+import { ExtraEventsPopUp } from '../components/blocks/ExtraEventsPopUp.jsx'
+import { EventsOverlayBackground } from '../components/overlay/EventsOverlayBackground.jsx'
+import {drawerStyle, rightDrawerButtonTop, rightDrawerButtonBottom} from '../styles/rightDrawerStyles.jsx'
+import { ColorPopover } from '../components/blocks/ColorPopover.jsx'
 
 
 function HomePage() {
@@ -33,7 +38,6 @@ function HomePage() {
     const currentUser = sessionStorage.getItem("currentUser"); //Gets Username in sessionStorage from login
     const currentUserAccountId = sessionStorage.getItem("currentUserAccountId"); //Gets Username in sessionStorage from login
     // console.log("Current User: " + currentUser + " Account ID: " + currentUserAccountId)
-
 
     // useState creates variables that are saved even when the page re-renders
     // [variable, function to change variable] is the format
@@ -58,8 +62,18 @@ function HomePage() {
     const [isShowEventOpen, setShowEventOpen] = useState(false)
     const [showEventID, setShowEventID] = useState('')
 
+    const [myDisplayedCalendarIds, setMyDisplayedCalendarIds] = useState([])
+
+    const [isExtraEventsPopUpOpen, setExtraEventsPopUp] = useState(false);
+    // const isOverlayBackgroundHidden = !isExtraEventsPopUpOpen
+
+    const [extraEvents, setExtraEvents] = useState([]);
+    const [popUpPosition, setPopUpPosition] = useState({ x: 0, y: 0 }); 
+
     const [isOverlayBackgroundHidden, setOverlayBackgroundHidden] = useState(true);
     // const isOverlayBackgroundHidden = isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen && !isShowCalendarOpen && !isShowAccountsOpen && !isShowEventOpen;
+
+    const [isExtraOverlayBackgroundHidden, setExtraOverlayBackgroundHidden] = useState(true);
 
     const [myCalendars, setMyCalendars] = useState([]);
 
@@ -70,51 +84,70 @@ function HomePage() {
 
     const [allAccounts, setAllAccounts] = useState([])
 
+    // for left panel
     const [myEvents, setMyEvents] = useState([]);
 
     useEffect(() => {
         if (currentUserAccountId) {
-            getMyCalendars(currentUserAccountId).then(setMyCalendars);
+            getMyCalendars(currentUserAccountId).then((calendars) => {
+                const sortedCalendars = calendars.sort((a, b) => a.calendarid - b.calendarid);
+                setMyCalendars(sortedCalendars);
+            });
 
-            getAllAccounts(currentUserAccountId).then(setAllAccounts);
+            getAllAccounts(currentUserAccountId).then((accounts) => {
+                const sortedAccounts = accounts.sort((a, b) => a.accountid - b.accountid);
+                setAllAccounts(sortedAccounts);
+            });
 
             getMyEvents(currentUserAccountId).then(setMyEvents);
 
-            getFollowedCalendars(currentUserAccountId).then(setFollowedCalendars);
+            getFollowedCalendars(currentUserAccountId).then((calendars) => {
+                const sortedCalendars = calendars.sort((a, b) => a.calendarid - b.calendarid);
+                setFollowedCalendars(sortedCalendars);
+            });
+
+            getMyDisplayedCalendars(currentUserAccountId).then(setMyDisplayedCalendarIds)
 
         }
     }, [currentUserAccountId]);
 
-    useEffect(() => {
+    // hides background when overlay is hidden
+    useEffect(() => { 
         setOverlayBackgroundHidden(() => {
             return isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen && !isShowCalendarOpen && !isShowAccountsOpen && !isShowEventOpen;
         });
+        setExtraOverlayBackgroundHidden(() => {
+            return !isExtraEventsPopUpOpen;
+        });
 
-    }, [isEventHidden, isRightDrawerOpen, isEventFormOpen, isEditCalendarsFormOpen, isEditAccountsFormOpen, isShowCalendarOpen, isShowAccountsOpen, isShowEventOpen]);
+    }, [isEventHidden, isExtraEventsPopUpOpen, isRightDrawerOpen, isEventFormOpen, isEditCalendarsFormOpen, isEditAccountsFormOpen, isShowCalendarOpen, isShowAccountsOpen, isShowEventOpen]);
 
+
+
+    // console.log("Displayed Calendar IDs: ", myDisplayedCalendarIds)
     // console.log("Followed Calendars: ", followedCalendars);
     // console.log("My Events: ", myEvents);
     // console.log("My Calendars: ", myCalendars);
     // console.log("All Accounts: ", allAccounts);
 
-
     // console.log("Chosen Date: ", chosenDate);
     const [refreshMonthEvents, setRefreshMonthEvents] = useState(0)
     const [monthEvents, setMonthEvents] = useState([])
 
-    useEffect(() => { //refreshes month events; display updated events on month calender
+    useEffect(() => { // refreshes month events; display updated events on month calender
         const fetchMonthEvents = async () => {
             try {
                 const currMonth = calendarDisplay.getMonth()
                 const monthEvents = await monthEventsService.getMonthEvents({ currMonth: currMonth });
                 setMonthEvents(monthEvents.data);
             } catch (err) {
-                console.error("Error fetching month events: ", err);
+                console.error("Error fetching month events: ", err);    
             }
         }
         fetchMonthEvents();
     }, [refreshMonthEvents])
 
+    // When the user exits an overlay, the following code turns off all overlays
     const hideOverlayBackground = () => {
         toggleEventHidden(true)
         toggleRightDrawer(false)
@@ -125,30 +158,72 @@ function HomePage() {
         setShowAccountsOpen(false)
         setShowEventOpen(false)
         setEventDetailsOpen(false)
-
+        setExtraEventsPopUp(false)
     }
 
+    const hideExtraOverlayBackground = () => {
+        toggleEventHidden(true)
+        toggleRightDrawer(false)
+        setEventFormOpen(false)
+        setEditAccountsFormOpen(false)
+        setEditCalendarsFormOpen(false)
+        setShowCalendarOpen(false)
+        setShowAccountsOpen(false)
+        setShowEventOpen(false)
+        setEventDetailsOpen(false)
+        setExtraEventsPopUp(false)
+    }
+
+    async function onCalendarCheckboxChange(calendarid, accountid) {
+        if (myDisplayedCalendarIds.includes(calendarid)) {
+            const res = await calendarService.undisplayCalendar(calendarid, accountid)
+            if (res.data.status) {
+                getMyDisplayedCalendars(currentUserAccountId).then(setMyDisplayedCalendarIds)
+            }
+            else {
+                console.error("Error undisplaying calendar!")
+            }
+        }
+        else {
+            const res = await calendarService.displayCalendar(calendarid, accountid)
+            if (res.data.status) {
+                getMyDisplayedCalendars(currentUserAccountId).then(setMyDisplayedCalendarIds)
+            }
+            else {
+                console.error("Error displaying calendar!")
+            }
+        }
+    }
+
+    async function colorChangeComplete(color, calendarid) {
+        const res = await calendarService.changeCalendarColor(color, calendarid)
+    }
     // Defining the uCalendarDisplay object that the page will use to update the Main Calendar.
     // the date object is the current time
 
-    // These are all styles for the contents of the right drawer. It's not really what I want but I am too lazy to do more css.
-    const drawerStyle = {
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        padding: 0,
-    }
-    const rightDrawerButtonTop = {
-        padding: 0,
-        flex: 1
-    }
-    const rightDrawerButtonBottom = {
-        marginTop: 'auto',
-        padding: 0
-    }
-
     return (
         <div>
+            {isExtraEventsPopUpOpen && (
+                <ExtraEventsPopUp
+                    onClose={() => hideOverlayBackground()}
+                    extraEvents={extraEvents}
+                    popUpPosition={popUpPosition}>
+                </ExtraEventsPopUp>
+                )
+            }
+
+            {/* <OverlayBlock
+                isHidden={!isShowEventOpen}
+                onClose={() => hideOverlayBackground()}>
+                <ShowEvent
+                    eventid={showEventID}>
+                </ShowEvent>
+            </OverlayBlock> */}
+
+            <EventsOverlayBackground
+                isHidden={isExtraOverlayBackgroundHidden}
+                onClick={() => hideExtraOverlayBackground()}>
+            </EventsOverlayBackground>
 
             <OverlayBackground
                 isHidden={isOverlayBackgroundHidden}
@@ -156,8 +231,6 @@ function HomePage() {
             </OverlayBackground>
 
             <TopNavbar isRightDrawerOpen={isRightDrawerOpen} toggleRightDrawer={toggleRightDrawer}></TopNavbar>
-
-
 
             {/* <RightDrawerCloseBackground isRightDrawerOpen={isRightDrawerOpen} toggleRightDrawer={toggleRightDrawer}></RightDrawerCloseBackground> */}
 
@@ -168,24 +241,29 @@ function HomePage() {
                 <div style={drawerStyle}>
                     <div style={rightDrawerButtonTop}>
                         <br></br>
-                        <br></br>
-                        <button>Account (TODO)</button>
-                        <br></br>
-                        <br></br>
-                        <button>Settings (TODO)</button>
-                        <br></br>
-                        <br></br>
-                        <button>Events (TODO)</button>
-                        <br></br>
-                        <br></br>
+                        {/*FOR BEV TO EDIT*/}
+                        <h3>Current User: {currentUser} &nbsp;
+                            <br></br>
+                            Account ID: {currentUserAccountId}</h3>
+
+                        {/*
+                        NOT NEEDED ANYMORE 
                         <button onClick={() => setEditAccountsFormOpen(!isEditAccountsFormOpen)}>Edit Account (Admin use)</button>
                         <br></br>
                         <br></br>
                         <button onClick={() => setEditCalendarsFormOpen(!isEditCalendarsFormOpen)}>Edit Calendar</button>
-                    </div> {/* TODO all these buttons */}
+                        */}
+                    </div>
 
                     <div style={rightDrawerButtonBottom}>
-                        <button><Link to="/">Sign Out</Link></button> {/* Button at the bottom to return to login page */}
+
+                        <button style={{
+                            backgroundColor: '#A78E72', // Dark brown color
+                            padding: '10px 20px',
+                            border: 'none',
+                            borderRadius: '8px',
+                            cursor: 'pointer'
+                        }}><Link to="/" style={{ color: 'white' }}>Sign Out</Link></button> {/* Button at the bottom to return to login page */}
                     </div>
                 </div>
             </RightDrawer>
@@ -203,31 +281,48 @@ function HomePage() {
                         {
                             1:
                                 <>
-                                    <ScrollBlock height='48%'
+                                    <ScrollBlock
+                                        height='48%'
                                         buttonData={myCalendars.map((calendar) => ({
                                             label: calendar.calendarname,
+                                            id: calendar.calendarid,
+                                            color: calendar.calendarcolour,
                                             onClick: () => {
-
                                                 setShowCalendarID(calendar.calendarid)
                                                 setTimeout(() => {
                                                     setShowCalendarOpen(true)
                                                 }, 100)
                                             }
                                         }))}
-                                    >
+                                        gotColour={true}
+                                        checkboxButton={true}
+                                        checkboxName='myCalendars'
+                                        accountid={currentUserAccountId}
+                                        onCheckboxChange={onCalendarCheckboxChange}
+                                        colorChangeComplete={colorChangeComplete}
+                                        myDisplayedCalendarIds={myDisplayedCalendarIds} >
                                         <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>My Calendars</h2>
                                     </ScrollBlock>
                                     <br></br>
                                     <ScrollBlock height='48%'
                                         buttonData={followedCalendars.map((calendar) => ({
                                             label: calendar.calendarname,
+                                            id: calendar.calendarid,
+                                            color: calendar.calendarcolour,
                                             onClick: () => {
                                                 setShowCalendarID(calendar.calendarid)
                                                 setTimeout(() => {
                                                     setShowCalendarOpen(true)
                                                 }, 100)
                                             }
-                                        }))}>
+                                        }))}
+                                        checkboxButton={true}
+                                        gotColour={true}
+                                        colorChangeComplete={colorChangeComplete}
+                                        checkboxName='myCalendars'
+                                        accountid={currentUserAccountId}
+                                        onCheckboxChange={onCalendarCheckboxChange}
+                                        myDisplayedCalendarIds={myDisplayedCalendarIds}>
                                         <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>Followed Calendars</h2>
                                     </ScrollBlock>
                                 </>
@@ -250,14 +345,16 @@ function HomePage() {
                                 </ScrollBlock>
                             ,
                             3:
-                                <ScrollBlock>
+                                <ScrollBlock
+                                    height='100%'>
                                     <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>My Events</h2>
                                     {myCalendars.map((calendar) => (
                                         <ScrollBlock
+                                            maxHeight='30%'
+                                            height='auto'
                                             key={calendar.calendarid}
-                                            height='40%'
                                             buttonData={myEvents[calendar.calendarid]?.map((event) => ({
-                                                label: event.eventname,
+                                                label: event.eventname + " - " + (new Date(event.startdt).toLocaleString()),
                                                 onClick: () => {
                                                     setShowEventID(event.eventid)
                                                     setTimeout(() => {
@@ -279,7 +376,6 @@ function HomePage() {
                 mainContent={
                     <div className='calendar-wrapper'>
                         <div className='main-content-centered'>
-                            <h3>Current User: {currentUser} &nbsp; Account ID: {currentUserAccountId}</h3>
                             <DropdownList
                                 optionArray={monthOptionsArray} // Assigns the options to the month dropdown list
                                 value={calendarDisplay.getMonth()} // Assigns the default value of the list to the current month
@@ -289,8 +385,8 @@ function HomePage() {
                                             calendarDisplay.getFullYear(),
                                             Number(event.target.value),
                                             calendarDisplay.getDate()
-                                    
-                                    )) // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
+
+                                        )) // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
                                     setRefreshMonthEvents(refreshMonthEvents + 1);
                                     console.log("Events Refreshed!");
                                 }}
@@ -304,8 +400,8 @@ function HomePage() {
                                             Number(event.target.value),
                                             calendarDisplay.getMonth(),
                                             calendarDisplay.getDate()
-                                
-                                    )); // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
+
+                                        )); // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
                                     setRefreshMonthEvents(refreshMonthEvents + 1);
                                     console.log("Events Refreshed!");
                                 }}
@@ -325,6 +421,12 @@ function HomePage() {
                                 monthEvents={monthEvents}
                                 setMonthEvents={setMonthEvents}
                                 setChosenDate={setChosenDate}
+                                isOverlayBackgroundHidden={isOverlayBackgroundHidden}
+                                hideOverlayBackground={hideOverlayBackground}
+                                setExtraEventsPopUp={setExtraEventsPopUp}
+                                setExtraEvents={setExtraEvents}
+                                setPopUpPosition={setPopUpPosition}
+                                extraEvents={extraEvents}
                             />
                         </div>
                     </div>
@@ -353,9 +455,7 @@ function HomePage() {
                     setShowEventID={setShowEventID}
                     setShowEventOpen={setShowEventOpen}
                     refreshFollowedCalendars={refreshFollowedCalendars}>
-
                 </ShowCalendar>
-
             </OverlayBlock>
 
             <OverlayBlock
@@ -380,7 +480,6 @@ function HomePage() {
                 < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setSelectedEvent} setEventDetailsOpen={setEventDetailsOpen}>
                 </TimeTable>
                 <button onClick={() => {
-                    // console.log("Button clicked!")
                     setEventFormOpen(true)
                 }}>+ Add Event</button>
 
@@ -417,9 +516,6 @@ function HomePage() {
                 isHidden={!isEditAccountsFormOpen}>
                 <EditAccountForm onClose={() => hideOverlayBackground()} />
             </OverlayBlock>
-
-            {/* nic's edit accounts form */}
-
 
             {/* nic's edit accounts form */}
             <OverlayBlock
