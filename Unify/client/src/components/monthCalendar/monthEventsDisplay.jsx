@@ -22,7 +22,7 @@ const case1Event = (event) => {
         onDragStart = {(e) => {dragStart(e, event)}}
         onDrop={(e) => e.preventDefault()}    
         onDragOver={(e) => e.preventDefault()} 
-        key={event.eventid}>
+        key={event.eventid + " Case1"}>
     {event.eventname}</div>
 }
 
@@ -49,7 +49,7 @@ const case2Event = (event, diffInDays) => {
         onDragStart = {(e) => {dragStart(e, event)}}
         onDrop={(e) => e.preventDefault()}    
         onDragOver={(e) => e.preventDefault()} 
-        key={event.eventid}>
+        key={event.eventid  + " Case2"}>
     {event.eventname}</div> 
 }
 
@@ -76,7 +76,7 @@ const case3Event = (event, diffInDays) => {
         onDragStart = {(e) => {dragStart(e, event)}}
         onDrop={(e) => e.preventDefault()}    
         onDragOver={(e) => e.preventDefault()} 
-        key={event.eventid}>
+        key={event.eventid  + " Case3"}>
     {event.eventname}</div>
 }
 
@@ -104,7 +104,7 @@ const case4Event = (event, diffInDays) => {
         onDragStart = {(e) => {dragStart(e, event)}}
         onDrop={(e) => e.preventDefault()}    
         onDragOver={(e) => e.preventDefault()} 
-        key={event.eventid}>
+        key={event.eventid + " Case4"}>
     {event.eventname}</div> 
 }
 
@@ -131,7 +131,7 @@ const case5Event = (event) => {
         onDragStart = {(e) => {dragStart(e, event)}}
         onDrop={(e) => e.preventDefault()}    
         onDragOver={(e) => e.preventDefault()} 
-        key={event.eventid}>
+        key={event.eventid + " Case5"}>
     {event.eventname}</div> 
 }
 
@@ -154,7 +154,7 @@ const case6Event = (event) => {
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         }} 
-    key={event.eventid}>{event.eventname}</button> 
+    key={event.eventid + " Case6"}>{event.eventname}</button> 
 }
 
 // Case 8: Empty Space

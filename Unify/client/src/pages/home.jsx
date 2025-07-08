@@ -134,13 +134,6 @@ function HomePage() {
         fetchMonthEvents();
     }, [refreshMonthEvents])
 
-    useEffect(() => { // checkClickedExtraEvents AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-        const checkClickedExtraEvents = () => {
-            console.log("events passed to the useffect: ", extraEvents)
-        }
-        checkClickedExtraEvents();
-    }, [setExtraEventsPopUp])
-
     // When the user exits an overlay, the following code turns off all overlays
     const hideOverlayBackground = () => {
         toggleEventHidden(true)

@@ -53,11 +53,11 @@ export const ExtraEventsPopUp = ({ children, onClose, extraEvents }) => {
 function displayExtraEvents(extraEvents, calenderEventsType){
   try {
     const displayedExtraEvents = [];
-    extraEvents.forEach((event) => {
-      displayedExtraEvents.push(calenderEventsType.case1Event(event))
-    });
-
-    console.log(displayedExtraEvents)
+    if (extraEvents.length !== 0){
+      extraEvents.forEach((event) => {
+        displayedExtraEvents.push(calenderEventsType.case1Event(event))
+      });
+    }
 
     return(
       <div>
@@ -65,6 +65,6 @@ function displayExtraEvents(extraEvents, calenderEventsType){
       </div>
     )
   } catch(e){
-    console.log("error: ", e)
+    console.log("display extra events error: ", e)
   }
 }
