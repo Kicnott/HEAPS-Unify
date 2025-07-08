@@ -226,7 +226,7 @@ function extraEventsPopUpCall(dateIndex, currDayExtraEvents, setExtraEvents, set
             key = {`${dateIndex} ` + "extraButton"}
             style={{
                 color: 'black', 
-                backgroundColor: '#D3B683', 
+                backgroundColor: 'grey', 
                 borderColor: 'black',
                 borderStyle: 'solid',
                 borderWidth: '1px',

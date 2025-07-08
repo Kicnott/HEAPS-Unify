@@ -10,7 +10,12 @@ export const CalendarDateBox = forwardRef(({ onClick, children, baseMonth, displ
   // baseMonth: The current month being displayed - to determine the font color
   // displayDate: The date to be displayed in the DateBox.
   let date = displayDate.getDate() // Converts the displayDate to the day number
+  let displayCurrentDayIndicator = '' // If the day matches current day, displays a circle on that date
+  const now = new Date(); // the current time, day and month
 
+  if (now.getDate() === displayDate.getDate() && now.getMonth() === displayDate.getMonth()){
+    displayCurrentDayIndicator = '#D3B683'
+  }
 
   let isBaseMonth // Stores true or false on whether the current date displayed in part of the base month.
   if (baseMonth === (displayDate.getMonth())) {
@@ -28,7 +33,7 @@ export const CalendarDateBox = forwardRef(({ onClick, children, baseMonth, displ
     margin: '0px',
     padding: '20px 10px 0px 10px',
     position: 'relative',
-    borderRadius: '2px'
+    borderRadius: '2px',
   }
 
 const dragOver = (e) => {
@@ -106,15 +111,19 @@ const drop = (e, displayDate) => {
     }}
   >
     {children}
-    
-    <span style={{
+
+    <div style={{
       color: isBaseMonth ? 'black' : 'grey',
       position: 'absolute',
       top: '0.2rem',
       left: '0.5rem',
+      background: `${displayCurrentDayIndicator}`,
+      borderRadius: '10px',
+      width: '20px',
     }}>
       {date}
-    </span>
+    </div>
+
   </button>
   )
 })
