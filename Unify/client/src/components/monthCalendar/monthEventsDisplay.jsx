@@ -12,7 +12,8 @@ const case1Event = (event) => {
         borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
-        paddingLeft: '2px',
+        paddingLeft: '5px',
+        paddingRight: '5px',
         textAlign: 'left',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
@@ -39,7 +40,8 @@ const case2Event = (event, diffInDays) => {
         borderWidth: '1px',
         marginRight: `-${eventOffset}px`,
         zIndex: '2',
-        paddingLeft: '2px',
+        paddingLeft: '5px',
+        paddingRight: '5px',
         textAlign: 'left',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
@@ -66,7 +68,8 @@ const case3Event = (event, diffInDays) => {
         borderWidth: '1px',
         marginRight: `-${eventOffset}px`,
         zIndex: '2',
-        paddingLeft: '2px',
+        paddingLeft: '5px',
+        paddingRight: '5px',
         textAlign: 'left',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
@@ -94,7 +97,8 @@ const case4Event = (event, diffInDays) => {
         marginLeft: `-10px`,
         marginRight: `-${eventOffset}px`,
         zIndex: '2',
-        paddingLeft: '2px',
+        paddingLeft: '5px',
+        paddingRight: '5px',
         textAlign: 'left',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
@@ -121,7 +125,8 @@ const case5Event = (event) => {
         marginLeft: `-10px`,
         marginRight: `-869px`,
         zIndex: '2',
-        paddingLeft: '2px',
+        paddingLeft: '5px',
+        paddingRight: '5px',
         textAlign: 'left',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
@@ -136,25 +141,25 @@ const case5Event = (event) => {
 }
 
 // Case 6: + more button, display excess events
-const case6Event = (event) => { 
-    let eventOffset = 6 * 143;
-    return <button style={{
+const case6Event = (event) => {
+    return <div style={{
         fontSize: '0.9rem',
         color: 'black', 
+        display: 'fixed',
+        width: '140px',
         backgroundColor: '#f6d8ac', 
         borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
-        marginLeft: `-10px`,
-        marginRight: `-${eventOffset}px`,
-        zIndex: '2',
-        paddingLeft: '2px',
+        paddingLeft: '5px',
+        paddingRight: '5px',
         textAlign: 'left',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         }} 
-    key={event.eventid + " Case6"}>{event.eventname}</button> 
+        key={event.eventid + " Case6"}>
+    {event.eventname}</div>
 }
 
 // Case 8: Empty Space
@@ -170,6 +175,7 @@ const calenderEventsType = {
     case3Event,
     case4Event,
     case5Event,
+    case6Event,
     case8Event
 }
 

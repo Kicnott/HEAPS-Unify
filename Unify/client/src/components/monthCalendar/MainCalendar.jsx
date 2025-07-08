@@ -1,5 +1,6 @@
 import { CalendarDateBox } from './CalendarDateBox.jsx'
 import { CalendarDateHeader } from './CalendarDateBox.jsx'
+import { useRef } from 'react'
 import calenderEventsType from './monthEventsDisplay.jsx'
 import getBaseDate from './getBaseDate.jsx'
 import '../../styles/MainCalendar.css'
@@ -51,10 +52,12 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
     for (let dateIndex = 0; dateIndex < cellCount; dateIndex++){ 
 
         let innerArrayIndex = 0;
+        let store4thEvent = ''; // needed to be replaced by extra events button if events >= 5
 
         // Intial filter of events for that day (currComparedDate)
         const comparedDate = currComparedDate.getDate();
         const comparedMonth = currComparedDate.getMonth();
+        const boxRef = useRef(null); // it gets the ref of each calendar box
 
         const dayEventsArray = monthEvents.filter((event)=>{
             const dbComparedEventDate = new Date(event.startdt).getDate();
@@ -87,10 +90,7 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
             const diffInDays = event.enddt.substring(8,10) - event.startdt.substring(8,10);
 
             // If innerArrayIndex is 4 or more, all displayable divs are occupied. Transfer the remaining events in sortedEventsInCurrDate to the 5th element in monthEventsArray (it stores extra events objects for that day)
-            if (innerArrayIndex >= 4){
-                monthEventsArray[dateIndex][4].push(event);
-                return;
-            }
+
 
             // Checks for an index that contains a null (not modified into Case 8 by previous multi day events)
             while (monthEventsArray[dateIndex][innerArrayIndex] !== null){
@@ -99,6 +99,11 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
                     monthEventsArray[dateIndex][4].push(event);
                     return;
                 }
+            }
+
+            // saves the 4th event in memory in case we need to pass it to the extra events button
+            if (innerArrayIndex == 3){
+                store4thEvent = event; 
             }
 
             if (diffInDays == 0){ // case 1: single day event
@@ -151,15 +156,12 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
         });
 
         // if all 4 positions of the currComparedDate in monthEventsArray is non-null, and the fifth element array is not empty (contains the 5th event), we push the fourth event into the fifth element array and replace it with a button that displays (+..) all extra events
-        // if (dateIndex === 12){
-        //     console.log("Check current array date", monthEventsArray[dateIndex], " of index", dateIndex)
-        //     console.log("monthEventsArray[dateIndex][4].length !== 0 : ", monthEventsArray[dateIndex][4].length !== 0)
-        // }
+
         
         if (monthEventsArray[dateIndex][4].length !== 0 && monthEventsArray[dateIndex][0] !== null && monthEventsArray[dateIndex][1] !== null && monthEventsArray[dateIndex][2] !== null && monthEventsArray[dateIndex][3] !== null){
-            monthEventsArray[dateIndex][4].push(monthEventsArray[dateIndex][3]);
-            const currDayExtraEvents= monthEventsArray[dateIndex][4];
-            monthEventsArray[dateIndex][3] = extraEventsPopUpCall(dateIndex, currDayExtraEvents, setExtraEvents, setExtraEventsPopUp);
+            monthEventsArray[dateIndex][4].push(store4thEvent);
+            const currDayExtraEvents = monthEventsArray[dateIndex][4];
+            monthEventsArray[dateIndex][3] = extraEventsPopUpCall(dateIndex, currDayExtraEvents, setExtraEvents, setExtraEventsPopUp, boxRef);
         } else {
             // if there are nulls left after event populating, replace them with empty divs
             for (let checkForNull = 0; checkForNull < 4; checkForNull++){
@@ -174,6 +176,7 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
 
         calendarBoxes.push(
         <CalendarDateBox 
+            ref={boxRef}
             key={currComparedDate} 
             baseMonth={displayDate.getMonth()} 
             displayDate={new Date(currComparedDate)} 
@@ -206,7 +209,10 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
 }
 
 // Returns a clickable div to store extra events
-function extraEventsPopUpCall(dateIndex, currDayExtraEvents, setExtraEvents, setExtraEventsPopUp){
+function extraEventsPopUpCall(dateIndex, currDayExtraEvents, setExtraEvents, setExtraEventsPopUp, boxRef){
+    const noOfExtraDays = currDayExtraEvents.length;
+    console.log("boxRef: ", boxRef)
+    
     return (
         <div 
             key = {`${dateIndex} ` + "extraButton"}
@@ -216,16 +222,19 @@ function extraEventsPopUpCall(dateIndex, currDayExtraEvents, setExtraEvents, set
                 borderColor: 'black',
                 borderStyle: 'solid',
                 borderWidth: '1px',
-                display: 'inline-block',
+                display: 'block',
+                paddingLeft: '5px',
+                textAlign: 'left',
+                alignItems: 'center',
+                marginRight: `90px`,
             }} 
             onClick={(e) => {
                     setExtraEvents(currDayExtraEvents);
                     setExtraEventsPopUp(true);
                     e.stopPropagation();
                 }               
-            }
-            >
-        ddd+
+            }>
+        +{noOfExtraDays}
         </div>
     )
 }

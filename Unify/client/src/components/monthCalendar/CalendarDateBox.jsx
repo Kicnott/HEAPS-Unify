@@ -1,9 +1,10 @@
 
 import eventService from '../../services/eventService.jsx';
+import { forwardRef } from 'react';
 
 
 // CalendarDateBox is a component used by MainCalendar to create the boxes in the Calendar.
-export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, setChosenDate, refreshEvents, setrefreshEvents, refreshMonthEvents, setRefreshMonthEvents }) => {
+export const CalendarDateBox = forwardRef(({ onClick, children, baseMonth, displayDate, setChosenDate, refreshEvents, setrefreshEvents, refreshMonthEvents, setRefreshMonthEvents }, ref) => {
   // onClick: A function that runs when the DateBox is clicked.
   // children: Any additional labels to be stored on each DateBox.
   // baseMonth: The current month being displayed - to determine the font color
@@ -95,6 +96,7 @@ const drop = (e, displayDate) => {
           
   return (
   <button 
+    ref={ref}
     key={displayDate}
     style={calendarStyle}       
     onDragOver={(e)=>dragOver(e)}
@@ -115,7 +117,7 @@ const drop = (e, displayDate) => {
     </span>
   </button>
   )
-}
+})
 
 
 // CalendarDateHeader is a component used by MainCalendar to create the header boxes in the Calendar, to display days of the week.
