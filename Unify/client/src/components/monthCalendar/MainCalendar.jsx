@@ -56,7 +56,6 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
         // Update boxref for extra events box
         useEffect(() => {
                 const boxRef = boxRefArray.current[selectedDateExtraEventsIndex];
-                console.log("AHHHH")
             if (boxRef) {
                 const { x, y } = boxRef.getBoundingClientRect();
                 setPopUpPosition({ x, y });

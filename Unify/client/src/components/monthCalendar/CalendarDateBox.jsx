@@ -44,27 +44,51 @@ const drop = (e, displayDate) => {
   e.preventDefault();
   const data = e.dataTransfer.getData('text/plain');
   const draggedEvent = JSON.parse(data);
+  let newStartDateValue = 0;
+  let startHours = displayDate.toISOString().substring(11,13);
+  let startMin = draggedEvent.startdt.substring(14,16);
+  let startSec = draggedEvent.startdt.substring(17,19);
+  let endHours = draggedEvent.enddt.substring(11,13);
+  let endMin = draggedEvent.enddt.substring(14,16);
+  let endSec = draggedEvent.enddt.substring(17,19);
+
+  console.log("STARTTTT HOURSS: ", startHours)
+
+  // account for timezone
+  if (Number(draggedEvent.startdt.substring(8,10)) === new Date(draggedEvent.newStartDt).getDate()){ 
+    newStartDateValue = displayDate.toISOString().substring(8,10);
+  } else{
+    newStartDateValue = displayDate.getDate();
+  }
 
   const draggedEventStartDt = new Date(draggedEvent.startdt);
   const draggedEventEndDt = new Date(draggedEvent.enddt);
 
   const eventid = draggedEvent.eventid;
 
-  // Calculate time in milliseconds of each date since 1970, and divide to get the diff in days
+  // Calculate time in millistartSeconds of each date since 1970, and divide to get the diff in days
   let diffInDays =  (Date.UTC(draggedEventEndDt.getFullYear(), draggedEventEndDt.getMonth(), draggedEventEndDt.getDate()) - Date.UTC(draggedEventStartDt.getFullYear(), draggedEventStartDt.getMonth(), draggedEventStartDt.getDate())) / (60 * 60 * 24 * 1000);
 
   const newStartDt = 
   draggedEvent.startdt.substring(0, 5) + String(displayDate.getMonth() + 1).padStart(2, '0') +    
-  draggedEvent.startdt.substring(7, 8) + String(displayDate.getDate()).padStart(2, '0') +   
-  draggedEvent.startdt.substring(10);
+  draggedEvent.startdt.substring(7, 8) + String(newStartDateValue).padStart(2, '0') +   
+  draggedEvent.startdt.substring(10, 11) + String(startHours).padStart(2, '0') + ':' + String(startMin).padStart(2, '0') + ':' + String(startSec).padStart(2, '0');
 
-  console.log("new startdate: ", newStartDt)
+  console.log("UTC event: ", draggedEvent.startdt)
+  console.log("local event: ", new Date(draggedEvent.startdt))
+  console.log("UTC DisplayDate: ", displayDate.toISOString())
+  console.log("local DisplayDate: ", displayDate)
+
+  console.log("date change: ", newStartDateValue)
+
+  console.log("new startdate in UTC: ", newStartDt)
+  console.log("new startdate in local: ", new Date(newStartDt))
   console.log("diff in days: ", diffInDays)
 
   // Following code allows draggedEvent to be dragged to previous months
   const yearCheck = new Date(draggedEventStartDt).getYear()
   const monthCheck = displayDate.getMonth() + 1;
-  let newEndDtValue = displayDate.getDate() + diffInDays;
+  let newEndDtValue = displayDate.getUTCDate() + diffInDays;
 
   if ([2].includes(monthCheck) && !isLeapYear(yearCheck) && newEndDtValue > 28){ // 28 days, Feb
     newEndDtValue = newEndDtValue - 28;
@@ -75,12 +99,25 @@ const drop = (e, displayDate) => {
   } else if ([1, 3, 5, 7, 8, 10, 12].includes(monthCheck) && newEndDtValue > 31){ // 31 days, Jan Mar May Jul Aug Oct Dec
     newEndDtValue = newEndDtValue - 31;
   }
+
+  // account for timezone
+  if (Number(draggedEvent.enddt.substring(8,10)) === new Date(draggedEvent.enddt).getDate()){ 
+    newEndDtValue = displayDate.toISOString().substring(8,10);
+  } else{
+    newEndDtValue = displayDate.getDate();
+    if (draggedEvent.enddt.substring(11,13) < 8){
+    endHours = 24 - (8 - draggedEvent.enddt.substring(11,13));
+    } else {
+    endHours = draggedEvent.enddt.substring(11,13) - 8;
+    }
+  }
+
   const newEndDt = 
   draggedEvent.enddt.substring(0, 5) + String(displayDate.getMonth() + 1).padStart(2, '0') +    
   draggedEvent.enddt.substring(7, 8) + String(newEndDtValue).padStart(2, '0') +   
-  draggedEvent.enddt.substring(10);
+  draggedEvent.enddt.substring(10, 11) + String(endHours).padStart(2, '0') + ':' + String(endMin).padStart(2, '0') + ':' + String(endSec).padStart(2, '0');
 
-  console.log("new enddate: ", newEndDt)
+  // console.log("new enddate: ", new newStartDateValue(newEndDt))
 
   try {
     const result = eventService.updateEvent({
