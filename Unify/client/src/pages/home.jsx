@@ -273,7 +273,7 @@ function HomePage() {
                                         myDisplayedCalendarIds={myDisplayedCalendarIds} >
                                         <div style={{
                                             display: 'flex',
-                                            alignItems: 'center', 
+                                            alignItems: 'center',
                                             borderBottom: '2px solid black',
                                             paddingBottom: '8px',
                                             marginBottom: '16px'
@@ -312,7 +312,7 @@ function HomePage() {
                                                     e.currentTarget.style.border = '1.5px solid #d1d5db';
                                                     e.currentTarget.style.boxShadow = 'none';
                                                 }}
-                                                onClick={() => {setCreateCalendarOpen(true)}}
+                                                onClick={() => { setCreateCalendarOpen(true) }}
                                             >
                                                 <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
                                                     <rect x="6" y="2" width="2" height="10" rx="1" fill="#222" />
@@ -343,7 +343,7 @@ function HomePage() {
                                         myDisplayedCalendarIds={myDisplayedCalendarIds}>
                                         <div style={{
                                             display: 'flex',
-                                            alignItems: 'center', 
+                                            alignItems: 'center',
                                             borderBottom: '2px solid black',
                                             paddingBottom: '8px',
                                             marginBottom: '16px'
@@ -353,7 +353,7 @@ function HomePage() {
                                                 fontWeight: 'bold',
                                                 margin: 0,
                                                 flex: 1,
-                                                lineHeight: 1 
+                                                lineHeight: 1
                                             }}>
                                                 Followed Calendars
                                             </h2>
@@ -510,11 +510,11 @@ function HomePage() {
             >
                 <CreateCalendar
                     accountid={currentUserAccountId}
-                    onClose={()=>{
+                    onClose={() => {
                         setCreateCalendarOpen(false)
                         hideOverlayBackground()
                     }}
-                    onSave={()=>{
+                    onSave={() => {
                         setCreateCalendarOpen(false)
                         hideOverlayBackground()
                     }}
@@ -527,12 +527,26 @@ function HomePage() {
                 isHidden={isEventHidden} // Assigns isEventHidden function
                 onClose={() => hideOverlayBackground()} // Assigns toggleEventHidden function
             >
-                < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setSelectedEvent} setEventDetailsOpen={setEventDetailsOpen}>
-                </TimeTable>
-                <button onClick={() => {
-                    setEventFormOpen(true)
-                }}>+ Add Event</button>
-
+                <button
+                    onClick={() => setEventFormOpen(true)}
+                    style={{
+                        position: 'absolute',
+                        top: 16,
+                        left: 16,
+                        background: 'white',
+                        border: '1.5px solid #222',
+                        borderRadius: '16px',
+                        padding: '6px 14px',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        zIndex: 1002,
+                        boxShadow: '0 1px 4px rgba(0,0,0,0.10)'
+                    }}
+                >+ Add Event</button>
+                <div style={{ paddingBottom: '20px' }}>
+                    < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setSelectedEvent} setEventDetailsOpen={setEventDetailsOpen}>
+                    </TimeTable>
+                </div>
             </OverlayBlock>
 
             {isEventDetailsOpen && selectedEvent && (
@@ -542,20 +556,19 @@ function HomePage() {
             )}
 
             {/* ADD event overlay block */}
-            {
-                isEventFormOpen && (
-                    <OverlayBlock
-                        isHidden={false}
-                        onClose={() => setEventFormOpen(false)}>
-                        <CreateEvent onClose={() => hideOverlayBackground()}
-                            onSave={() => {
-                                setEventFormOpen(false);
-                                seteventRefreshTrigger(prev => prev + 1);
-                            }}
-                            chosenDate={chosenDate}
-                            accountid={currentUserAccountId} />
-                    </OverlayBlock>
-                )
+            {isEventFormOpen && (
+                <OverlayBlock
+                    isHidden={false}
+                    onClose={() => setEventFormOpen(false)}>
+                    <CreateEvent onClose={() => hideOverlayBackground()}
+                        onSave={() => {
+                            setEventFormOpen(false);
+                            seteventRefreshTrigger(prev => prev + 1);
+                        }}
+                        chosenDate={chosenDate}
+                        accountid={currentUserAccountId} />
+                </OverlayBlock>
+            )
             }
 
             {/* nic's edit accounts form */}

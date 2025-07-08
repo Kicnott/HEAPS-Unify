@@ -22,6 +22,7 @@ export const OverlayBlock = ({ children, isHidden, onClose }) => {
     right: 16,
     background: 'transparent',
     border: 'none',
+    outline: 'none',  
     fontSize: 20,
     cursor: 'pointer',
     zIndex: 1002
