@@ -162,8 +162,8 @@ const case6Event = (event) => {
     {event.eventname}</div>
 }
 
-// Case 8: Empty Space
-const case8Event = (emptyEventSpaceCount) => {
+// Case 7: Empty Space
+const case7Event = (emptyEventSpaceCount) => {
     return(
     <div key={`empty-${emptyEventSpaceCount}`} style={{
     }}></div>
@@ -176,7 +176,7 @@ const calenderEventsType = {
     case4Event,
     case5Event,
     case6Event,
-    case8Event
+    case7Event
 }
 
 export default calenderEventsType

@@ -13,7 +13,7 @@ export const ScrollBlock = ({ buttonData, children, width = '100%', height = '10
 
     useEffect(() => {
         if (gotColour) {
-            console.log("ScrollBlock colors: ", colors)
+            // console.log("ScrollBlock colors: ", colors)
         }
 
 
