@@ -1,9 +1,10 @@
 
 import eventService from '../../services/eventService.jsx';
+import { forwardRef } from 'react';
 
 
 // CalendarDateBox is a component used by MainCalendar to create the boxes in the Calendar.
-export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, setChosenDate, refreshEvents, setrefreshEvents, refreshMonthEvents, setRefreshMonthEvents }) => {
+export const CalendarDateBox = forwardRef(({ onClick, children, baseMonth, displayDate, setChosenDate, refreshEvents, setrefreshEvents, refreshMonthEvents, setRefreshMonthEvents }, ref) => {
   // onClick: A function that runs when the DateBox is clicked.
   // children: Any additional labels to be stored on each DateBox.
   // baseMonth: The current month being displayed - to determine the font color
@@ -30,15 +31,6 @@ export const CalendarDateBox = ({ onClick, children, baseMonth, displayDate, set
     borderRadius: '2px'
   }
 
-  let eventStyle = {
-    fontSize: '0.8rem', 
-    backgroundColor: 'pink',
-    color: 'red',
-    borderRadius: '1rem', //idk how to curve the eventbox on calendarbox slightly
-    cursor: 'grab',
-    opacity: 1
-  }
-
 const dragOver = (e) => {
   e.preventDefault(); // allow drop
 };
@@ -46,18 +38,26 @@ const dragOver = (e) => {
 const drop = (e, displayDate) => {
   e.preventDefault();
   const data = e.dataTransfer.getData('text/plain');
-  const event = JSON.parse(data);
+  const draggedEvent = JSON.parse(data);
 
-  const eventid = event.eventid;
-  let diffInDays = new Date(event.enddt).getDate() - new Date(event.startdt).getDate();
+  const draggedEventStartDt = new Date(draggedEvent.startdt);
+  const draggedEventEndDt = new Date(draggedEvent.enddt);
+
+  const eventid = draggedEvent.eventid;
+
+  // Calculate time in milliseconds of each date since 1970, and divide to get the diff in days
+  let diffInDays =  (Date.UTC(draggedEventEndDt.getFullYear(), draggedEventEndDt.getMonth(), draggedEventEndDt.getDate()) - Date.UTC(draggedEventStartDt.getFullYear(), draggedEventStartDt.getMonth(), draggedEventStartDt.getDate())) / (60 * 60 * 24 * 1000);
 
   const newStartDt = 
-  event.startdt.substring(0, 5) + String(displayDate.getMonth() + 1).padStart(2, '0') +    
-  event.startdt.substring(7, 8) + String(displayDate.getDate()).padStart(2, '0') +   
-  event.startdt.substring(10);
+  draggedEvent.startdt.substring(0, 5) + String(displayDate.getMonth() + 1).padStart(2, '0') +    
+  draggedEvent.startdt.substring(7, 8) + String(displayDate.getDate()).padStart(2, '0') +   
+  draggedEvent.startdt.substring(10);
 
-  // Following code allows event to be dragged to previous months
-  const yearCheck = new Date(event.enddt).getYear()
+  console.log("new startdate: ", newStartDt)
+  console.log("diff in days: ", diffInDays)
+
+  // Following code allows draggedEvent to be dragged to previous months
+  const yearCheck = new Date(draggedEventStartDt).getYear()
   const monthCheck = displayDate.getMonth() + 1;
   let newEndDtValue = displayDate.getDate() + diffInDays;
 
@@ -70,11 +70,12 @@ const drop = (e, displayDate) => {
   } else if ([1, 3, 5, 7, 8, 10, 12].includes(monthCheck) && newEndDtValue > 31){ // 31 days, Jan Mar May Jul Aug Oct Dec
     newEndDtValue = newEndDtValue - 31;
   }
-
   const newEndDt = 
-  event.enddt.substring(0, 5) + String(displayDate.getMonth() + 1).padStart(2, '0') +    
-  event.enddt.substring(7, 8) + String(newEndDtValue).padStart(2, '0') +   
-  event.enddt.substring(10);
+  draggedEvent.enddt.substring(0, 5) + String(displayDate.getMonth() + 1).padStart(2, '0') +    
+  draggedEvent.enddt.substring(7, 8) + String(newEndDtValue).padStart(2, '0') +   
+  draggedEvent.enddt.substring(10);
+
+  console.log("new enddate: ", newEndDt)
 
   try {
     const result = eventService.updateEvent({
@@ -89,18 +90,19 @@ const drop = (e, displayDate) => {
       console.log("Dragged Event fail to update")
     }
   } catch (err) {
-    console.log("Error Updating dragged event: ", err)
+    console.log("Error Updating dragged draggedEvent: ", err)
   }
 }
           
   return (
   <button 
-    id={displayDate}
+    ref={ref}
+    key={displayDate}
     style={calendarStyle}       
     onDragOver={(e)=>dragOver(e)}
     onDrop={(e) => drop(e, displayDate)}
     onClick={() => {
-      onClick && onClick(displayDate);
+      onClick(displayDate);
     }}
   >
     {children}
@@ -115,7 +117,7 @@ const drop = (e, displayDate) => {
     </span>
   </button>
   )
-}
+})
 
 
 // CalendarDateHeader is a component used by MainCalendar to create the header boxes in the Calendar, to display days of the week.

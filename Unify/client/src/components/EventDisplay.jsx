@@ -1,11 +1,29 @@
 import { DateTime } from 'luxon';
+import eventService from '../services/eventService';
 
-export const EventDisplay = ({displayedEvent}) => {
+export const EventDisplay = ({displayedEvent, onClose, onDelete}) => {
     const start = DateTime.fromISO(displayedEvent.startdt);
     const end = DateTime.fromISO(displayedEvent.enddt);
 
-    const startStr = start.toFormat('hh:mm a');
-    const endStr = end.toFormat('hh:mm a');    
+    const sameDay = start.hasSame(end, 'day');
+
+    const startStr = start.toFormat('d LLLL h:mm a'); // e.g., 9 July 4:15 PM
+    const endStr = sameDay
+    ? end.toFormat('h:mm a') // just time if same day
+    : end.toFormat('d LLLL h:mm a'); // full date+time if different day
+
+    const deleteTs = async () => {
+        try {
+            const res = await eventService.deleteEvent(displayedEvent.eventid);
+            console.log("Event status:", res.data.status);
+            onClose();
+            onDelete();
+        } catch (e) {
+            console.error("Error deleting events", e);
+        }
+    }
+
+//add modify function 
     
     return (
         <div style={containerStyle}>
@@ -20,6 +38,10 @@ export const EventDisplay = ({displayedEvent}) => {
         </div>
         <div style={rowStyle}>
             <span style={labelStyle}>Duration:</span> {startStr} - {endStr}
+        </div>
+        <div style={rowStyle}>
+            <button onClick={deleteTs}>Delete</button>
+            <button>Modify</button>
         </div>
         </div>
     )
@@ -49,5 +71,4 @@ const rowStyle = {
     marginBottom: '0.7em',
     textAlign: 'left',
     wordBreak: 'break-word'
-
 };

@@ -9,10 +9,11 @@ const case1Event = (event) => {
         fontSize: '0.9rem',
         color: 'black', 
         backgroundColor: '#f6d8ac', 
-        borderColor: 'black',
+        borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
-        paddingLeft: '2px',
+        paddingLeft: '5px',
+        paddingRight: '5px',
         textAlign: 'left',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
@@ -22,8 +23,7 @@ const case1Event = (event) => {
         onDragStart = {(e) => {dragStart(e, event)}}
         onDrop={(e) => e.preventDefault()}    
         onDragOver={(e) => e.preventDefault()} 
-        event={event}
-        key={event.eventid}>
+        key={event.eventid + " Case1"}>
     {event.eventname}</div>
 }
 
@@ -35,12 +35,13 @@ const case2Event = (event, diffInDays) => {
         fontSize: '0.9rem',
         color: 'black', 
         backgroundColor: '#f6d8ac', 
-        borderColor: 'black',
+        borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
         marginRight: `-${eventOffset}px`,
         zIndex: '2',
-        paddingLeft: '2px',
+        paddingLeft: '5px',
+        paddingRight: '5px',
         textAlign: 'left',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
@@ -50,8 +51,7 @@ const case2Event = (event, diffInDays) => {
         onDragStart = {(e) => {dragStart(e, event)}}
         onDrop={(e) => e.preventDefault()}    
         onDragOver={(e) => e.preventDefault()} 
-        event={event}
-        key={event.eventid}>
+        key={event.eventid  + " Case2"}>
     {event.eventname}</div> 
 }
 
@@ -63,12 +63,13 @@ const case3Event = (event, diffInDays) => {
         fontSize: '0.9rem',
         color: 'black', 
         backgroundColor: '#f6d8ac', 
-        borderColor: 'black',
+        borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
         marginRight: `-${eventOffset}px`,
         zIndex: '2',
-        paddingLeft: '2px',
+        paddingLeft: '5px',
+        paddingRight: '5px',
         textAlign: 'left',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
@@ -78,8 +79,7 @@ const case3Event = (event, diffInDays) => {
         onDragStart = {(e) => {dragStart(e, event)}}
         onDrop={(e) => e.preventDefault()}    
         onDragOver={(e) => e.preventDefault()} 
-        event={event}
-        key={event.eventid}>
+        key={event.eventid  + " Case3"}>
     {event.eventname}</div>
 }
 
@@ -91,13 +91,14 @@ const case4Event = (event, diffInDays) => {
         fontSize: '0.9rem',
         color: 'black', 
         backgroundColor: '#f6d8ac', 
-        borderColor: 'black',
+        borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
         marginLeft: `-10px`,
         marginRight: `-${eventOffset}px`,
         zIndex: '2',
-        paddingLeft: '2px',
+        paddingLeft: '5px',
+        paddingRight: '5px',
         textAlign: 'left',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
@@ -107,8 +108,7 @@ const case4Event = (event, diffInDays) => {
         onDragStart = {(e) => {dragStart(e, event)}}
         onDrop={(e) => e.preventDefault()}    
         onDragOver={(e) => e.preventDefault()} 
-        event={event}
-        key={event.eventid}>
+        key={event.eventid + " Case4"}>
     {event.eventname}</div> 
 }
 
@@ -119,13 +119,14 @@ const case5Event = (event) => {
         fontSize: '0.9rem',
         color: 'black', 
         backgroundColor: '#f6d8ac', 
-        borderColor: 'black',
+        borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
         marginLeft: `-10px`,
         marginRight: `-869px`,
         zIndex: '2',
-        paddingLeft: '2px',
+        paddingLeft: '5px',
+        paddingRight: '5px',
         textAlign: 'left',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
@@ -135,31 +136,30 @@ const case5Event = (event) => {
         onDragStart = {(e) => {dragStart(e, event)}}
         onDrop={(e) => e.preventDefault()}    
         onDragOver={(e) => e.preventDefault()} 
-        event={event}
-        key={event.eventid}>
+        key={event.eventid + " Case5"}>
     {event.eventname}</div> 
 }
 
-// Case 6: 
-const case6Event = (event) => { 
-    let eventOffset = 6 * 143;
+// Case 6: + more button, display excess events
+const case6Event = (event) => {
     return <div style={{
         fontSize: '0.9rem',
         color: 'black', 
+        display: 'fixed',
+        width: '140px',
         backgroundColor: '#f6d8ac', 
-        borderColor: 'black',
+        borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
-        marginLeft: `-10px`,
-        marginRight: `-${eventOffset}px`,
-        zIndex: '2',
-        paddingLeft: '2px',
+        paddingLeft: '5px',
+        paddingRight: '5px',
         textAlign: 'left',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         }} 
-    key={event.eventid}>{event.eventname}</div> 
+        key={event.eventid + " Case6"}>
+    {event.eventname}</div>
 }
 
 // Case 8: Empty Space
@@ -175,6 +175,7 @@ const calenderEventsType = {
     case3Event,
     case4Event,
     case5Event,
+    case6Event,
     case8Event
 }
 

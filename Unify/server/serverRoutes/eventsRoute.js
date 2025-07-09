@@ -68,7 +68,7 @@ router.get('/home/getEvent', async (req, res) => {
       return res.status(400).json({ error: 'Missing eventid parameter' });
     }
 
-    console.log("GetEvent: Connected!");
+    // console.log("GetEvent: Connected!");
 
     const result = await pool.query(
       'SELECT * FROM eventstable WHERE eventid = $1', [eventid]
@@ -97,13 +97,13 @@ router.get('/home/getMonthEvents', async (req, res) => {
     const filterEvents = result.rows.filter((event)=>{
       let filtered = false
       const eventDate = new Date(event.startdt);
-      const startDayValue = new Date(event.startdt).getDate();
+      const startDayValue = eventDate.getDate();
 
       if (eventDate.getMonth() === currMonth){
         filtered = true;
-      } else if (eventDate.getMonth() === currMonth - 1 & startDayValue > 25){ // get events from the previous month
+      } else if ((eventDate.getMonth() === (currMonth - 1)) && startDayValue > 23){ // get events from the previous month
         filtered = true;
-      } else if (eventDate.getMonth() === currMonth + 1 & startDayValue < 7){ // get events from the next month
+      } else if ((eventDate.getMonth() === (currMonth + 1)) && startDayValue < 7){ // get events from the next month
         filtered = true;
       }
 
@@ -134,6 +134,28 @@ router.put('/home/updateEvent', async (req, res) => {
     console.log("updateEvent: Server Error");
     console.log(e);
     return res.json(false);}
+})
+
+
+//add modify and delete route
+router.delete('/home/deleteEvent/:id', async(req, res) => {
+  try {
+    const eventid = req.params.id;
+
+    const result = await pool.query(
+      'DELETE FROM eventstable WHERE eventid = ($1)', [eventid]
+    )
+
+    if (result.rowCount === 0){ // if result constant has no rows, it means no rows are deleted
+      return res.json({ status : "Failed to delete event"});
+    } else {
+      return res.json({ status : "Event deleted"});
+    }
+  } catch (e){
+    console.log("deleteEvent: Server Error");
+    console.log(e);
+    return res.json(e);
+  }
 })
 
 export default router
