@@ -1,31 +1,48 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ColorPopover } from "./ColorPopover";
 
-export const ScrollBlock = ({ buttonData, children, width = '100%', height = '100%', checkboxButton = false, checkboxName, myDisplayedCalendarIds, onCheckboxChange, accountid, refreshTrigger, maxHeight = '100%', gotColour = false, colorChangeComplete }) => {
+export const ScrollBlock = ({
+    buttonData,
+    children,
+    width = '100%',
+    height = '100%',
+    checkboxButton = false,
+    checkboxName,
+    myDisplayedCalendarIds,
+    onCheckboxChange, accountid,
+    maxHeight = '100%',
+    gotColour = false,
+    refreshTrigger,
+    colorChangeComplete }) => {
     // Store color state for each button by index
-    const [colors, setColors] = useState([]);
 
-    useEffect(() => {
-        if (buttonData && buttonData.length > 0) {
-            setColors(buttonData.map(btn => btn.color || "#3498db"));
-        }
-    }, [buttonData]);
+    const [colors, setColors] = useState(() =>
+        (buttonData && buttonData.length > 0)
+            ? buttonData.map(btn => btn.color || "#3498db")
+            : []
+    );
+    const [pendingColorChanges, setPendingColorChanges] = useState({});
 
-    useEffect(() => {
-        if (gotColour) {
-            // console.log("ScrollBlock colors: ", colors)
-        }
-
-
-    }, [colors, setColors, gotColour])
-
-    const handleColorChange = (idx, newColor) => {
+    const handleColorChange = (idx, newColor, calendarId) => {
         setColors(prev => {
             const updated = [...prev];
             updated[idx] = newColor;
             return updated;
         });
+        setPendingColorChanges(prev => ({ ...prev, [calendarId]: newColor }));
     };
+
+    useEffect(() => {
+        if (buttonData && buttonData.length > 0) {
+            setColors(prevColors =>
+                buttonData.map((btn, idx) =>
+                    pendingColorChanges[btn.id] !== undefined
+                        ? pendingColorChanges[btn.id]
+                        : btn.color || "#3498db"
+                )
+            );
+        }
+    }, [buttonData, pendingColorChanges]);
 
     return (
         <div
@@ -39,7 +56,7 @@ export const ScrollBlock = ({ buttonData, children, width = '100%', height = '10
                 border: "1px solid #ccc",
                 padding: "8px",
                 boxSizing: "border-box",
-                overflow: 'visible'
+                overflowX: 'hidden'
             }}
 
         >   {children}
@@ -72,15 +89,27 @@ export const ScrollBlock = ({ buttonData, children, width = '100%', height = '10
                                 style={{ display: "flex", alignItems: "center" }}
                             >
                                 <ColorPopover
-                                    calendarid = {btn.id}
+                                    calendarid={btn.id}
                                     side="left"
                                     color={colors[idx]}
-                                    setColor={c => handleColorChange(idx, c)}
+                                    setColor={c => handleColorChange(idx, c, btn.id)}
                                     colorChangeComplete={colorChangeComplete}
+                                    refreshTrigger={refreshTrigger}
                                 />
                             </span>
                         )}
-                        {btn.label}
+                        <span
+                            style={{
+                                flex: 1,          
+                                minWidth: 0,          
+                                overflow: "hidden",
+                                whiteSpace: "nowrap",
+                                textOverflow: "ellipsis",
+                                textAlign: "left",
+                            }}
+                        >
+                            {btn.label}
+                        </span>
                         {checkboxButton && (
                             <input
                                 type='checkbox'
