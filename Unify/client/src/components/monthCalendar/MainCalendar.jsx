@@ -24,10 +24,13 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
     let calendarBoxes = [] // used as the final return
     let emptyEventSpaceCount = 0; // give the keys of empty divs an incremental value
 
-    const baseDate = new Date(getBaseDate(displayDate)) // baseDate; needed to determine all sats in the month and currComparedDate ('1st displayed' day of the month)
-    let currComparedDate = new Date(baseDate) // currComparedDate: copy of baseDate. Serves an index/pointer that goes thru all displayed days in the chosen month. After getBaseDate and new Date(), it becomes a date of the '1st displayed' day of the month. For eg, in july 2025, the value -> Sun Jun 29 2025 00:00:00 GMT+0800 (Singapore Standard Time)
+    const baseStartDate = new Date(getBaseDate(displayDate)) // baseStartDate; needed to determine all sats in the month and currComparedDate ('1st displayed' day of the month)
+    const baseEndDate = new Date(baseStartDate);
+    baseEndDate.setDate(new Date(baseStartDate).getDate() + cellCount - 1); // last displayed date of the month, e.g. in July 2025, the last displayed date is 2nd July
+    
+    let currComparedDate = new Date(baseStartDate) // currComparedDate: copy of baseStartDate. Serves an index/pointer that goes thru all displayed days in the chosen month. After getBaseDate and new Date(), it becomes a date of the '1st displayed' day of the month. For eg, in july 2025, the value -> Sun Jun 29 2025 00:00:00 GMT+0800 (Singapore Standard Time)
     let sundaysOfTheMonth = []; // sundaysOfTheMonth; used to store all sun (Digit)
-    let currSunDate = new Date(baseDate); // currSunDate; copy of baseDate. Used to populate sundaysOfTheMonth
+    let currSunDate = new Date(baseStartDate); // currSunDate; copy of baseStartDate. Used to populate sundaysOfTheMonth
     currSunDate.setDate(currSunDate.getDate() - 7); // allows the code to include events 1 week before (cross-ed over)
     let days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"] // Defining the calendar headers.
 
@@ -98,33 +101,24 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
         });
 
         sortedEventsInCurrDate.forEach(event => {
+            const startdt = new Date(event.startdt)
+            const enddt = new Date(event.enddt)
             const msInDay = 24 * 60 * 60 * 1000; // milliseconds in a day
-            const diffInDays =  Math.floor((new Date(event.enddt) - new Date(event.startdt)) / msInDay);
-            const daysInMonth = new Date(baseDate.getFullYear(), baseDate.getMonth(), 0).getDate(); // no of days in this month
+            const diffInDays =  Math.floor((enddt - startdt) / msInDay);
 
             // checks if event is across the entire month, first month
-            const isEventStartAcrossMonth = 
-            (new Date(event.startdt).getMonth() === comparedMonth) && 
-            ((new Date(event.enddt).getMonth() - comparedMonth > 1) || 
-            ((new Date(event.enddt).getMonth() - comparedMonth === 1) && (new Date(event.enddt).getDate() >= sundaysOfTheMonth[sundaysOfTheMonth.length - 1][0] - daysInMonth + 7)
-            )) ? true : false;
+            const isEventStartAcrossMonth = (
+                ((baseStartDate <= startdt) && (startdt <= baseEndDate)) 
+                && 
+                (baseEndDate < enddt)
+            );
 
             // checks if event is across the entire month, middle months
-            const isEventMiddleAcrossMonth = 
-            (new Date(event.startdt).getMonth() === comparedMonth) && 
-            ((new Date(event.enddt).getMonth() - comparedMonth > 1) || 
-            ((new Date(event.enddt).getMonth() - comparedMonth === 1) && (new Date(event.enddt).getDate() >= sundaysOfTheMonth[sundaysOfTheMonth.length - 1][0] - daysInMonth + 7)
-            )) ? true : false;
-
-                if (dateIndex === 13){
-                    console.log("isEventStartAcrossMonth: ", isEventStartAcrossMonth)
-                    console.log("first test: ", new Date(event.startdt).getMonth() === comparedMonth)
-                    console.log("second test: ", new Date(event.enddt).getMonth() !== comparedMonth)
-                    console.log("third test: ", new Date(event.enddt).getDate() >= sundaysOfTheMonth[-1] - daysInMonth + 7)
-                    console.log("value A: ", new Date(event.enddt).getDate())
-                    console.log("value B: ", sundaysOfTheMonth[sundaysOfTheMonth.length - 1][0] - daysInMonth + 7)
-                }
-
+            const isEventMiddleAcrossMonth = (
+                ((startdt < baseStartDate)) 
+                && 
+                (baseEndDate < enddt)
+            );
 
             // Checks for an index that contains a null (not modified into Case 8 by previous multi day events)
             while (monthEventsArray[dateIndex][innerArrayIndex] !== null){
@@ -143,17 +137,9 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
             if (diffInDays == 0){ // case 1: single day event
                 monthEventsArray[dateIndex][innerArrayIndex] = calenderEventsType.case1Event(event);
             } else if (diffInDays != 0){
-                const noSunsPassed = noOfWeekEdgePasses(event, sundaysOfTheMonth, isEventStartAcrossMonth, daysInMonth, baseDate);
-                if (dateIndex === 13){
-                    console.log("noSunsPassed: ", noSunsPassed)
-                    console.log("sundaysOfTheMonth: ", sundaysOfTheMonth)
-                }
+                const noSunsPassed = noOfWeekEdgePasses(event, sundaysOfTheMonth, isEventStartAcrossMonth, daysInMonth, baseStartDate);
 
                 if (noSunsPassed == 0){ // case 2: multi day event, within the week
-
-                if (dateIndex === 13){
-                    console.log("case 2!: ")
-                }
                     monthEventsArray[dateIndex][innerArrayIndex] = calenderEventsType.case2Event(event, diffInDays);
                     for (let emptyPopulator = 1; emptyPopulator < diffInDays + 1; emptyPopulator++){
                         if (dateIndex + emptyPopulator == cellCount) { break; } // prevents index overflow
@@ -164,10 +150,6 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
                     const diffInDaysToSatStart = noOfDaysToNextClosestSat(event.startdt);
                     const diffInDaysToSunStart = noOfDaysToNextClosestSun(event.startdt);
                     const diffInDaysToSunEnd = noOfDaysToNextClosestSun(event.enddt);
-
-                if (dateIndex === 13){
-                    console.log("isEventStartAcrossMonth: ", isEventStartAcrossMonth)
-                }
 
                     // When an event crosses the entire month, we populate with case 5
                     if (isEventStartAcrossMonth){
@@ -313,7 +295,7 @@ function extraEventsPopUpCall(dateIndex, currDayExtraEvents, setExtraEvents, set
 }
 
 // Returns number of times an event passes the week edge into the next week
-function noOfWeekEdgePasses(event, sundaysOfTheMonth, isEventStartAcrossMonth, daysInMonth, baseDate) {
+function noOfWeekEdgePasses(event, sundaysOfTheMonth, isEventStartAcrossMonth, daysInMonth, baseStartDate) {
     let eventStartDate = new Date(event.startdt).getDate();
     let eventEndDate = new Date(event.enddt).getDate();
     let eventStartMonth = new Date(event.startdt).getMonth() + 1;
@@ -322,13 +304,10 @@ function noOfWeekEdgePasses(event, sundaysOfTheMonth, isEventStartAcrossMonth, d
 
 
     if (isEventStartAcrossMonth){
+        console.log("AJJJ")
         eventEndDate = daysInMonth;
-        eventStartMonth = baseDate.getMonth() + 1;
-        eventEndMonth = baseDate.getMonth() + 1;
-        console.log("eventStartDate: ", eventStartDate)
-        console.log("eventStartMonth: ", eventStartMonth)
-        console.log("eventEndMonth: ", eventEndMonth)
-        console.log("sundaysOfTheMonth: ", sundaysOfTheMonth)
+        eventStartMonth = baseStartDate.getMonth() + 1;
+        eventEndMonth = baseStartDate.getMonth() + 1;
     }
 
     sundaysOfTheMonth.forEach((sun) => {
