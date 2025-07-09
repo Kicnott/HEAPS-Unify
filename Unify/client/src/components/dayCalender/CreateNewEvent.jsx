@@ -150,18 +150,9 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
       </div>
 
       <div style={{ marginTop: '12px' }}>
-        <label>Start Date</label>
-        <input type="date" value={eventStartDate} onChange={e => setEventStartDate(e.target.value)} style={inputStyle} />
-      </div>
-
-      <div style={{ marginTop: '12px' }}>
         <label>Start Time</label>
+        <input type="date" value={eventStartDate} onChange={e => setEventStartDate(e.target.value)} style={inputStyle} />
         <input type="time" step="900" value={startTime} onChange={round15Minute(setStartTime)} style={inputStyle} />
-      </div>
-
-      <div style={{ marginTop: '12px' }}>
-        <label>End Date</label>
-        <input type="date" value={eventEndDate} onChange={e => setEventEndDate(e.target.value)} style={inputStyle} />
       </div>
 
       <div style={{ marginTop: '12px' }}>
@@ -169,7 +160,7 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
 
         <input
           type="date"
-          value={endDate}
+          value={eventEndDate}
           min={DateTime.fromJSDate(chosenDate).toFormat('yyyy-MM-dd')}
           onChange={e => setEndDate(e.target.value)}
           style={inputStyle}

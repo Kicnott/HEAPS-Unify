@@ -30,7 +30,7 @@ import { EventDisplay } from '../components/EventDisplay.jsx'
 import { CreateCalendar } from '../components/LeftPanel/CreateCalendar.jsx'
 import { ExtraEventsPopUp } from '../components/blocks/ExtraEventsPopUp.jsx'
 import { EventsOverlayBackground } from '../components/overlay/EventsOverlayBackground.jsx'
-import {drawerStyle, rightDrawerButtonTop, rightDrawerButtonBottom} from '../styles/rightDrawerStyles.jsx'
+import { drawerStyle, rightDrawerButtonTop, rightDrawerButtonBottom } from '../styles/rightDrawerStyles.jsx'
 
 
 function HomePage() {
@@ -71,7 +71,7 @@ function HomePage() {
     // const isOverlayBackgroundHidden = !isExtraEventsPopUpOpen
 
     const [extraEvents, setExtraEvents] = useState([]);
-    const [popUpPosition, setPopUpPosition] = useState({ x: 0, y: 0 }); 
+    const [popUpPosition, setPopUpPosition] = useState({ x: 0, y: 0 });
 
     const [isOverlayBackgroundHidden, setOverlayBackgroundHidden] = useState(true);
     // const isOverlayBackgroundHidden = isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen && !isShowCalendarOpen && !isShowAccountsOpen && !isShowEventOpen;
@@ -115,7 +115,7 @@ function HomePage() {
     }, [currentUserAccountId, mainRefreshTrigger]);
 
     // hides background when overlay is hidden
-    useEffect(() => { 
+    useEffect(() => {
         setOverlayBackgroundHidden(() => {
             return isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen && !isShowCalendarOpen && !isShowAccountsOpen && !isShowEventOpen && !isCreateCalendarOpen;
         });
@@ -143,7 +143,7 @@ function HomePage() {
                 const monthEvents = await monthEventsService.getMonthEvents({ currMonth: currMonth });
                 setMonthEvents(monthEvents.data);
             } catch (err) {
-                console.error("Error fetching month events: ", err);    
+                console.error("Error fetching month events: ", err);
             }
         }
         fetchMonthEvents();
@@ -216,7 +216,7 @@ function HomePage() {
                     extraEvents={extraEvents}
                     popUpPosition={popUpPosition}>
                 </ExtraEventsPopUp>
-                )
+            )
             }
 
             {/* <OverlayBlock
@@ -424,12 +424,13 @@ function HomePage() {
                                     <ScrollBlock
                                         height='40%'>
                                         {myCalendars.map((calendar) => (
-                                            <>
+                                            <div
+                                            key={calendar.calendarid}>
                                                 <div
                                                     style={{
                                                         display: 'grid',
                                                         gridTemplateColumns: '1fr auto',
-                                                        alignItems: 'center',
+                                                        alignItems: 'end',
                                                         borderBottom: '2px solid black',
                                                         paddingBottom: '8px',
                                                         marginBottom: '16px',
@@ -447,6 +448,7 @@ function HomePage() {
                                                             whiteSpace: 'nowrap',
                                                             overflow: 'hidden',
                                                             textOverflow: 'ellipsis',
+                                                            alignSelf: 'end'
                                                         }}
                                                         title={calendar.calendarname}
                                                     >
@@ -469,6 +471,8 @@ function HomePage() {
                                                             gridColumn: '2',
                                                             gridRow: '1',
                                                             justifySelf: 'end',
+                                                            alignSelf: 'end',
+                                                            marginBottom: '2px',
                                                         }}
                                                         onMouseOver={e => {
                                                             e.currentTarget.style.background = '#f3f4f6';
@@ -516,7 +520,7 @@ function HomePage() {
                                                     }
                                                 >
                                                 </ScrollBlock>
-                                            </>
+                                            </div>
                                         ))}
 
                                     </ScrollBlock>
@@ -525,7 +529,8 @@ function HomePage() {
                                     <ScrollBlock
                                         height='40%'>
                                         {followedCalendars.map((calendar) => (
-                                            <>
+                                            <div
+                                            key={calendar.calendarid}>
                                                 <div
                                                     style={{
                                                         display: 'grid',
@@ -572,13 +577,13 @@ function HomePage() {
                                                             : [
                                                                 {
                                                                     label: "No events",
-                                                                    onClick: () => { }, 
+                                                                    onClick: () => { },
                                                                 },
                                                             ]
                                                     }
                                                 >
                                                 </ScrollBlock>
-                                            </>
+                                            </div>
                                         ))}
 
                                     </ScrollBlock>
@@ -735,10 +740,10 @@ function HomePage() {
 
             {isEventDetailsOpen && selectedEvent && (
                 <OverlayBlock onClose={() => setEventDetailsOpen(false)}>
-                    <EventDisplay 
-                    displayedEvent = {selectedEvent} 
-                    onClose={() => setEventDetailsOpen(false)}
-                    onDelete = {() => seteventRefreshTrigger(prev => prev + 1)}/>
+                    <EventDisplay
+                        displayedEvent={selectedEvent}
+                        onClose={() => setEventDetailsOpen(false)}
+                        onDelete={() => seteventRefreshTrigger(prev => prev + 1)} />
                 </OverlayBlock>
             )}
 
