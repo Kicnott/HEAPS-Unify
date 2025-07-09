@@ -14,8 +14,6 @@ export const ScrollBlock = ({
     gotColour = false,
     refreshTrigger,
     colorChangeComplete }) => {
-    // Store color state for each button by index
-
     const [colors, setColors] = useState(() =>
         (buttonData && buttonData.length > 0)
             ? buttonData.map(btn => btn.color || "#3498db")
@@ -47,7 +45,6 @@ export const ScrollBlock = ({
     return (
         <div
             style={{
-                //   height: "100%",
                 flex: '1',
                 overflowY: "auto",
                 width: width,
@@ -75,11 +72,11 @@ export const ScrollBlock = ({
                             overflow: "hidden",
                         }}
                         onClick={e => {
-                            // Only trigger if not clicking the color popover
                             if (e.target.dataset.colorcircle) return;
                             btn.onClick && btn.onClick(e);
                         }}
                         type="button"
+                        title={btn.title || ""}
                     >
 
                         {gotColour && (

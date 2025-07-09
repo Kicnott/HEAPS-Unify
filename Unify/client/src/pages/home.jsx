@@ -4,6 +4,7 @@ import '../styles/App.css'
 import { monthOptionsArray, yearOptionsArray } from '../constants/calendarConstants.jsx'
 // import getBaseDate from '../functions/getBaseDate.jsx'
 import { uAccount, uCalendar, uCalendarDisplay, uEvent, uTimeslot } from '../classes/'
+import profilePlaceholder from '../assets/placeholder_pfp.jpg';
 
 // Components
 import { TopNavbar } from "../components/blocks/TopNavbar.jsx"
@@ -96,13 +97,11 @@ function HomePage() {
 
         if (currentUserAccountId) {
             getMyCalendars(currentUserAccountId).then((calendars) => {
-                const sortedCalendars = calendars.sort((a, b) => a.calendarid - b.calendarid);
-                setMyCalendars(sortedCalendars);
+                setMyCalendars(calendars);
             });
 
             getAllAccounts(currentUserAccountId).then((accounts) => {
-                const sortedAccounts = accounts.sort((a, b) => a.accountid - b.accountid);
-                setAllAccounts(sortedAccounts);
+                setAllAccounts(accounts);
             });
 
             getFollowedCalendars(currentUserAccountId).then((calendars) => {
@@ -218,8 +217,12 @@ function HomePage() {
         }
     }
 
-    // Defining the uCalendarDisplay object that the page will use to update the Main Calendar.
-    // the date object is the current time
+    function formatFollowerCount(num) {
+        if (num >= 1e9) return (num / 1e9).toFixed(1).replace(/\.0$/, '') + 'b';
+        if (num >= 1e6) return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'm';
+        if (num >= 1e3) return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'k';
+        return num.toString();
+    }
 
     return (
         <div>
@@ -353,9 +356,43 @@ function HomePage() {
                                     <ScrollBlock
                                         height='40.5%'
                                         buttonData={myCalendars.map((calendar) => ({
-                                            label: calendar.calendarname,
+                                            label: (
+                                                <span
+                                                    style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'space-between',
+                                                        width: '100%',
+                                                        overflow: 'hidden',
+                                                    }}
+                                                >
+                                                    <span
+                                                        style={{
+                                                            whiteSpace: 'nowrap',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                            flex: 1,
+                                                            minWidth: 0,
+                                                        }}
+                                                    >
+                                                        {calendar.calendarname}
+                                                    </span>
+                                                    <span
+                                                        style={{
+                                                            color: '#a3a3a3',
+                                                            marginLeft: '12px',
+                                                            fontSize: '0.95em',
+                                                            flexShrink: 0,
+                                                        }}
+                                                        title={calendar.followercount + ' follower' + (calendar.followercount == 1 ? '' : 's')}
+                                                    >
+                                                        👥 {formatFollowerCount(calendar.followercount)}
+                                                    </span>
+                                                </span>
+                                            ),
                                             id: calendar.calendarid,
                                             color: calendar.calendarcolour,
+                                            title: calendar.calendarname,
                                             onClick: () => {
                                                 setShowCalendarID(calendar.calendarid)
                                                 setTimeout(() => {
@@ -393,7 +430,40 @@ function HomePage() {
                                     </div>
                                     <ScrollBlock height='40.5%'
                                         buttonData={followedCalendars.map((calendar) => ({
-                                            label: calendar.calendarname,
+                                            label: (
+                                                <span
+                                                    style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'space-between',
+                                                        width: '100%',
+                                                        overflow: 'hidden',
+                                                    }}
+                                                >
+                                                    <span
+                                                        style={{
+                                                            whiteSpace: 'nowrap',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                            flex: 1,
+                                                            minWidth: 0,
+                                                        }}
+                                                    >
+                                                        {calendar.calendarname}
+                                                    </span>
+                                                    <span
+                                                        style={{
+                                                            color: '#a3a3a3',
+                                                            marginLeft: '12px',
+                                                            fontSize: '0.95em',
+                                                            flexShrink: 0,
+                                                        }}
+                                                        title={calendar.followercount + ' follower' + (calendar.followercount == 1 ? '' : 's')}
+                                                    >
+                                                        👥 {formatFollowerCount(calendar.followercount)}
+                                                    </span>
+                                                </span>
+                                            ),
                                             id: calendar.calendarid,
                                             color: calendar.calendarcolour,
                                             onClick: () => {
@@ -417,7 +487,57 @@ function HomePage() {
                             2:
                                 <ScrollBlock
                                     buttonData={allAccounts.map((account) => ({
-                                        label: account.accountusername,
+                                        label: (
+                                            <span
+                                                style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'space-between',
+                                                    width: '100%',
+                                                    overflow: 'hidden',
+                                                }}
+                                            >
+                                                <img
+                                                    src={profilePlaceholder} 
+                                                    alt={account.accountusername + " profile"}
+                                                    style={{
+                                                        width: 28,
+                                                        height: 28,
+                                                        borderRadius: '50%',
+                                                        objectFit: 'cover',
+                                                        marginRight: 10,
+                                                        flexShrink: 0,
+                                                        background: '#e5e7eb', 
+                                                    }}
+                                                />
+                                                <span
+                                                    style={{
+                                                        whiteSpace: 'nowrap',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        flex: 1,
+                                                        minWidth: 0,
+                                                    }}
+                                                >
+                                                    {account.accountusername}
+                                                </span>
+                                                <span
+                                                    style={{
+                                                        color: '#a3a3a3',
+                                                        marginLeft: '12px',
+                                                        fontSize: '0.95em',
+                                                        flexShrink: 0,
+                                                    }}
+                                                    title={
+                                                        account.followercount +
+                                                        ' follower' +
+                                                        (account.followercount === 1 ? '' : 's')
+                                                    }
+                                                >
+                                                    👥 {formatFollowerCount(account.followercount)}
+                                                </span>
+                                            </span>
+                                        ),
                                         onClick: () => {
                                             setShowAccountID(account.accountid)
                                             setTimeout(() => {
@@ -428,6 +548,49 @@ function HomePage() {
                                     height='100%'
                                 >
                                     <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>Accounts</h2>
+                                    <div style={{ position: 'relative', width: '80%', maxWidth: '100%', marginBottom: '20px' }}>
+                                        <input
+                                            type="text"
+                                            placeholder="Search…"
+                                            style={{
+                                                width: '100%',
+                                                padding: '10px 40px 10px 14px',
+                                                borderRadius: '24px',
+                                                border: '1.5px solid #d1d5db',
+                                                fontSize: '16px',
+                                                outline: 'none',
+                                                background: '#fafbfc',
+                                                color: '#222',
+                                                boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                                                transition: 'border 0.2s, box-shadow 0.2s',
+                                            }}
+
+                                        />
+                                        <svg
+                                            width="18"
+                                            height="18"
+                                            viewBox="0 0 20 20"
+                                            fill="none"
+                                            style={{
+                                                position: 'absolute',
+                                                right: '-35px',
+                                                top: '50%',
+                                                transform: 'translateY(-50%)',
+                                                color: '#a3a3a3',
+                                                cursor: 'pointer',
+                                                pointerEvents: 'auto',
+                                            }}
+                                            aria-hidden="true"
+                                            onClick={() => {
+
+                                            }}
+                                        >
+                                            <circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="2" />
+                                            <line x1="15" y1="15" x2="19" y2="19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                                        </svg>
+                                    </div>
+
+
 
                                 </ScrollBlock>
                             ,
@@ -457,7 +620,7 @@ function HomePage() {
                                                             fontSize: '24px',
                                                             fontWeight: 'bold',
                                                             margin: 0,
-                                                            flex: 1, // This makes the heading take all available space
+                                                            flex: 1,
                                                             lineHeight: 'normal',
                                                             whiteSpace: 'nowrap',
                                                             overflow: 'hidden',
@@ -558,7 +721,7 @@ function HomePage() {
                                                             fontSize: '24px',
                                                             fontWeight: 'bold',
                                                             margin: 0,
-                                                            flex: 1, // This makes the heading take all available space
+                                                            flex: 1,
                                                             lineHeight: 'normal',
                                                             whiteSpace: 'nowrap',
                                                             overflow: 'hidden',
