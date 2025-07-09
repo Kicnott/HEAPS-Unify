@@ -65,6 +65,8 @@ function HomePage() {
     const [mainRefreshTrigger, setMainRefreshTrigger] = useState(0)
 
     const [myDisplayedCalendarIds, setMyDisplayedCalendarIds] = useState([])
+    
+    // If sessionStorage for currMonth and currYear are not defined, assign calendarDisplay to current time. Important to retain session currMonth and currYear after each refresh.
     const [calendarDisplay, changeCalendarDisplay] = useState((sessionStorage.getItem("currYear") && sessionStorage.getItem("currMonth")) ? new Date(sessionStorage.getItem("currYear"), sessionStorage.getItem("currMonth"), 1) : new Date())
 
     const [isExtraEventsPopUpOpen, setExtraEventsPopUp] = useState(false);
@@ -167,7 +169,6 @@ function HomePage() {
         const fetchMonthEvents = async () => {
             try {
                 const currMonth = calendarDisplay.getMonth();
-                console.log("currMonth: ",currMonth)
                 const monthEvents = await monthEventsService.getMonthEvents({currMonth: currMonth});
                 setMonthEvents(monthEvents.data);
 
@@ -732,7 +733,7 @@ function HomePage() {
                     }}
                 >+ Add Event</button>
                 <div style={{ paddingBottom: '20px' }}>
-                    < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setSelectedEvent} setEventDetailsOpen={setEventDetailsOpen}>
+                    <TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setSelectedEvent} setEventDetailsOpen={setEventDetailsOpen}>
                     </TimeTable>
                 </div>
             </OverlayBlock>

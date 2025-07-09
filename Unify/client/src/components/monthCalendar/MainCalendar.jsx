@@ -74,9 +74,19 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
         const comparedMonth = currComparedDate.getMonth();
 
         const dayEventsArray = monthEvents.filter((event)=>{
-            const dbComparedEventDate = new Date(event.startdt).getDate();
-            const dbComparedEventMonth = new Date(event.startdt).getMonth();
-            return (dbComparedEventDate === comparedDate) && (dbComparedEventMonth === comparedMonth);
+            const eventBegin = new Date(event.startdt);
+            const eventStop = new Date(event.enddt);
+            const dbComparedEventDate = eventBegin.getDate();
+            const dbComparedEventMonth = eventBegin.getMonth();
+            let dbCheckEventsStartBeforeMonthEndWithin = false
+            let dbCheckEventsStartBeforeMonthEndAfter = false
+
+            if (dateIndex === 0){
+                dbCheckEventsStartBeforeMonthEndWithin = (eventBegin < baseStartDate.setHours(0)) && (baseStartDate.setHours(0) < eventStop) && (eventStop <= baseEndDate.setHours(24))
+                dbCheckEventsStartBeforeMonthEndAfter = (eventBegin < baseStartDate.setHours(0)) && (baseEndDate.setHours(24) <= eventStop)
+            }
+
+            return (dbComparedEventDate === comparedDate) && (dbComparedEventMonth === comparedMonth) || dbCheckEventsStartBeforeMonthEndWithin || dbCheckEventsStartBeforeMonthEndAfter;
         })
 
         // sorts the events in the box
@@ -271,16 +281,15 @@ function extraEventsPopUpCall(dateIndex, currDayExtraEvents, setExtraEvents, set
             key = {`${dateIndex} ` + "extraButton"}
             style={{
                 color: 'black', 
-                backgroundColor: 'grey', 
-                borderColor: 'black',
-                borderStyle: 'solid',
-                borderWidth: '1px',
+                backgroundColor: '#D3B683', 
                 display: 'flex',
                 paddingLeft: '5px',
                 textAlign: 'left',
                 alignItems: 'center',
-                width: `25px`,
-                borderRadius: '10px'
+                width: `28px`,
+                height: `18px`,
+                borderRadius: '7px',
+                marginTop: '5px',
             }} 
             onClick={(e) => {
                     setExtraEvents(currDayExtraEvents);
@@ -304,7 +313,6 @@ function noOfWeekEdgePasses(event, sundaysOfTheMonth, isEventStartAcrossMonth, d
 
 
     if (isEventStartAcrossMonth){
-        console.log("AJJJ")
         eventEndDate = daysInMonth;
         eventStartMonth = baseStartDate.getMonth() + 1;
         eventEndMonth = baseStartDate.getMonth() + 1;
