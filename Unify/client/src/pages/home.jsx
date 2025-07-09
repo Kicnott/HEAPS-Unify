@@ -46,7 +46,6 @@ function HomePage() {
     const [isEventFormOpen, setEventFormOpen] = useState(false)
     const [isEditAccountsFormOpen, setEditAccountsFormOpen] = useState(false)
     const [isEditCalendarsFormOpen, setEditCalendarsFormOpen] = useState(false)
-    const [calendarDisplay, changeCalendarDisplay] = useState(new Date())
     const [chosenDate, setChosenDate] = useState(new Date())
     const [eventRefreshTrigger, seteventRefreshTrigger] = useState(0)
 
@@ -63,6 +62,7 @@ function HomePage() {
     const [showEventID, setShowEventID] = useState('')
 
     const [myDisplayedCalendarIds, setMyDisplayedCalendarIds] = useState([])
+    const [calendarDisplay, changeCalendarDisplay] = useState((sessionStorage.getItem("currYear") && sessionStorage.getItem("currMonth")) ? new Date(sessionStorage.getItem("currYear"), sessionStorage.getItem("currMonth"), 1) : new Date())
 
     const [isExtraEventsPopUpOpen, setExtraEventsPopUp] = useState(false);
 
@@ -88,6 +88,38 @@ function HomePage() {
 
     // for left panel
     const [myEvents, setMyEvents] = useState([]);
+
+    const handleOnYearChange = (event) => {
+        const newDate = new Date(
+            Number(event),
+            calendarDisplay.getMonth(),
+            calendarDisplay.getDate()
+        )
+        changeCalendarDisplay(newDate); // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
+        sessionStorage.setItem("currYear", newDate.getFullYear());
+        setRefreshMonthEvents(refreshMonthEvents + 1);
+        console.log("Events Refreshed!");
+    }
+
+    const handleOnMonthChange = (event) => {
+        const newDate = new Date(
+            calendarDisplay.getFullYear(),
+            Number(event),
+            calendarDisplay.getDate()
+        )
+        changeCalendarDisplay(newDate); // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
+        sessionStorage.setItem("currMonth", newDate.getMonth());
+        setRefreshMonthEvents(refreshMonthEvents + 1);
+        console.log("Events Refreshed!");
+    }
+
+    useEffect(() => {
+        handleOnMonthChange(calendarDisplay.getDate());
+        console.log("calendarDisplay.getDate(): ", calendarDisplay.getMonth())
+        handleOnYearChange(calendarDisplay.getFullYear());
+        console.log("calendarDisplay.getFullYear(): ", calendarDisplay.getFullYear())
+    }, [])
+
 
     useEffect(() => {
 
@@ -133,22 +165,13 @@ function HomePage() {
 
     // console.log("Chosen Date: ", chosenDate);
 
+
     useEffect(() => { // refreshes month events; display updated events on month calender
         const fetchMonthEvents = async () => {
             try {
-                // Check if sessionStorage already has values
-                const existingMonth = sessionStorage.getItem("currMonth");
-                const existingYear = sessionStorage.getItem("currYear");
-
-                if (!existingMonth || !existingYear) {
-                    const currMonth = calendarDisplay.getMonth();
-                    const currYear = calendarDisplay.getFullYear();
-                    sessionStorage.setItem("currMonth", currMonth.toString());
-                    sessionStorage.setItem("currYear", currYear.toString());
-                }
-
-                const sessionCurrMonth = sessionStorage.getItem("currMonth");
-                const monthEvents = await monthEventsService.getMonthEvents({currMonth: sessionCurrMonth});
+                const currMonth = calendarDisplay.getMonth();
+                console.log("currMonth: ",currMonth)
+                const monthEvents = await monthEventsService.getMonthEvents({currMonth: currMonth});
                 setMonthEvents(monthEvents.data);
 
             } catch (err) {
@@ -222,14 +245,6 @@ function HomePage() {
                 </ExtraEventsPopUp>
                 )
             }
-
-            {/* <OverlayBlock
-                isHidden={!isShowEventOpen}
-                onClose={() => hideOverlayBackground()}>
-                <ShowEvent
-                    eventid={showEventID}>
-                </ShowEvent>
-            </OverlayBlock> */}
 
             <EventsOverlayBackground
                 isHidden={isExtraOverlayBackgroundHidden}
@@ -389,33 +404,13 @@ function HomePage() {
                         <div className='main-content-centered'>
                             <DropdownList
                                 optionArray={monthOptionsArray} // Assigns the options to the month dropdown list
-                                value={calendarDisplay.getMonth()} // Assigns the default value of the list to the current month
-                                onChange={(event) => {
-                                    sessionStorage.setItem("currentMonth", Number(event.target.value))
-                                    changeCalendarDisplay(
-                                        new Date(
-                                            calendarDisplay.getFullYear(),
-                                            Number(event.target.value),
-                                            calendarDisplay.getDate()
-                                        )) // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
-                                    setRefreshMonthEvents(refreshMonthEvents + 1);
-                                    console.log("Events Refreshed!");
-                                }}
+                                value={String(calendarDisplay.getMonth())} // Assigns the default value of the list to the current month
+                                onChange={(event) => {handleOnMonthChange(event.target.value);}}
                             />
                             <DropdownList
                                 optionArray={yearOptionsArray} // Assigns the options to the year dropdown list
-                                value={calendarDisplay.getFullYear()} // Assigns the default value of the list to the current year
-                                onChange={(event) => {
-                                    changeCalendarDisplay(
-                                        new Date(
-                                            Number(event.target.value),
-                                            calendarDisplay.getMonth(),
-                                            calendarDisplay.getDate()
-
-                                        )); // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
-                                    setRefreshMonthEvents(refreshMonthEvents + 1);
-                                    console.log("Events Refreshed!");
-                                }}
+                                value={String(calendarDisplay.getFullYear())} // Assigns the default value of the list to the current year
+                                onChange={(event) => {handleOnYearChange(event.target.value);}}
                             />
 
                             <MainCalendar
