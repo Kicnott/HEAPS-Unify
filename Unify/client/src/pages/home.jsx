@@ -152,7 +152,7 @@ function HomePage() {
                 }
 
                 const sessionCurrMonth = sessionStorage.getItem("currMonth");
-                const monthEvents = await monthEventsService.getMonthEvents({currMonth: sessionCurrMonth});
+                const monthEvents = await monthEventsService.getMonthEvents({ currMonth: sessionCurrMonth });
                 setMonthEvents(monthEvents.data);
 
             } catch (err) {
@@ -438,16 +438,18 @@ function HomePage() {
                                         height='40%'>
                                         {myCalendars.map((calendar) => (
                                             <div
-                                            key={calendar.calendarid}>
+                                                key={calendar.calendarid}
+                                                style={{
+                                                    marginBottom: '16px'
+                                                }}
+                                            >
                                                 <div
                                                     style={{
-                                                        display: 'grid',
-                                                        gridTemplateColumns: '1fr auto',
-                                                        alignItems: 'end',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
                                                         borderBottom: '2px solid black',
                                                         paddingBottom: '8px',
                                                         marginBottom: '16px',
-                                                        position: 'relative',
                                                     }}
                                                 >
                                                     <h3
@@ -455,13 +457,12 @@ function HomePage() {
                                                             fontSize: '24px',
                                                             fontWeight: 'bold',
                                                             margin: 0,
-                                                            textAlign: 'center',
-                                                            width: '100%',
-                                                            gridColumn: '1 / -1',
+                                                            flex: 1, // This makes the heading take all available space
+                                                            lineHeight: 'normal',
                                                             whiteSpace: 'nowrap',
                                                             overflow: 'hidden',
                                                             textOverflow: 'ellipsis',
-                                                            alignSelf: 'end'
+                                                            paddingLeft: '12px',
                                                         }}
                                                         title={calendar.calendarname}
                                                     >
@@ -481,11 +482,7 @@ function HomePage() {
                                                             outline: 'none',
                                                             cursor: 'pointer',
                                                             transition: 'background 0.15s, border 0.15s, box-shadow 0.15s',
-                                                            gridColumn: '2',
-                                                            gridRow: '1',
-                                                            justifySelf: 'end',
-                                                            alignSelf: 'end',
-                                                            marginBottom: '2px',
+                                                            marginLeft: '8px',
                                                         }}
                                                         onMouseOver={e => {
                                                             e.currentTarget.style.background = '#f3f4f6';
@@ -498,8 +495,8 @@ function HomePage() {
                                                             e.currentTarget.style.boxShadow = 'none';
                                                         }}
                                                         onClick={() => {
-                                                            setChosenDate(new Date())
-                                                            setShowCalendarID(calendar.calendarid)
+                                                            setChosenDate(new Date());
+                                                            setShowCalendarID(calendar.calendarid);
                                                             setEventFormOpen(true);
                                                         }}
                                                     >
@@ -543,16 +540,17 @@ function HomePage() {
                                         height='40%'>
                                         {followedCalendars.map((calendar) => (
                                             <div
-                                            key={calendar.calendarid}>
+                                                key={calendar.calendarid}
+                                                style={{
+                                                    marginBottom: '16px'
+                                                }}>
                                                 <div
                                                     style={{
-                                                        display: 'grid',
-                                                        gridTemplateColumns: '1fr auto',
+                                                        display: 'flex',
                                                         alignItems: 'center',
                                                         borderBottom: '2px solid black',
                                                         paddingBottom: '8px',
                                                         marginBottom: '16px',
-                                                        position: 'relative',
                                                     }}
                                                 >
                                                     <h3
@@ -560,12 +558,12 @@ function HomePage() {
                                                             fontSize: '24px',
                                                             fontWeight: 'bold',
                                                             margin: 0,
-                                                            textAlign: 'center',
-                                                            width: '100%',
-                                                            gridColumn: '1 / -1',
+                                                            flex: 1, // This makes the heading take all available space
+                                                            lineHeight: 'normal',
                                                             whiteSpace: 'nowrap',
                                                             overflow: 'hidden',
                                                             textOverflow: 'ellipsis',
+                                                            paddingLeft: '12px',
                                                         }}
                                                         title={calendar.calendarname}
                                                     >
