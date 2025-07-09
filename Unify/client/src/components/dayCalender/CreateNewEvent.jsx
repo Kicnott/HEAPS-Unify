@@ -1,8 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import eventService from '../../services/eventService.jsx'
-import {getMyCalendars} from '../LeftPanel/LeftPanelFunctions.jsx'
+import { getMyCalendars } from '../LeftPanel/LeftPanelFunctions.jsx'
+import { DateTime } from 'luxon'
 
-export const CreateEvent = ({ onClose, chosenDate, onSave, accountid }) => {
+export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid }) => {
+
+  function formatDateForInput(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  //have multiple day event option now. check how its stored in db, then bring logic over to timetable.jsx
+  //find out if i want all day row or just make a full column
+
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
   const [location, setLocation] = useState("")
@@ -10,28 +22,37 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid }) => {
   const [endTime, setEndTime] = useState("")
   const [repeat, setRepeat] = useState("None")
   const [errors, setErrors] = useState([])
-  const [calendarID, setCalendarID] = useState('')
+  const [calendarID, setCalendarID] = useState(calendarid || "")
   const [myCalendars, setMyCalendars] = useState([])
+  const [eventStartDate, setEventStartDate] = useState(formatDateForInput(new Date()))
+  const [eventEndDate, setEventEndDate] = useState(formatDateForInput(new Date()))
 
   useEffect(() => {
     getMyCalendars(accountid).then(setMyCalendars);
   }, [accountid])
 
-  console.log("myCalendars State:", myCalendars)
+  useEffect(() => {
+    if (chosenDate) {
+      setEventStartDate(formatDateForInput(chosenDate))
+      setEventEndDate(formatDateForInput(chosenDate))
+    }
+  }, [chosenDate])
+  // console.log("myCalendars State:", myCalendars)
 
   const handleSave = async (e) => {
     setErrors([]);
     // get the chosenDate and change its hours and minutes according to input start/end time
-    const startDateTime = new Date(chosenDate);
-    const endDateTime = new Date(chosenDate);
-    const [startHours, startMinutes] = startTime.split(':').map(Number);
-    const [endHours, endMinutes] = endTime.split(':').map(Number);
-    startDateTime.setHours(startHours, startMinutes);
-    endDateTime.setHours(endHours, endMinutes);
+    // const startDateTime = new Date(chosenDate);
+    // const endDateTime = new Date(chosenDate);
+    // const [startHours, startMinutes] = startTime.split(':').map(Number);
+    // const [endHours, endMinutes] = endTime.split(':').map(Number);
+    // startDateTime.setHours(startHours, startMinutes);
+    // endDateTime.setHours(endHours, endMinutes);
 
-    // error handling here
-    // make sure endtime always after starttime
-    // all fields must be written
+    const startDateTime = new Date(`${eventStartDate}T${startTime}`);
+    const endDateTime = new Date(`${eventEndDate}T${endTime}`);
+
+
     const errors = [];
     if (!name) errors.push("Event name is required");
     if (!description) errors.push("Description is required");
@@ -41,12 +62,23 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid }) => {
     if (!calendarID) errors.push("Calendar is required");
 
     if (startTime && endTime) {
-      if (startHours === endHours && startMinutes === endMinutes) {
+      const durationMs = endDateTime - startDateTime;
+      const minDurationMs = 15 * 60 * 1000;
+
+      if (endTime === "00:00") {
+        errors.push("End Time cannot be 12:00am. Please select up to 11:45pm.");
+      }
+      if (startDateTime.getTime() === endDateTime.getTime()) {
         errors.push("Events must be at least 15 minutes long");
-      } else if (startDateTime >= endDateTime) {
+      }
+      if (startDateTime >= endDateTime) {
         errors.push("End Time must be after Start Time");
       }
+      if (durationMs < minDurationMs && startDateTime < endDateTime) {
+        errors.push("Events must be at least 15 minutes long");
+      }
     }
+
 
     if (errors.length > 0) {
       setErrors(errors);
@@ -97,6 +129,10 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid }) => {
 
   return (
     <div style={{ width: '100%' }}>
+      <h2>
+        New Event
+      </h2>
+      <hr></hr>
 
       <div style={{ marginTop: '12px' }}>
         <label>Event Name</label>
@@ -115,11 +151,21 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid }) => {
 
       <div style={{ marginTop: '12px' }}>
         <label>Start Time</label>
+        <input type="date" value={eventStartDate} onChange={e => setEventStartDate(e.target.value)} style={inputStyle} />
         <input type="time" step="900" value={startTime} onChange={round15Minute(setStartTime)} style={inputStyle} />
       </div>
 
       <div style={{ marginTop: '12px' }}>
         <label>End Time</label>
+
+        <input
+          type="date"
+          value={eventEndDate}
+          min={DateTime.fromJSDate(chosenDate).toFormat('yyyy-MM-dd')}
+          onChange={e => setEndDate(e.target.value)}
+          style={inputStyle}
+        />
+
         <input type="time" step='900' value={endTime} onChange={round15Minute(setEndTime)} style={inputStyle} />
       </div>
 

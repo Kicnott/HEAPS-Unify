@@ -13,6 +13,8 @@
     border: 2px solid #b0d4f1; 
     transition: border-color 0.2s, box-shadow 0.2s;
     cursor: pointer; 
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .event-block:hover {

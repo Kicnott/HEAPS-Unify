@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import eventService from "../../services/eventService.jsx";
 import calendarService from "../../services/calendarService.jsx";
 
-export const ShowEvent = ({ eventid }) => {
+export const ShowEvent = ({ eventid, setShowCalendarOpen, setShowCalendarID, setShowEventOpen }) => {
     const [eventData, setEventData] = useState(null);
     const [calendarData, setCalendarData] = useState(null);
     const [error, setError] = useState(null);
@@ -74,7 +74,19 @@ export const ShowEvent = ({ eventid }) => {
                     </tr>
                     <tr>
                         <th>In Calendar</th>
-                        <td>{calendarData.calendarname}</td>
+                        <td>
+                            {/* {calendarData.calendarname} */}
+                            <button
+                                onClick={() => {
+                                    setShowCalendarID(calendarData.calendarid);
+                                    setTimeout(() => {
+                                        setShowCalendarOpen(true);
+                                        setShowEventOpen(false);
+                                    }, 100);
+                                }}
+                            >{calendarData.calendarname}</button>
+
+                        </td>
                     </tr>
                 </tbody>
             </table>

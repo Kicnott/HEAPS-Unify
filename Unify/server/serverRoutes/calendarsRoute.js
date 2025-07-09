@@ -48,6 +48,8 @@ router.post('/home/createCalendar', async (req, res) => {
     const calendarName = req.body.calendarName
     const calendarDescription = req.body.calendarDescription
     const currentAccountId = req.body.accountid
+    const calendarPrivacy = req.body.calendarPrivacy
+    const calendarColour = req.body.calendarColour
 
     console.log(currentAccountId)
 
@@ -63,14 +65,14 @@ router.post('/home/createCalendar', async (req, res) => {
       return res.json({ status: "Calendar already exists" }) // If rows > 0, the calendar already exists in db 
     }
 
-    const latestResult = await pool.query( // searches the highest calendar id in the db
-      'SELECT calendarid FROM calendarstable ORDER BY calendarid::int DESC LIMIT 1'
-    );
+    // const latestResult = await pool.query( // searches the highest calendar id in the db
+    //   'SELECT calendarid FROM calendarstable ORDER BY calendarid::int DESC LIMIT 1'
+    // );
 
-    const newCalendarId = parseInt(latestResult.rows[0].calendarid, 10) + 1;
+    // const newCalendarId = parseInt(latestResult.rows[0].calendarid, 10) + 1;
 
     const result = await pool.query( // Inserts the oncoming created calendar into db
-      'INSERT INTO calendarstable (calendarid,calendarname,calendardescription, accountid) VALUES ($1, $2, $3, $4)', [newCalendarId, calendarName, calendarDescription, currentAccountId]
+      'INSERT INTO calendarstable (calendarname,calendardescription, accountid, calendarprivacy, calendarcolour) VALUES ($1, $2, $3, $4, $5)', [calendarName, calendarDescription, currentAccountId, calendarPrivacy, calendarColour]
     );
 
     return res.json({ status: 'Calendar created' })
