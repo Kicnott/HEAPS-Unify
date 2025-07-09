@@ -92,35 +92,37 @@ function HomePage() {
     // for left panel
     const [myEvents, setMyEvents] = useState([]);
 
+    // Function to update displayed calendar year
     const handleOnYearChange = (event) => {
         const newDate = new Date(
             Number(event),
             calendarDisplay.getMonth(),
             calendarDisplay.getDate()
         )
-        changeCalendarDisplay(newDate); // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
+        changeCalendarDisplay(newDate);
         sessionStorage.setItem("currYear", newDate.getFullYear());
         setRefreshMonthEvents(refreshMonthEvents + 1);
         console.log("Events Refreshed!");
     }
 
+    // Function to update displayed calendar year
     const handleOnMonthChange = (event) => {
         const newDate = new Date(
             calendarDisplay.getFullYear(),
             Number(event),
             calendarDisplay.getDate()
         )
-        changeCalendarDisplay(newDate); // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
+        changeCalendarDisplay(newDate); 
         sessionStorage.setItem("currMonth", newDate.getMonth());
         setRefreshMonthEvents(refreshMonthEvents + 1);
         console.log("Events Refreshed!");
     }
 
     useEffect(() => {
-        handleOnMonthChange(calendarDisplay.getDate());
-        console.log("calendarDisplay.getDate(): ", calendarDisplay.getMonth())
-        handleOnYearChange(calendarDisplay.getFullYear());
-        console.log("calendarDisplay.getFullYear(): ", calendarDisplay.getFullYear())
+        if (sessionStorage.getItem("currMonth") || sessionStorage.getItem("currYear")){
+            handleOnMonthChange(calendarDisplay.getMonth());
+            handleOnYearChange(calendarDisplay.getFullYear());            
+        }
     }, [])
 
 
@@ -160,17 +162,8 @@ function HomePage() {
 
     }, [isEventHidden, isExtraEventsPopUpOpen, isRightDrawerOpen, isEventFormOpen, isEditCalendarsFormOpen, isEditAccountsFormOpen, isShowCalendarOpen, isShowAccountsOpen, isShowEventOpen, isCreateCalendarOpen]);
 
-
-    // console.log("Displayed Calendar IDs: ", myDisplayedCalendarIds)
-    // console.log("Followed Calendars: ", followedCalendars);
-    // console.log("My Events: ", myEvents);
-    // console.log("My Calendars: ", myCalendars);
-    // console.log("All Accounts: ", allAccounts);
-
-    // console.log("Chosen Date: ", chosenDate);
-
-
-    useEffect(() => { // refreshes month events; display updated events on month calender
+    // refreshes month events; display updated events on month calender
+    useEffect(() => { 
         const fetchMonthEvents = async () => {
             try {
                 const currMonth = calendarDisplay.getMonth();
