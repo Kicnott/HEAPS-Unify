@@ -68,7 +68,9 @@ function HomePage() {
     const [myDisplayedCalendarIds, setMyDisplayedCalendarIds] = useState([])
 
     const [isExtraEventsPopUpOpen, setExtraEventsPopUp] = useState(false);
-    // const isOverlayBackgroundHidden = !isExtraEventsPopUpOpen
+
+    const [refreshMonthEvents, setRefreshMonthEvents] = useState(0)
+    const [monthEvents, setMonthEvents] = useState([])
 
     const [extraEvents, setExtraEvents] = useState([]);
     const [popUpPosition, setPopUpPosition] = useState({ x: 0, y: 0 });
@@ -91,6 +93,7 @@ function HomePage() {
     const [myEvents, setMyEvents] = useState([]);
 
     useEffect(() => {
+
         if (currentUserAccountId) {
             getMyCalendars(currentUserAccountId).then((calendars) => {
                 const sortedCalendars = calendars.sort((a, b) => a.calendarid - b.calendarid);
@@ -123,7 +126,7 @@ function HomePage() {
             return !isExtraEventsPopUpOpen;
         });
 
-    }, [isEventHidden, isExtraEventsPopUpOpen, isRightDrawerOpen, isEventFormOpen, isEditCalendarsFormOpen, isEditAccountsFormOpen, isShowCalendarOpen, isShowAccountsOpen, isShowEventOpen, isShowEventOpen, isCreateCalendarOpen]);
+    }, [isEventHidden, isExtraEventsPopUpOpen, isRightDrawerOpen, isEventFormOpen, isEditCalendarsFormOpen, isEditAccountsFormOpen, isShowCalendarOpen, isShowAccountsOpen, isShowEventOpen, isCreateCalendarOpen]);
 
 
     // console.log("Displayed Calendar IDs: ", myDisplayedCalendarIds)
@@ -133,15 +136,25 @@ function HomePage() {
     // console.log("All Accounts: ", allAccounts);
 
     // console.log("Chosen Date: ", chosenDate);
-    const [refreshMonthEvents, setRefreshMonthEvents] = useState(0)
-    const [monthEvents, setMonthEvents] = useState([])
 
     useEffect(() => { // refreshes month events; display updated events on month calender
         const fetchMonthEvents = async () => {
             try {
-                const currMonth = calendarDisplay.getMonth()
-                const monthEvents = await monthEventsService.getMonthEvents({ currMonth: currMonth });
+                // Check if sessionStorage already has values
+                const existingMonth = sessionStorage.getItem("currMonth");
+                const existingYear = sessionStorage.getItem("currYear");
+
+                if (!existingMonth || !existingYear) {
+                    const currMonth = calendarDisplay.getMonth();
+                    const currYear = calendarDisplay.getFullYear();
+                    sessionStorage.setItem("currMonth", currMonth.toString());
+                    sessionStorage.setItem("currYear", currYear.toString());
+                }
+
+                const sessionCurrMonth = sessionStorage.getItem("currMonth");
+                const monthEvents = await monthEventsService.getMonthEvents({currMonth: sessionCurrMonth});
                 setMonthEvents(monthEvents.data);
+
             } catch (err) {
                 console.error("Error fetching month events: ", err);
             }
@@ -598,12 +611,12 @@ function HomePage() {
                                 optionArray={monthOptionsArray} // Assigns the options to the month dropdown list
                                 value={calendarDisplay.getMonth()} // Assigns the default value of the list to the current month
                                 onChange={(event) => {
+                                    sessionStorage.setItem("currentMonth", Number(event.target.value))
                                     changeCalendarDisplay(
                                         new Date(
                                             calendarDisplay.getFullYear(),
                                             Number(event.target.value),
                                             calendarDisplay.getDate()
-
                                         )) // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
                                     setRefreshMonthEvents(refreshMonthEvents + 1);
                                     console.log("Events Refreshed!");
