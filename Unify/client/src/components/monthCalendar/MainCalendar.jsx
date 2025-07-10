@@ -327,17 +327,19 @@ function extraEventsPopUpCall(dateIndex, currDayExtraEvents, setExtraEvents, set
         <div 
             key = {`${dateIndex} ` + "extraButton"}
             style={{
+                fontSize: '12px',
                 color: 'black', 
-                backgroundColor: '#D3B683', 
                 display: 'flex',
-                paddingLeft: '5px',
                 textAlign: 'left',
                 alignItems: 'center',
-                width: `28px`,
+                width: `60px`,
                 height: `18px`,
+                paddingLeft: '2px',
                 borderRadius: '7px',
-                marginTop: '5px',
+                marginTop: '3px',
             }} 
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = "lightgray")}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = "")}
             onClick={(e) => {
                     setExtraEvents(currDayExtraEvents);
                     setExtraEventsPopUp(true);
@@ -345,7 +347,7 @@ function extraEventsPopUpCall(dateIndex, currDayExtraEvents, setExtraEvents, set
                     e.stopPropagation();
                 }               
             }>
-        +{noOfExtraDays}
+        +{noOfExtraDays} more
         </div>
     )
 }

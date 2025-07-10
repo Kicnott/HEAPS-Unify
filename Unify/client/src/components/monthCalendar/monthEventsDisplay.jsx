@@ -10,7 +10,7 @@ const case1Event = (event) => {
     return <div style={{
         fontSize: '0.9rem',
         color: 'black', 
-        backgroundColor: '#f6d8ac', 
+        backgroundColor: event.calendarcolour, 
         borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
@@ -36,7 +36,7 @@ const case2Event = (event, diffInDays) => {
     return <div style={{
         fontSize: '0.9rem',
         color: 'black', 
-        backgroundColor: '#f6d8ac', 
+        backgroundColor: event.calendarcolour, 
         borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
@@ -64,7 +64,7 @@ const case3Event = (event, diffInDays) => {
     return <div style={{
         fontSize: '0.9rem',
         color: 'black', 
-        backgroundColor: '#f6d8ac', 
+        backgroundColor: event.calendarcolour, 
         borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
@@ -92,7 +92,7 @@ const case4Event = (event, diffInDays) => {
     return <div style={{
         fontSize: '0.9rem',
         color: 'black', 
-        backgroundColor: '#f6d8ac', 
+        backgroundColor: event.calendarcolour, 
         borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
@@ -120,7 +120,7 @@ const case5Event = (event) => {
     return <div style={{
         fontSize: '0.9rem',
         color: 'black', 
-        backgroundColor: '#f6d8ac', 
+        backgroundColor: event.calendarcolour, 
         borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
@@ -149,7 +149,7 @@ const case6Event = (event) => {
         color: 'black', 
         display: 'fixed',
         width: '140px',
-        backgroundColor: '#f6d8ac', 
+        backgroundColor: event.calendarcolour, 
         borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',

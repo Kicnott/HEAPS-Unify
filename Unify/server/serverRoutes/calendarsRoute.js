@@ -255,7 +255,7 @@ router.get('/home/getMyDisplayedCalendars', async (req, res) => {
     // console.log("GetMyDisplayedCalendars: Connected!");
 
     const result = await pool.query(
-      'SELECT * FROM displayedcalendarstable WHERE accountid = $1', [accountid]
+      'SELECT * FROM displayedcalendarstable, calendarstable WHERE displayedcalendarstable.calendarid = calendarstable.calendarid AND displayedcalendarstable.accountid = $1', [accountid]
     );
 
     return res.json({ rows: result.rows });
@@ -297,6 +297,8 @@ router.post('/home/displayCalendar', async (req, res) => {
   try {
     const calendarid = req.body.calendarid
     const accountid = req.body.accountid
+
+    console.log(calendarid, " : ", accountid)
 
     if (!calendarid || !accountid) {
       return res.status(400).json({ status: false });

@@ -83,8 +83,7 @@ function HomePage() {
     const [isExtraOverlayBackgroundHidden, setExtraOverlayBackgroundHidden] = useState(true);
 
     const [myCalendars, setMyCalendars] = useState([]);
-    const [displayCalendarBasedOnIDAndColour, setDisplayCalendarBasedOnIDAndColour] = useState({})
-
+    
     const [followedCalendars, setFollowedCalendars] = useState([])
     const refreshFollowedCalendars = () => {
         getFollowedCalendars(currentUserAccountId).then(setFollowedCalendars);
@@ -194,8 +193,6 @@ function HomePage() {
                     return myDisplayedCalendarIds.includes(event.calendarid)
                 })
 
-                console.log("myDisplayedCalendarIds", myDisplayedCalendarIds)
-
                 setMonthEvents(matchedIdEvents);
             } catch (err) {
                 console.error("Error fetching month events: ", err);
@@ -244,6 +241,7 @@ function HomePage() {
         }
         else {
             const res = await calendarService.displayCalendar(calendarid, accountid)
+            console.log("res: ", res)
             if (res.data.status) {
                 getMyDisplayedCalendars(currentUserAccountId).then(setMyDisplayedCalendarIds)
             }
