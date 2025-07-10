@@ -32,6 +32,7 @@ import { ExtraEventsPopUp } from '../components/blocks/ExtraEventsPopUp.jsx'
 import { EventsOverlayBackground } from '../components/overlay/EventsOverlayBackground.jsx'
 import { drawerStyle, rightDrawerButtonTop, rightDrawerButtonBottom } from '../styles/rightDrawerStyles.jsx'
 import accountService from '../services/accountService.jsx'
+import { ColorCircle } from '../components/blocks/ColorPopover.jsx'
 
 
 function HomePage() {
@@ -166,13 +167,13 @@ function HomePage() {
     // hides background when overlay is hidden
     useEffect(() => {
         setOverlayBackgroundHidden(() => {
-            return isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen && !isShowCalendarOpen && !isShowAccountsOpen && !isShowEventOpen && !isCreateCalendarOpen;
+            return isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen && !isShowCalendarOpen && !isShowAccountsOpen && !isShowEventOpen && !isCreateCalendarOpen && !isEventDetailsOpen;
         });
         setExtraOverlayBackgroundHidden(() => {
             return !isExtraEventsPopUpOpen;
         });
 
-    }, [isEventHidden, isExtraEventsPopUpOpen, isRightDrawerOpen, isEventFormOpen, isEditCalendarsFormOpen, isEditAccountsFormOpen, isShowCalendarOpen, isShowAccountsOpen, isShowEventOpen, isCreateCalendarOpen]);
+    }, [isEventHidden, isExtraEventsPopUpOpen, isRightDrawerOpen, isEventFormOpen, isEditCalendarsFormOpen, isEditAccountsFormOpen, isShowCalendarOpen, isShowAccountsOpen, isShowEventOpen, isCreateCalendarOpen, isEventDetailsOpen]);
 
 
     // console.log("Displayed Calendar IDs: ", myDisplayedCalendarIds)
@@ -489,11 +490,23 @@ function HomePage() {
                                                 >
                                                     <span
                                                         style={{
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                            marginRight: 8
+                                                        }}
+                                                    >
+                                                        <ColorCircle
+                                                            color={calendar.calendarcolour}
+                                                        />
+                                                    </span>
+                                                    <span
+                                                        style={{
                                                             whiteSpace: 'nowrap',
                                                             overflow: 'hidden',
                                                             textOverflow: 'ellipsis',
                                                             flex: 1,
                                                             minWidth: 0,
+                                                            textAlign: "left",
                                                         }}
                                                     >
                                                         {calendar.calendarname}
@@ -513,6 +526,7 @@ function HomePage() {
                                             ),
                                             id: calendar.calendarid,
                                             color: calendar.calendarcolour,
+                                            title: calendar.calendarname,
                                             onClick: () => {
                                                 setShowCalendarID(calendar.calendarid)
                                                 setTimeout(() => {
@@ -521,7 +535,7 @@ function HomePage() {
                                             }
                                         }))}
                                         checkboxButton={true}
-                                        gotColour={true}
+                                        // gotColour={true}
                                         colorChangeComplete={colorChangeComplete}
                                         checkboxName='myCalendars'
                                         accountid={currentUserAccountId}
@@ -932,9 +946,11 @@ function HomePage() {
                 onClose={() => hideOverlayBackground()}>
                 <ShowAccount
                     accountid={showAccountID}
+                    currentAccountid={currentUserAccountId}
                     setShowCalendarID={setShowCalendarID}
                     setShowCalendarOpen={setShowCalendarOpen}
                     setShowAccountOpen={setShowAccountsOpen}
+                    refreshTrigger={setMainRefreshTrigger}
                 >
                 </ShowAccount>
             </OverlayBlock>
@@ -980,7 +996,7 @@ function HomePage() {
                     }}
                 >+ Add Event</button>
                 <div style={{ paddingBottom: '20px' }}>
-                    < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setSelectedEvent} setEventDetailsOpen={setEventDetailsOpen}>
+                    < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setSelectedEvent} setEventDetailsOpen={setEventDetailsOpen} closeOthers={hideOverlayBackground}>
                     </TimeTable>
                 </div>
             </OverlayBlock>

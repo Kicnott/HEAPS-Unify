@@ -9,7 +9,7 @@ import '../../styles/timetable.css';
 
 //make all day event block
 
-export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector, setEventDetailsOpen }) => {
+export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector, setEventDetailsOpen, closeOthers }) => {
     // const [eventsForDay, setEventsForDay] = useState([]);
     const [maxLanes, setMaxLanes] = useState(1);
     const [timedEvents, setTimedEvents] = useState([]);
@@ -277,6 +277,7 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                         }}
                         onClick={() => {
                             eventselector(e.originalEvent || e);
+                            closeOthers()
                             setEventDetailsOpen(true);
                         }}
                         >
@@ -316,6 +317,7 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                         }}
                         onClick={() => {
                             eventselector(e.originalEvent || e);
+                            closeOthers()
                             setEventDetailsOpen(true);
                         }}
                         >

@@ -4,6 +4,14 @@ import accountService from "../../services/accountService.jsx";
 import eventService from "../../services/eventService.jsx";
 import { ScrollBlock } from "../blocks/ScrollBlock.jsx";
 
+
+function formatFollowerCount(num) {
+    if (num >= 1e9) return (num / 1e9).toFixed(1).replace(/\.0$/, '') + 'b';
+    if (num >= 1e6) return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'm';
+    if (num >= 1e3) return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'k';
+    return num.toString();
+}
+
 export const ShowCalendar = ({ accountid, calendarid, setShowEventOpen, setShowCalendarOpen, setShowAccountOpen, setShowAccountID, setShowEventID, refreshFollowedCalendars }) => {
     const [calendarData, setCalendarData] = useState(null);
     const [accountData, setAccountData] = useState(null);
@@ -53,65 +61,116 @@ export const ShowCalendar = ({ accountid, calendarid, setShowEventOpen, setShowC
 
     return (
         <div>
-            <h2>Calendar Details</h2>
-            <table border={1} cellPadding={10} cellSpacing={0}>
-                <tbody>
-                    <tr>
-                        <th>Calendar ID</th>
-                        <td>{calendarData.calendarid}</td>
-                    </tr>
-                    <tr>
-                        <th>Calendar Name</th>
-                        <td>{calendarData.calendarname}</td>
-                    </tr>
-                    <tr>
-                        <th>Calendar Description</th>
-                        <td>{calendarData.calendardescription}</td>
-                    </tr>
-                    <tr>
-                        <th>Privacy</th>
-                        <td>{calendarData.calendarprivacy}</td>
-                    </tr>
-                    <tr>
-                        <th>Owned By</th>
-                        <td><button
-                            onClick={() => {
-                                setShowAccountID(accountData.accountid);
-                                setTimeout(() => {
-                                    setShowAccountOpen(true);
-                                    setShowCalendarOpen(false);
-                                }, 100);
-                            }}
-                        >{accountData.accountusername}</button></td>
-                    </tr>
-                    <tr>
-                        <th>Events</th>
-                        <td>
-                            {eventData.length === 0 ? (
-                                <div>No events</div>
-                            ) : (
-                                <div
-                                    style={{ maxHeight: "200px", overflowY: "auto" }}>
-                                    <ScrollBlock
-                                        buttonData={eventData.map(event => ({
-                                            label: event.eventname,
-                                            onClick: () => {
-                                                setShowEventID(event.eventid);
-                                                setShowEventOpen(true);
-                                                setShowCalendarOpen(false);
-                                            }
-                                        }))}
-                                    />
-                                </div>
-                            )}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+
+            <div>
+                <h2
+                    style={{
+                        marginBottom: 16,
+                        borderBottom: '2px solid black',
+                        fontSize: 28,
+                        fontWeight: 700,
+                        letterSpacing: '0.5px',
+                    }}
+                >
+                    {calendarData.calendarname}
+                </h2>
+
+                {calendarData.calendardescription && (
+                    <div
+                        style={{
+                            background: "#f9fafb",
+                            borderLeft: "4px solid " + calendarData.calendarcolour,
+                            borderRadius: 8,
+                            padding: "16px 20px",
+                            marginBottom: 24,
+                            fontStyle: "italic",
+                            color: "#374151",
+                            fontSize: 18,
+                        }}
+                    >
+                        {calendarData.calendardescription}
+                    </div>
+                )}
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: 24,
+                        gap: 16,
+                    }}
+                >
+                    <button
+                        style={{
+                            background: "#f3f4f6",
+                            color: "#111",
+                            border: "none",
+                            borderRadius: 16,
+                            padding: "6px 14px",
+                            fontWeight: 500,
+                            fontSize: 15,
+                            cursor: "pointer",
+                            transition: "background 0.2s",
+                        }}
+                        onClick={() => {
+                            setShowAccountID(accountData.accountid);
+                            setTimeout(() => {
+                                setShowAccountOpen(true);
+                                setShowCalendarOpen(false);
+                            }, 100);
+                        }}
+                        title="View owner profile"
+                    >
+                        Owned By: 👤 {accountData.accountusername}
+                    </button>
+
+                    <span
+                        style={{
+                            background: "#eef2ff",
+                            color: "#6366f1",
+                            borderRadius: 16,
+                            padding: "6px 14px",
+                            fontWeight: 500,
+                            fontSize: 15,
+                            display: "inline-block",
+                        }}
+                        title={calendarData.followercount + ' follower' + (calendarData.followercount == 1 ? '' : 's')}
+                    >
+                        👥 {formatFollowerCount(calendarData.followercount)}
+                    </span>
+                </div>
+
+                <div>
+                    <div style={{ fontWeight: 600, marginBottom: 8, fontSize: 16 }}>Events</div>
+                    {eventData.length === 0 ? (
+                        <div style={{ maxHeight: "200px", overflowY: "auto", marginBottom: "10px" }}>
+                            <ScrollBlock>
+                                <div style={{ color: "#888" }}>No events</div>
+                            </ScrollBlock>
+                        </div>
+
+
+                    ) : (
+                        <div style={{ maxHeight: "200px", overflowY: "auto", marginBottom: "10px" }}>
+                            <ScrollBlock
+                                buttonData={eventData.map(event => ({
+                                    label: event.eventname + " - " + new Date(event.startdt).toLocaleString(),
+                                    onClick: () => {
+                                        setShowEventID(event.eventid);
+                                        setShowEventOpen(true);
+                                        setShowCalendarOpen(false);
+                                    }
+                                }))}
+                            />
+
+                        </div>
+                    )}
+                </div>
+            </div>
 
             {accountid && String(accountid) === String(calendarData.accountid) && (
                 <button>
-                    You own this calendar
+                    Modify Calendar
                 </button>
             )}
 

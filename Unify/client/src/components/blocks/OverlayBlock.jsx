@@ -1,7 +1,8 @@
 export const OverlayBlock = ({ children, isHidden, onClose }) => {
   const blockStyle = {
     width: '500px',
-    height: '500px',
+    minHeight: '200px',
+    maxHeight: '500px',
     padding: '24px',
     background: 'white',
     border: '3px solid #A78E72',
@@ -22,7 +23,7 @@ export const OverlayBlock = ({ children, isHidden, onClose }) => {
     right: 16,
     background: 'transparent',
     border: 'none',
-    outline: 'none',  
+    outline: 'none',
     fontSize: 20,
     cursor: 'pointer',
     zIndex: 1002
