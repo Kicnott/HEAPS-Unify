@@ -304,7 +304,7 @@ function noOfWeekEdgePasses(event, sundaysOfTheMonth, isEventStartAcrossMonth, d
 
 
     if (isEventStartAcrossMonth){
-        console.log("AJJJ")
+        // console.log("AJJJ")
         eventEndDate = daysInMonth;
         eventStartMonth = baseStartDate.getMonth() + 1;
         eventEndMonth = baseStartDate.getMonth() + 1;

@@ -14,14 +14,13 @@ import { OverlayBlock } from '../components/blocks/OverlayBlock.jsx'
 import { DropdownList } from '../components/monthCalendar/DropdownList.jsx'
 import { TimeTable } from '../components/dayCalender/timeTable.jsx'
 import { CreateEvent } from '../components/dayCalender/CreateNewEvent.jsx'
-import { RightDrawerCloseBackground } from '../components/rightDrawer/rightDrawerCloseBackground.jsx'
 import { EditAccountForm } from '../components/rightDrawer/EditAccounts.jsx'
 import { EditCalendarsForm } from '../components/monthCalendar/EditCalendars.jsx'
 import { OverlayBackground } from '../components/overlay/OverlayBackground.jsx'
 import { LeftTabPanel } from '../components/LeftPanel/LeftTabPanel.jsx'
 import { ScrollBlock } from '../components/blocks/ScrollBlock.jsx'
 import MainLayout from '../components/blocks/MainLayout.jsx'
-import { getMyCalendars, getMyEvents, getAllAccounts, getFollowedCalendars, getMyDisplayedCalendars } from '../components/LeftPanel/LeftPanelFunctions.jsx'
+import { getMyCalendars, getMyEvents, getAllAccounts, getFollowedCalendars, getMyDisplayedCalendars, searchAccounts } from '../components/LeftPanel/LeftPanelFunctions.jsx'
 import { ShowCalendar } from '../components/LeftPanel/ShowCalendar.jsx'
 import { ShowAccount } from '../components/LeftPanel/ShowAccount.jsx'
 import { ShowEvent } from '../components/LeftPanel/ShowEvent.jsx'
@@ -32,6 +31,7 @@ import { CreateCalendar } from '../components/LeftPanel/CreateCalendar.jsx'
 import { ExtraEventsPopUp } from '../components/blocks/ExtraEventsPopUp.jsx'
 import { EventsOverlayBackground } from '../components/overlay/EventsOverlayBackground.jsx'
 import { drawerStyle, rightDrawerButtonTop, rightDrawerButtonBottom } from '../styles/rightDrawerStyles.jsx'
+import accountService from '../services/accountService.jsx'
 
 
 function HomePage() {
@@ -90,8 +90,39 @@ function HomePage() {
 
     const [allAccounts, setAllAccounts] = useState([])
 
-    // for left panel
     const [myEvents, setMyEvents] = useState([]);
+
+    const [searchAccountTerm, setSearchAccountTerm] = useState('')
+    const [searchedAccounts, setSearchedAccounts] = useState([])
+
+    function useDebounce(value, delay) {
+        const [debouncedValue, setDebouncedValue] = useState(value);
+
+        useEffect(() => {
+            const handler = setTimeout(() => {
+                setDebouncedValue(value);
+            }, delay);
+
+            return () => {
+                clearTimeout(handler);
+            };
+        }, [value, delay]);
+
+        return debouncedValue;
+    }
+
+    const debouncedSearchTerm = useDebounce(searchAccountTerm, 500);
+
+    useEffect(() => {
+        if (debouncedSearchTerm !== "") {
+            searchAccounts(debouncedSearchTerm).then((accounts) => {
+                setSearchedAccounts(accounts);
+            });
+        } else {
+            setSearchedAccounts([]);
+        }
+    }, [debouncedSearchTerm]);
+
 
     useEffect(() => {
 
@@ -115,6 +146,22 @@ function HomePage() {
 
         }
     }, [currentUserAccountId, mainRefreshTrigger]);
+
+    useEffect(() => {
+        if (debouncedSearchTerm != "") {
+            searchAccounts(debouncedSearchTerm).then((accounts) => {
+                setSearchedAccounts(accounts)
+            })
+        }
+        else {
+            setSearchedAccounts([])
+        }
+
+    }, [debouncedSearchTerm])
+
+    useEffect(() => {
+        console.log(searchedAccounts)
+    }, [searchedAccounts])
 
     // hides background when overlay is hidden
     useEffect(() => {
@@ -354,7 +401,7 @@ function HomePage() {
                                         </button>
                                     </div>
                                     <ScrollBlock
-                                        height='40.5%'
+                                        height='40%'
                                         buttonData={myCalendars.map((calendar) => ({
                                             label: (
                                                 <span
@@ -428,7 +475,7 @@ function HomePage() {
                                             Followed Calendars
                                         </h2>
                                     </div>
-                                    <ScrollBlock height='40.5%'
+                                    <ScrollBlock height='40%'
                                         buttonData={followedCalendars.map((calendar) => ({
                                             label: (
                                                 <span
@@ -485,8 +532,12 @@ function HomePage() {
                                 </>
                             ,
                             2:
+
+
                                 <ScrollBlock
-                                    buttonData={allAccounts.map((account) => ({
+
+
+                                    buttonData={(searchAccountTerm ? searchedAccounts : allAccounts).map((account) => ({
                                         label: (
                                             <span
                                                 style={{
@@ -498,7 +549,7 @@ function HomePage() {
                                                 }}
                                             >
                                                 <img
-                                                    src={profilePlaceholder} 
+                                                    src={profilePlaceholder}
                                                     alt={account.accountusername + " profile"}
                                                     style={{
                                                         width: 28,
@@ -507,7 +558,7 @@ function HomePage() {
                                                         objectFit: 'cover',
                                                         marginRight: 10,
                                                         flexShrink: 0,
-                                                        background: '#e5e7eb', 
+                                                        background: '#e5e7eb',
                                                     }}
                                                 />
                                                 <span
@@ -551,7 +602,7 @@ function HomePage() {
                                     <div style={{ position: 'relative', width: '80%', maxWidth: '100%', marginBottom: '20px' }}>
                                         <input
                                             type="text"
-                                            placeholder="Search…"
+                                            placeholder="Find an account..."
                                             style={{
                                                 width: '100%',
                                                 padding: '10px 40px 10px 14px',
@@ -564,7 +615,8 @@ function HomePage() {
                                                 boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
                                                 transition: 'border 0.2s, box-shadow 0.2s',
                                             }}
-
+                                            value={searchAccountTerm}
+                                            onChange={(e) => setSearchAccountTerm(e.target.value)}
                                         />
                                         <svg
                                             width="18"
@@ -589,6 +641,27 @@ function HomePage() {
                                             <line x1="15" y1="15" x2="19" y2="19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                                         </svg>
                                     </div>
+
+                                    {!searchAccountTerm && (
+                                        <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginTop: '10px' }}>
+                                            Suggested Accounts
+                                        </h3>
+
+                                    )}
+
+                                    {searchAccountTerm && searchedAccounts.length >= 1 && (
+                                        <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginTop: '10px' }}>
+                                            Results
+                                        </h3>
+
+                                    )}
+
+                                    {searchAccountTerm && searchedAccounts.length == 0 && (
+                                        <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginTop: '10px' }}>
+                                            No Result Found
+                                        </h3>
+
+                                    )}
 
 
 

@@ -41,7 +41,7 @@ router.get('/home/searchAccounts', async (req, res) => {
      FROM accountstable a
      LEFT JOIN calendarstable c ON a.accountid = c.accountid
      LEFT JOIN followedcalendarstable f ON c.calendarid = f.calendarid
-    WHERE a.accountname LIKE $1
+    WHERE a.accountusername ILIKE $1
     GROUP BY a.accountid
     ORDER BY followercount DESC, a.accountid ASC`,
       [`%${search}%`]

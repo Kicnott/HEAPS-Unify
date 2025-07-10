@@ -58,3 +58,10 @@ export async function getMyDisplayedCalendars(accountid) {
         return myDisplayedCalendars.map(calendar => calendar.calendarid);
     }
 }
+
+export async function searchAccounts(search){
+    const res = await accountService.searchAccounts(search)
+    const searchAccounts = res.data.rows
+
+    return searchAccounts
+}
