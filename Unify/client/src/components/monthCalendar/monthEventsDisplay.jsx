@@ -1,4 +1,6 @@
 
+import { EventDisplay } from "../EventDisplay";
+
 const dragStart = (e, event) => {
   e.dataTransfer.setData('text/plain', JSON.stringify(event));
 };
