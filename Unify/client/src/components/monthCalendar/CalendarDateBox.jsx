@@ -73,17 +73,6 @@ const drop = (e, displayDate) => {
   draggedEvent.startdt.substring(7, 8) + String(newStartDateValue).padStart(2, '0') +   
   draggedEvent.startdt.substring(10, 11) + String(startHours).padStart(2, '0') + ':' + String(startMin).padStart(2, '0') + ':' + String(startSec).padStart(2, '0');
 
-  console.log("UTC event: ", draggedEvent.startdt)
-  console.log("local event: ", new Date(draggedEvent.startdt))
-  console.log("UTC DisplayDate: ", displayDate.toISOString())
-  console.log("local DisplayDate: ", displayDate)
-
-  console.log("date change: ", newStartDateValue)
-
-  console.log("new startdate in UTC: ", newStartDt)
-  console.log("new startdate in local: ", new Date(newStartDt))
-  console.log("diff in days: ", diffInDays)
-
   // Following code allows draggedEvent to be dragged to previous months
   const yearCheck = new Date(draggedEventStartDt).getYear()
   const monthCheck = displayDate.getMonth() + 1;
@@ -108,11 +97,6 @@ const drop = (e, displayDate) => {
   draggedEvent.enddt.substring(0, 5) + String(newEndMonthValue).padStart(2, '0') +    
   draggedEvent.enddt.substring(7, 8) + String(newEndDtValue).padStart(2, '0') +   
   draggedEvent.enddt.substring(10, 11) + String(endHours).padStart(2, '0') + ':' + String(endMin).padStart(2, '0') + ':' + String(endSec).padStart(2, '0');
-
-  console.log("newEndMonthValue: ", newEndMonthValue)
-  console.log("Initial enddt: ", draggedEvent.enddt)
-  console.log("newEndDtValue: ", newEndDtValue)
-  console.log("newEndDt: ", newEndDt)
 
   try {
     const result = eventService.updateEvent({

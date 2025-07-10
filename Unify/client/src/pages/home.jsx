@@ -65,6 +65,10 @@ function HomePage() {
     const [mainRefreshTrigger, setMainRefreshTrigger] = useState(0)
 
     const [myDisplayedCalendarIds, setMyDisplayedCalendarIds] = useState([])
+
+    console.log("UNITAL myDisplayedCalendarIds: ", myDisplayedCalendarIds)
+
+    // If sessionStorage for currMonth and currYear are not defined, assign calendarDisplay to current time. Important to retain session currMonth and currYear after each refresh.
     const [calendarDisplay, changeCalendarDisplay] = useState((sessionStorage.getItem("currYear") && sessionStorage.getItem("currMonth")) ? new Date(sessionStorage.getItem("currYear"), sessionStorage.getItem("currMonth"), 1) : new Date())
 
     const [isExtraEventsPopUpOpen, setExtraEventsPopUp] = useState(false);
@@ -76,12 +80,10 @@ function HomePage() {
     const [popUpPosition, setPopUpPosition] = useState({ x: 0, y: 0 });
 
     const [isOverlayBackgroundHidden, setOverlayBackgroundHidden] = useState(true);
-    // const isOverlayBackgroundHidden = isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen && !isShowCalendarOpen && !isShowAccountsOpen && !isShowEventOpen;
-
     const [isExtraOverlayBackgroundHidden, setExtraOverlayBackgroundHidden] = useState(true);
 
     const [myCalendars, setMyCalendars] = useState([]);
-
+    
     const [followedCalendars, setFollowedCalendars] = useState([])
     const refreshFollowedCalendars = () => {
         getFollowedCalendars(currentUserAccountId).then(setFollowedCalendars);
@@ -89,7 +91,7 @@ function HomePage() {
 
     const [allAccounts, setAllAccounts] = useState([])
 
-    // for left panel
+    // for left panel display
     const [myEvents, setMyEvents] = useState([]);
 
     // Function to update displayed calendar year
@@ -102,7 +104,7 @@ function HomePage() {
         changeCalendarDisplay(newDate);
         sessionStorage.setItem("currYear", newDate.getFullYear());
         setRefreshMonthEvents(refreshMonthEvents + 1);
-        console.log("Events Refreshed!");
+        // console.log("Events Refreshed!");
     }
 
     // Function to update displayed calendar year
@@ -115,9 +117,10 @@ function HomePage() {
         changeCalendarDisplay(newDate); 
         sessionStorage.setItem("currMonth", newDate.getMonth());
         setRefreshMonthEvents(refreshMonthEvents + 1);
-        console.log("Events Refreshed!");
+        // console.log("Events Refreshed!");
     }
 
+    // populate currMonth and currYear session data
     useEffect(() => {
         if (sessionStorage.getItem("currMonth") || sessionStorage.getItem("currYear")){
             handleOnMonthChange(calendarDisplay.getMonth());
@@ -125,9 +128,27 @@ function HomePage() {
         }
     }, [])
 
+    // UseState for clicked calendars to display
+/*     useEffect(() => {
+        if (Object.keys(displayCalendarBasedOnIDAndColour).length !== 0) {
+            console.log("AHHHHHHHHHHHHHHHHHHHHHHH")
+            let filteredEvents = [];
+            for (const [id, colour] of Object.entries(displayCalendarBasedOnIDAndColour)) {
+                const matchedEvents = monthEvents
+                    .filter(event => event.calendarid === id)
+                    .map(event => ({
+                        ...event,
+                        eventcolour: colour
+                    }));
+                filteredEvents = filteredEvents.concat(matchedEvents);
+            }
+            setMonthEvents(filteredEvents);
+            setRefreshMonthEvents(prev => prev + 1);
+        }
+    }, [displayCalendarBasedOnIDAndColour]); */
+
 
     useEffect(() => {
-
         if (currentUserAccountId) {
             getMyCalendars(currentUserAccountId).then((calendars) => {
                 const sortedCalendars = calendars.sort((a, b) => a.calendarid - b.calendarid);
@@ -167,16 +188,18 @@ function HomePage() {
         const fetchMonthEvents = async () => {
             try {
                 const currMonth = calendarDisplay.getMonth();
-                console.log("currMonth: ",currMonth)
                 const monthEvents = await monthEventsService.getMonthEvents({currMonth: currMonth});
-                setMonthEvents(monthEvents.data);
+                const matchedIdEvents = monthEvents.data.filter((event) => {
+                    return myDisplayedCalendarIds.includes(event.calendarid)
+                })
 
+                setMonthEvents(matchedIdEvents);
             } catch (err) {
                 console.error("Error fetching month events: ", err);
             }
         }
         fetchMonthEvents();
-    }, [refreshMonthEvents])
+    }, [refreshMonthEvents, myDisplayedCalendarIds])
 
     // When the user exits an overlay, the following code turns off all overlays
     const hideOverlayBackground = () => {
@@ -218,6 +241,7 @@ function HomePage() {
         }
         else {
             const res = await calendarService.displayCalendar(calendarid, accountid)
+            console.log("res: ", res)
             if (res.data.status) {
                 getMyDisplayedCalendars(currentUserAccountId).then(setMyDisplayedCalendarIds)
             }
@@ -732,7 +756,7 @@ function HomePage() {
                     }}
                 >+ Add Event</button>
                 <div style={{ paddingBottom: '20px' }}>
-                    < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setSelectedEvent} setEventDetailsOpen={setEventDetailsOpen}>
+                    <TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setSelectedEvent} setEventDetailsOpen={setEventDetailsOpen}>
                     </TimeTable>
                 </div>
             </OverlayBlock>
