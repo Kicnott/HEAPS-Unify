@@ -10,6 +10,7 @@ const case1Event = (event) => {
     return <div style={{
         fontSize: '0.9rem',
         color: 'black', 
+        borderRadius: '5px',
         backgroundColor: event.calendarcolour, 
         borderColor: 'grey',
         borderStyle: 'solid',
@@ -36,6 +37,7 @@ const case2Event = (event, diffInDays) => {
     return <div style={{
         fontSize: '0.9rem',
         color: 'black', 
+        borderRadius: '5px',
         backgroundColor: event.calendarcolour, 
         borderColor: 'grey',
         borderStyle: 'solid',
@@ -60,10 +62,12 @@ const case2Event = (event, diffInDays) => {
 // Case 3: Multiple day Event, crosses week edge
 const case3Event = (event, diffInDays) => {
     let eventOverflowCount = diffInDays;
-    let eventOffset = eventOverflowCount * 143 + 10;
+    let eventOffset = eventOverflowCount * 143 + 12;
     return <div style={{
         fontSize: '0.9rem',
         color: 'black', 
+        borderTopLeftRadius: '5px',
+        borderBottomLeftRadius: '5px',
         backgroundColor: event.calendarcolour, 
         borderColor: 'grey',
         borderStyle: 'solid',
@@ -92,6 +96,8 @@ const case4Event = (event, diffInDays) => {
     return <div style={{
         fontSize: '0.9rem',
         color: 'black', 
+        borderTopRightRadius: '5px',
+        borderBottomRightRadius: '5px',
         backgroundColor: event.calendarcolour, 
         borderColor: 'grey',
         borderStyle: 'solid',

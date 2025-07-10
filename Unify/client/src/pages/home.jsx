@@ -66,8 +66,6 @@ function HomePage() {
 
     const [myDisplayedCalendarIds, setMyDisplayedCalendarIds] = useState([])
 
-    console.log("UNITAL myDisplayedCalendarIds: ", myDisplayedCalendarIds)
-
     // If sessionStorage for currMonth and currYear are not defined, assign calendarDisplay to current time. Important to retain session currMonth and currYear after each refresh.
     const [calendarDisplay, changeCalendarDisplay] = useState((sessionStorage.getItem("currYear") && sessionStorage.getItem("currMonth")) ? new Date(sessionStorage.getItem("currYear"), sessionStorage.getItem("currMonth"), 1) : new Date())
 
@@ -241,7 +239,6 @@ function HomePage() {
         }
         else {
             const res = await calendarService.displayCalendar(calendarid, accountid)
-            console.log("res: ", res)
             if (res.data.status) {
                 getMyDisplayedCalendars(currentUserAccountId).then(setMyDisplayedCalendarIds)
             }

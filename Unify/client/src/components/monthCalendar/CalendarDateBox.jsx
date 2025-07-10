@@ -134,8 +134,9 @@ const drop = (e, displayDate) => {
       top: '0.2rem',
       left: '0.5rem',
       background: `${displayCurrentDayIndicator}`,
-      borderRadius: '10px',
-      width: '20px',
+      borderRadius: '7px',
+      paddingLeft: '4px',
+      paddingRight: '4px',
     }}>
       {date}
     </div>
