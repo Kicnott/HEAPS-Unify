@@ -27,11 +27,12 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
     const baseStartDate = new Date(getBaseDate(displayDate)) // baseStartDate; needed to determine all sats in the month and currComparedDate ('1st displayed' day of the month)
     const baseEndDate = new Date(baseStartDate);
     baseEndDate.setDate(new Date(baseStartDate).getDate() + cellCount - 1); // last displayed date of the month, e.g. in July 2025, the last displayed date is 2nd July
+    baseEndDate.setHours(24); // Set enddate to first displayed date of next month
     
     let currComparedDate = new Date(baseStartDate) // currComparedDate: copy of baseStartDate. Serves an index/pointer that goes thru all displayed days in the chosen month. After getBaseDate and new Date(), it becomes a date of the '1st displayed' day of the month. For eg, in july 2025, the value -> Sun Jun 29 2025 00:00:00 GMT+0800 (Singapore Standard Time)
     let sundaysOfTheMonth = []; // sundaysOfTheMonth; used to store all sun (Digit)
     let currSunDate = new Date(baseStartDate); // currSunDate; copy of baseStartDate. Used to populate sundaysOfTheMonth
-    currSunDate.setDate(currSunDate.getDate() - 7); // allows the code to include events 1 week before (cross-ed over)
+    currSunDate.setDate(currSunDate.getDate()); // allows the code to include events 1 week before (cross-ed over)
     let days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"] // Defining the calendar headers.
 
     for (let i = 0; i < 7; i++){
@@ -49,7 +50,7 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
     }
 
     // sundaysOfTheMonth; stores [[sun Date A, sun Month A], [sun Date B, sun Month B],...]
-    for (let i = 0; i < (cellCount / 7) + 2 ; i++){
+    for (let i = 0; i < (cellCount / 7) + 1; i++){
         sundaysOfTheMonth.push([new Date(currSunDate).getDate(), new Date(currSunDate).getMonth() + 1]);
         currSunDate.setDate(currSunDate.getDate() + 7);
     }
@@ -82,11 +83,11 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
             let dbCheckEventsStartBeforeMonthEndAfter = false
 
             if (dateIndex === 0){
-                dbCheckEventsStartBeforeMonthEndWithin = (eventBegin < baseStartDate.setHours(0)) && (baseStartDate.setHours(0) < eventStop) && (eventStop <= baseEndDate.setHours(24))
+                dbCheckEventsStartBeforeMonthEndWithin = (eventBegin < baseStartDate.setHours(0)) && (baseStartDate.setHours(0) < eventStop) && (eventStop <= baseEndDate)
                 dbCheckEventsStartBeforeMonthEndAfter = (eventBegin < baseStartDate.setHours(0)) && (baseEndDate.setHours(24) <= eventStop)
             }
 
-            return (dbComparedEventDate === comparedDate) && (dbComparedEventMonth === comparedMonth) || dbCheckEventsStartBeforeMonthEndWithin || dbCheckEventsStartBeforeMonthEndAfter;
+            return ((dbComparedEventDate === comparedDate) && (dbComparedEventMonth === comparedMonth)) || dbCheckEventsStartBeforeMonthEndWithin || dbCheckEventsStartBeforeMonthEndAfter;
         })
 
         // sorts the events in the box
@@ -125,9 +126,9 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
 
             // checks if event is across the entire month, middle months
             const isEventMiddleAcrossMonth = (
-                ((startdt < baseStartDate.setHours(0))) 
+                ((startdt < new Date(baseStartDate.setHours(0)))) 
                 && 
-                (baseEndDate.setHours(24) < enddt)
+                (new Date(baseEndDate.setHours(24)) < enddt)
             );
 
             // checks if event is across the month and ends this month, ending month
@@ -155,11 +156,6 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
                 monthEventsArray[dateIndex][innerArrayIndex] = calenderEventsType.case1Event(event);
             } else if (diffInDays != 0){
                 const noSunsPassed = noOfWeekEdgePasses(event, sundaysOfTheMonth, isEventStartAcrossMonth, daysInMonth, baseStartDate);
-
-                if (dateIndex === 0){
-                    console.log("SUNNN", noSunsPassed)
-                    console.log("event brefore: ", event)
-                }
 
                 if (noSunsPassed == 0){ // case 2: multi day event, within the week
                     monthEventsArray[dateIndex][innerArrayIndex] = calenderEventsType.case2Event(event, diffInDays);
@@ -196,6 +192,18 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
                                 emptyEventSpaceCount += 1; // increments emptyEventSpaceCount to set keys
                             }
                         }
+                    } else if (isEventMiddleAcrossMonth){
+                        // case 3: multi day event, crosses week, first week
+                        for (let passedEdge = 1; passedEdge < noSunsPassed + 1; passedEdge++){ 
+                            const workingIndexSun = dateIndex - diffInDaysToSunStart + (passedEdge * 7);
+                            if (dateIndex - diffInDaysToSunStart + (passedEdge * 7) >= cellCount){ break; } // prevents index overflow
+                            monthEventsArray[workingIndexSun][innerArrayIndex] = calenderEventsType.case5Event(event); // case 5: passed edge, full week
+                            for (let emptyPopulator = 1; emptyPopulator < diffInDaysToSatStart + 1; emptyPopulator++){
+                                if (workingIndexSun + emptyPopulator == cellCount) { break; } // prevents index overflow
+                                monthEventsArray[workingIndexSun + emptyPopulator][innerArrayIndex] = calenderEventsType.case7Event(emptyEventSpaceCount);
+                                emptyEventSpaceCount += 1; // increments emptyEventSpaceCount to set keys
+                            }                        
+                        }
                     } else if (isEventAcrossAndEndsThisMonth) { // event started before curr month and ends in this month
                         let eventPartition = event;
                         eventPartition.startdt = baseStartDate.toISOString()
@@ -204,14 +212,6 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshEven
                         const noOfSunPassedPartition = Math.floor(diffInDaysPartition / 7);
                         const diffInDaysToSatStartPartition = noOfDaysToNextClosestSat(eventPartition.startdt);
                         const diffInDaysToSunEndPartition = noOfDaysToNextClosestSun(eventPartition.enddt);
-
-                        console.log(eventPartition.eventname)
-                        console.log("A: ", new Date(eventPartition.enddt))
-                        console.log("B: ", baseStartDate)
-                        console.log("C: ", (diffInDaysPartition / 7))
-                        console.log("noOfSunPassedPartition: ", noOfSunPassedPartition)
-                        console.log("diffInDaysToSatStartPartition: ", diffInDaysToSatStartPartition)
-                        console.log("diffInDaysToSunEndPartition: ", diffInDaysToSunEndPartition)
 
                         for (let passedEdge = 1; passedEdge < noOfSunPassedPartition + 1; passedEdge++){ 
                             const workingIndexSun = dateIndex + (passedEdge * 7);
@@ -351,32 +351,22 @@ function extraEventsPopUpCall(dateIndex, currDayExtraEvents, setExtraEvents, set
 }
 
 // Returns number of times an event passes the week edge into the next week
-function noOfWeekEdgePasses(event, sundaysOfTheMonth, isEventStartAcrossMonth, daysInMonth, baseStartDate) {
-    let eventStartDate = new Date(event.startdt).getDate();
-    let eventEndDate = new Date(event.enddt).getDate();
-    let eventStartMonth = new Date(event.startdt).getMonth() + 1;
-    let eventEndMonth = new Date(event.enddt).getMonth() + 1;
+function noOfWeekEdgePasses(event, sundaysOfTheMonth) {
     let noOfWeekEdgePasses = 0;
 
+    const localEventStart = new Date(event.startdt)
+    const localEventEnd = new Date(event.enddt)
+    const year = new Date().getFullYear();
 
-    if (isEventStartAcrossMonth){
-        eventEndDate = daysInMonth;
-        eventStartMonth = baseStartDate.getMonth() + 1;
-        eventEndMonth = baseStartDate.getMonth() + 1;
-    }
+    const sundaysOfTheMonthConverted = sundaysOfTheMonth.map((sun) =>{
+        return new Date(year, sun[1] - 1, sun[0], 0);
+    })
 
-    sundaysOfTheMonth.forEach((sun) => {
-        if ((eventStartDate < sun[0] && eventStartMonth == sun[1]) && (sun[0] <= eventEndDate && eventEndMonth == sun[1])) {
+    sundaysOfTheMonthConverted.forEach((sun) => {
+        if (localEventStart < sun && sun < localEventEnd) {
             noOfWeekEdgePasses += 1;
         }
     });
-
-    if (event.eventname === 'Meta Camp'){
-        console.log("sundaysOfTheMonth",sundaysOfTheMonth)
-        console.log("event.startdt",event.startdt)
-        console.log("event.enddt: ", event.enddt)
-        console.log("noOfWeekEdgePasses: ", noOfWeekEdgePasses)
-    }
 
     return noOfWeekEdgePasses;
 }

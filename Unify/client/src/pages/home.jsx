@@ -65,7 +65,7 @@ function HomePage() {
     const [mainRefreshTrigger, setMainRefreshTrigger] = useState(0)
 
     const [myDisplayedCalendarIds, setMyDisplayedCalendarIds] = useState([])
-    
+
     // If sessionStorage for currMonth and currYear are not defined, assign calendarDisplay to current time. Important to retain session currMonth and currYear after each refresh.
     const [calendarDisplay, changeCalendarDisplay] = useState((sessionStorage.getItem("currYear") && sessionStorage.getItem("currMonth")) ? new Date(sessionStorage.getItem("currYear"), sessionStorage.getItem("currMonth"), 1) : new Date())
 
@@ -104,7 +104,7 @@ function HomePage() {
         changeCalendarDisplay(newDate);
         sessionStorage.setItem("currYear", newDate.getFullYear());
         setRefreshMonthEvents(refreshMonthEvents + 1);
-        console.log("Events Refreshed!");
+        // console.log("Events Refreshed!");
     }
 
     // Function to update displayed calendar year
@@ -117,7 +117,7 @@ function HomePage() {
         changeCalendarDisplay(newDate); 
         sessionStorage.setItem("currMonth", newDate.getMonth());
         setRefreshMonthEvents(refreshMonthEvents + 1);
-        console.log("Events Refreshed!");
+        // console.log("Events Refreshed!");
     }
 
     useEffect(() => {
@@ -171,7 +171,6 @@ function HomePage() {
                 const currMonth = calendarDisplay.getMonth();
                 const monthEvents = await monthEventsService.getMonthEvents({currMonth: currMonth});
                 setMonthEvents(monthEvents.data);
-
             } catch (err) {
                 console.error("Error fetching month events: ", err);
             }
