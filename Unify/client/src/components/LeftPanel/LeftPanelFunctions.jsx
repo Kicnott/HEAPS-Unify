@@ -23,6 +23,20 @@ export async function getMyEvents(accountid) {
     return events;
 }
 
+export async function getFollowedEvents(accountid) {
+    const calendarData = await getFollowedCalendars(accountid);
+    const calendarids = calendarData.map(calendar => calendar.calendarid);
+
+    const events = {};
+
+    for (const calendarid of calendarids) {
+        const res = await eventService.getMyEvents(calendarid);
+        events[calendarid] = res.data.rows;
+    }
+    return events;
+}
+
+
 export async function getAllAccounts() {
     const res = await accountService.showAllAccounts()
     return res.data.rows

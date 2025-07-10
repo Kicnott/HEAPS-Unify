@@ -20,7 +20,7 @@ import { OverlayBackground } from '../components/overlay/OverlayBackground.jsx'
 import { LeftTabPanel } from '../components/LeftPanel/LeftTabPanel.jsx'
 import { ScrollBlock } from '../components/blocks/ScrollBlock.jsx'
 import MainLayout from '../components/blocks/MainLayout.jsx'
-import { getMyCalendars, getMyEvents, getAllAccounts, getFollowedCalendars, getMyDisplayedCalendars, searchAccounts } from '../components/LeftPanel/LeftPanelFunctions.jsx'
+import { getMyCalendars, getFollowedEvents, getMyEvents, getAllAccounts, getFollowedCalendars, getMyDisplayedCalendars, searchAccounts } from '../components/LeftPanel/LeftPanelFunctions.jsx'
 import { ShowCalendar } from '../components/LeftPanel/ShowCalendar.jsx'
 import { ShowAccount } from '../components/LeftPanel/ShowAccount.jsx'
 import { ShowEvent } from '../components/LeftPanel/ShowEvent.jsx'
@@ -93,6 +93,8 @@ function HomePage() {
 
     const [myEvents, setMyEvents] = useState([]);
 
+    const [followedEvents, setFollowedEvents] = useState([])
+
     const [searchAccountTerm, setSearchAccountTerm] = useState('')
     const [searchedAccounts, setSearchedAccounts] = useState([])
 
@@ -140,6 +142,8 @@ function HomePage() {
                 const sortedCalendars = calendars.sort((a, b) => a.calendarid - b.calendarid);
                 setFollowedCalendars(sortedCalendars);
             });
+
+            getFollowedEvents(currentUserAccountId).then(setFollowedEvents)
 
             getMyEvents(currentUserAccountId).then(setMyEvents);
 
@@ -825,8 +829,8 @@ function HomePage() {
                                                     height='auto'
                                                     key={calendar.calendarid}
                                                     buttonData={
-                                                        myEvents[calendar.calendarid] && myEvents[calendar.calendarid].length > 0
-                                                            ? myEvents[calendar.calendarid].map((event) => ({
+                                                        followedEvents[calendar.calendarid] && followedEvents[calendar.calendarid].length > 0
+                                                            ? followedEvents[calendar.calendarid].map((event) => ({
                                                                 label: event.eventname + " - " + new Date(event.startdt).toLocaleString(),
                                                                 onClick: () => {
                                                                     setShowEventID(event.eventid);
@@ -922,6 +926,7 @@ function HomePage() {
                     setShowCalendarID={setShowCalendarID}
                     setShowCalendarOpen={setShowCalendarOpen}
                     setShowEventOpen={setShowEventOpen}
+                    currentAccountid={currentUserAccountId}
                 >
                 </ShowEvent>
             </OverlayBlock>

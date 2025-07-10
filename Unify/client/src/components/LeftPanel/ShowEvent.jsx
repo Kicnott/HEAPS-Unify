@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import eventService from "../../services/eventService.jsx";
 import calendarService from "../../services/calendarService.jsx";
 
-export const ShowEvent = ({ eventid, setShowCalendarOpen, setShowCalendarID, setShowEventOpen }) => {
+export const ShowEvent = ({ eventid, setShowCalendarOpen, setShowCalendarID, setShowEventOpen, currentAccountid }) => {
     const [eventData, setEventData] = useState(null);
     const [calendarData, setCalendarData] = useState(null);
     const [error, setError] = useState(null);
@@ -30,66 +30,110 @@ export const ShowEvent = ({ eventid, setShowCalendarOpen, setShowCalendarID, set
     if (error) return <div>{error}</div>;
     if (!eventData || !calendarData) return <div>Loading...</div>;
 
-    // console.log("eventstarttime:", eventData.startdt);
-    // console.log("eventendtime:", eventData.enddt);
-
-    // const rawStartDate = eventData.eventstarttime;
-    // const isoStartDate = rawStartDate.replace(" ", "T");
-    // const startDateObj = new Date(isoStartDate);
-
-    // const rawEndDate = eventData.eventendtime;
-    // const isoEndDate = rawEndDate.replace(" ", "T");
-    // const endDateObj = new Date(isoEndDate);
-
     const startDateObj = new Date(eventData.startdt);
     const endDateObj = new Date(eventData.enddt);
     return (
         <div>
-            <h2>Event Details</h2>
-            <table border={1} cellPadding={10} cellSpacing={0}>
-                <tbody>
-                    <tr>
-                        <th>Event ID</th>
-                        <td>{eventData.eventid}</td>
-                    </tr>
-                    <tr>
-                        <th>Event Name</th>
-                        <td>{eventData.eventname}</td>
-                    </tr>
-                    <tr>
-                        <th>Event Description</th>
-                        <td>{eventData.eventdescription}</td>
-                    </tr>
-                    <tr>
-                        <th>Event Location</th>
-                        <td>{eventData.eventlocation}</td>
-                    </tr>
-                    <tr>
-                        <th>Start Time</th>
-                        <td>{startDateObj.toLocaleString()}</td>
-                    </tr>
-                    <tr>
-                        <th>End Time</th>
-                        <td>{endDateObj.toLocaleString()}</td>
-                    </tr>
-                    <tr>
-                        <th>In Calendar</th>
-                        <td>
-                            {/* {calendarData.calendarname} */}
-                            <button
-                                onClick={() => {
-                                    setShowCalendarID(calendarData.calendarid);
-                                    setTimeout(() => {
-                                        setShowCalendarOpen(true);
-                                        setShowEventOpen(false);
-                                    }, 100);
-                                }}
-                            >{calendarData.calendarname}</button>
 
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <h2
+                style={{
+                    marginBottom: 16,
+                    borderBottom: '2px solid black',
+                    fontSize: 28,
+                    fontWeight: 700,
+                    letterSpacing: '0.5px',
+                }}
+            >
+                {eventData.eventname}
+            </h2>
+
+            <div
+                style={{
+                    maxWidth: 500,
+                    margin: "2rem auto",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: 14,
+                    background: "#fff",
+                    padding: 28,
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.07)",
+                    textAlign: 'center'
+                }}
+            >
+
+                {eventData.eventdescription && (
+                    <div style={{
+                        background: "#f9fafb",
+                        borderLeft: "4px solid #6366f1",
+                        borderRadius: 8,
+                        padding: "12px 18px",
+                        marginBottom: 20,
+                        color: "#374151",
+                        fontSize: 16,
+                        fontStyle: "italic"
+                    }}>
+                        {eventData.eventdescription}
+                    </div>
+                )}
+
+                <div style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 14,
+                    fontSize: 16,
+                    color: "#444",
+                    marginBottom: 16
+                }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <span role="img" aria-label="Location" style={{ fontSize: 20 }} title="Location">📍</span>
+                        <span style={{ color: eventData.eventlocation ? "#444" : "#bbb" }}>
+                            {eventData.eventlocation || "No location"}
+                        </span>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <span role="img" aria-label="Start" style={{ fontSize: 20 }} title="Start Time">🕒</span>
+                        <span>
+                            {startDateObj.toLocaleString()}
+                        </span>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <span role="img" aria-label="End" style={{ fontSize: 20 }} title="End Time">🏁</span>
+                        <span>
+                            {endDateObj.toLocaleString()}
+                        </span>
+                    </div>
+                </div>
+
+                <div>
+                    <button
+                        style={{
+                            background: "#f3f4f6",
+                            color: "#2563eb",
+                            border: "none",
+                            borderRadius: 14,
+                            padding: "6px 16px",
+                            fontWeight: 500,
+                            fontSize: 15,
+                            cursor: "pointer",
+                            transition: "background 0.2s",
+                        }}
+                        onClick={() => {
+                            setShowCalendarID(calendarData.calendarid);
+                            setTimeout(() => {
+                                setShowCalendarOpen(true);
+                                setShowEventOpen(false);
+                            }, 100);
+                        }}
+                        title="View calendar"
+                    >
+                        📅 {calendarData.calendarname}
+                    </button>
+                </div>
+            </div>
+            {currentAccountid && String(currentAccountid) === String(calendarData.accountid) && (
+                <button>
+                    Modify Calendar
+                </button>
+            )}
         </div>
     );
 
