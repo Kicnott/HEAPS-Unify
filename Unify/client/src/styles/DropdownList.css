@@ -5,7 +5,7 @@
   margin: 0.1rem auto;
   transform: translate(65px, -48px);
 }
-/* Native <select> styling */
+
 .dropdown-container select {
   font-family: 'Times New Roman', Times, serif;
   width: 150%;
