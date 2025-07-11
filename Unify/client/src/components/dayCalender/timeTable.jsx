@@ -5,7 +5,7 @@ import '../../styles/timetable.css';
 
 //add drag and drop & event extension
 //allow div to be created at last block 11pm-12am
-    //automatically assigned endidx to be last block if endidx is ever smaller than startidx. dont think this will work for multi day events 
+//automatically assigned endidx to be last block if endidx is ever smaller than startidx. dont think this will work for multi day events 
 
 //make all day event block
 
@@ -24,13 +24,13 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
 
         const getEvents = async () => {
             const dayStart = DateTime.fromJSDate(chosenDate).startOf('day');
-            const dayEnd = dayStart.plus({ days: 1});
+            const dayEnd = dayStart.plus({ days: 1 });
             try {
                 const response = await eventService.getEvents();
                 const eventRows = response.data.rows;
 
                 const timed = [];
-                const allDay = [];  
+                const allDay = [];
 
                 eventRows.forEach(e => {
                     const start = DateTime.fromISO(e.startdt);
@@ -153,7 +153,7 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
         getEvents();
     }, [chosenDate, refreshTrigger]);
 
-    
+
 
 
     const eventsWithLanes = useMemo(() => {
@@ -259,7 +259,7 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                         gridRow: '1',
                         gridColumn: '1'
                     }}>
-                All Day</div>
+                    All Day</div>
 
                 <div
                     style={{
@@ -276,21 +276,23 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                             gridColumn: e.lane + 2,
                         }}
                         onClick={() => {
-                            eventselector(e.originalEvent || e);
+                            eventselector(e.originalEvent.eventid || e.eventid);
                             closeOthers()
-                            setEventDetailsOpen(true);
+                            setTimeout(() => {
+                                setEventDetailsOpen(true)
+                            }, 100)
                         }}
-                        >
+                    >
                         {e.eventname}</div>
                 ))}
-                
+
                 {hoursCreator().map((hourData, hourIdx) => (
                     <div key={`hour-${hourIdx}`}
                         style={{
                             ...hourLabelStyle,
                             gridRow: `${hourIdx * 4 + 2} / span 4`,
                             gridColumn: '1'
-                        }}>     
+                        }}>
                         {hourData.hourLabel}
                     </div>
                 ))}
@@ -316,11 +318,14 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                             gridColumn: e.lane + 2
                         }}
                         onClick={() => {
-                            eventselector(e.originalEvent || e);
+                            eventselector(e.originalEvent.eventid || e.eventid);
                             closeOthers()
-                            setEventDetailsOpen(true);
+                            setTimeout(() => {
+                                setEventDetailsOpen(true)
+                            }, 100)
+
                         }}
-                        >
+                    >
                         {e.eventname}
                     </div>
                 ))}

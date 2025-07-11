@@ -286,15 +286,6 @@ function HomePage() {
                 </ExtraEventsPopUp>
             )
             }
-
-            {/* <OverlayBlock
-                isHidden={!isShowEventOpen}
-                onClose={() => hideOverlayBackground()}>
-                <ShowEvent
-                    eventid={showEventID}>
-                </ShowEvent>
-            </OverlayBlock> */}
-
             <EventsOverlayBackground
                 isHidden={isExtraOverlayBackgroundHidden}
                 onClick={() => hideExtraOverlayBackground()}>
@@ -1001,7 +992,7 @@ function HomePage() {
                     }}
                 >+ Add Event</button>
                 <div style={{ paddingBottom: '20px' }}>
-                    < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setSelectedEvent} setEventDetailsOpen={setEventDetailsOpen} closeOthers={hideOverlayBackground}>
+                    < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setShowEventID} setEventDetailsOpen={setShowEventOpen} closeOthers={hideOverlayBackground}>
                     </TimeTable>
                 </div>
             </OverlayBlock>

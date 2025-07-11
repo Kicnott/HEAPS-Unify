@@ -131,7 +131,7 @@ export const ShowEvent = ({ eventid, setShowCalendarOpen, setShowCalendarID, set
             </div>
             {currentAccountid && String(currentAccountid) === String(calendarData.accountid) && (
                 <button>
-                    Modify Calendar
+                    Modify Event
                 </button>
             )}
         </div>
