@@ -153,7 +153,7 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                 laneCounts[i]++;
             }
         });
-        return Math.max(1, ...laneCounts);
+        return Math.max(1, ...laneCounts) + 1;
     };
 
     const assignLanes = (events, maxLanes) => {
@@ -245,7 +245,7 @@ function isSingleDayEvent(event, dayStart, dayEnd) {
 
 
     const handleEventDrop = async (item, dropIdx, dropLaneIdx) => {
-        if (item.lane !== dropLaneIdx) return;
+        // if (item.lane !== dropLaneIdx) return;
 
         const duration = item.endIdx - item.startIdx;
         const newStartIdx = dropIdx;
@@ -375,7 +375,7 @@ function isSingleDayEvent(event, dayStart, dayEnd) {
                             }}
                             onDrop={handleEventDrop}
                             canDropEvent={(item, cellIdx, cellLaneIdx) => {
-                            if (item.lane !== cellLaneIdx) return false;
+                            // if (item.lane !== cellLaneIdx) return false;
                             const duration = item.endIdx - item.startIdx;
                             const newStartIdx = cellIdx;
                             const newEndIdx = cellIdx + duration;
