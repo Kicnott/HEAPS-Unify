@@ -12,7 +12,7 @@ function formatFollowerCount(num) {
     return num.toString();
 }
 
-export const ShowCalendar = ({ accountid, calendarid, setShowEventOpen, setShowCalendarOpen, setShowAccountOpen, setShowAccountID, setShowEventID, refreshFollowedCalendars }) => {
+export const ShowCalendar = ({ accountid, calendarid, setShowEventOpen, setShowCalendarOpen, setShowAccountOpen, setShowAccountID, setShowEventID, refreshTrigger, modifyCalendarOnClick }) => {
     const [calendarData, setCalendarData] = useState(null);
     const [accountData, setAccountData] = useState(null);
     const [eventData, setEventData] = useState(null);
@@ -169,7 +169,11 @@ export const ShowCalendar = ({ accountid, calendarid, setShowEventOpen, setShowC
             </div>
 
             {accountid && String(accountid) === String(calendarData.accountid) && (
-                <button>
+                <button
+                onClick={
+                    modifyCalendarOnClick
+                }
+                >
                     Modify Calendar
                 </button>
             )}
@@ -181,7 +185,7 @@ export const ShowCalendar = ({ accountid, calendarid, setShowEventOpen, setShowC
                             .then(() => {
                                 setIsFollowing(false);
                                 setTimeout(() => {
-                                    if (refreshFollowedCalendars) refreshFollowedCalendars();
+                                    if (refreshTrigger) refreshTrigger((prev) => prev + 1);
                                 }, 100);
 
                             })
@@ -198,7 +202,7 @@ export const ShowCalendar = ({ accountid, calendarid, setShowEventOpen, setShowC
                             .then(() => {
                                 setIsFollowing(true);
                                 setTimeout(() => {
-                                    if (refreshFollowedCalendars) refreshFollowedCalendars();
+                                    if (refreshTrigger) refreshTrigger((prev) => prev + 1);
                                 }, 100);
 
                             })

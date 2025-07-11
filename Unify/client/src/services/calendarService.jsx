@@ -63,6 +63,11 @@ const changeCalendarColor = (color, calendarid) => {
     return http.post('/home/changeCalendarColor', { calendarid, color })
 }
 
+const modifyCalendar = (data) => {
+    return http.post('/home/modifyCalendar', data)
+}
+
+
 export default {
     showAllCalendars,
     createCalendar,
@@ -77,5 +82,6 @@ export default {
     checkDisplayedCalendar,
     displayCalendar,
     undisplayCalendar,
-    changeCalendarColor
+    changeCalendarColor,
+    modifyCalendar
 }

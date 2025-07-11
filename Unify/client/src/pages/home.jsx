@@ -33,6 +33,8 @@ import { EventsOverlayBackground } from '../components/overlay/EventsOverlayBack
 import { drawerStyle, rightDrawerButtonTop, rightDrawerButtonBottom } from '../styles/rightDrawerStyles.jsx'
 import accountService from '../services/accountService.jsx'
 import { ColorCircle } from '../components/blocks/ColorPopover.jsx'
+import { ModifyCalendar } from '../components/LeftPanel/ModifyCalendar.jsx'
+import { ModifyEvent } from '../components/LeftPanel/ModifyEvent.jsx'
 
 
 function HomePage() {
@@ -74,6 +76,9 @@ function HomePage() {
     const [refreshMonthEvents, setRefreshMonthEvents] = useState(0)
     const [monthEvents, setMonthEvents] = useState([])
 
+    const [isModifyCalendarOpen, setModifyCalendarOpen] = useState(false)
+    const [isModifyEventOpen, setModifyEventOpen] = useState(false)
+
     const [extraEvents, setExtraEvents] = useState([]);
     const [popUpPosition, setPopUpPosition] = useState({ x: 0, y: 0 });
 
@@ -83,18 +88,10 @@ function HomePage() {
     const [isExtraOverlayBackgroundHidden, setExtraOverlayBackgroundHidden] = useState(true);
 
     const [myCalendars, setMyCalendars] = useState([]);
-
     const [followedCalendars, setFollowedCalendars] = useState([])
-    const refreshFollowedCalendars = () => {
-        getFollowedCalendars(currentUserAccountId).then(setFollowedCalendars);
-    };
-
     const [allAccounts, setAllAccounts] = useState([])
-
     const [myEvents, setMyEvents] = useState([]);
-
     const [followedEvents, setFollowedEvents] = useState([])
-
     const [searchAccountTerm, setSearchAccountTerm] = useState('')
     const [searchedAccounts, setSearchedAccounts] = useState([])
 
@@ -171,13 +168,13 @@ function HomePage() {
     // hides background when overlay is hidden
     useEffect(() => {
         setOverlayBackgroundHidden(() => {
-            return isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen && !isShowCalendarOpen && !isShowAccountsOpen && !isShowEventOpen && !isCreateCalendarOpen && !isEventDetailsOpen;
+            return isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen && !isShowCalendarOpen && !isShowAccountsOpen && !isShowEventOpen && !isCreateCalendarOpen && !isEventDetailsOpen && !isModifyCalendarOpen && !isModifyEventOpen;
         });
         setExtraOverlayBackgroundHidden(() => {
             return !isExtraEventsPopUpOpen;
         });
 
-    }, [isEventHidden, isExtraEventsPopUpOpen, isRightDrawerOpen, isEventFormOpen, isEditCalendarsFormOpen, isEditAccountsFormOpen, isShowCalendarOpen, isShowAccountsOpen, isShowEventOpen, isCreateCalendarOpen, isEventDetailsOpen]);
+    }, [isEventHidden, isExtraEventsPopUpOpen, isRightDrawerOpen, isEventFormOpen, isEditCalendarsFormOpen, isEditAccountsFormOpen, isShowCalendarOpen, isShowAccountsOpen, isShowEventOpen, isCreateCalendarOpen, isEventDetailsOpen, isModifyCalendarOpen, isModifyEventOpen]);
 
 
     // console.log("Displayed Calendar IDs: ", myDisplayedCalendarIds)
@@ -226,6 +223,8 @@ function HomePage() {
         setEventDetailsOpen(false)
         setCreateCalendarOpen(false)
         setExtraEventsPopUp(false)
+        setModifyCalendarOpen(false)
+        setModifyEventOpen(false)
     }
 
     const hideExtraOverlayBackground = () => {
@@ -239,6 +238,8 @@ function HomePage() {
         setShowEventOpen(false)
         setEventDetailsOpen(false)
         setExtraEventsPopUp(false)
+        setModifyCalendarOpen(false)
+        setModifyEventOpen(false)
     }
 
     async function onCalendarCheckboxChange(calendarid, accountid) {
@@ -333,8 +334,6 @@ function HomePage() {
                     </div>
                 </div>
             </RightDrawer>
-
-
 
             <MainLayout
                 leftPanel={<LeftTabPanel
@@ -914,6 +913,10 @@ function HomePage() {
                 onClose={() => hideOverlayBackground()}>
                 <ShowEvent
                     eventid={showEventID}
+                    onModifyEventClick={() => {
+                      hideOverlayBackground()
+                        setModifyEventOpen(true)
+                    }}
                     setShowCalendarID={setShowCalendarID}
                     setShowCalendarOpen={setShowCalendarOpen}
                     setShowEventOpen={setShowEventOpen}
@@ -933,7 +936,11 @@ function HomePage() {
                     setShowAccountOpen={setShowAccountsOpen}
                     setShowEventID={setShowEventID}
                     setShowEventOpen={setShowEventOpen}
-                    refreshFollowedCalendars={refreshFollowedCalendars}>
+                    modifyCalendarOnClick={(e) => {
+                        hideOverlayBackground()
+                        setModifyCalendarOpen(true)
+                    }}
+                    refreshTrigger={setMainRefreshTrigger}>
                 </ShowCalendar>
             </OverlayBlock>
 
@@ -949,6 +956,46 @@ function HomePage() {
                     refreshTrigger={setMainRefreshTrigger}
                 >
                 </ShowAccount>
+            </OverlayBlock>
+
+            <OverlayBlock
+                isHidden={!isModifyCalendarOpen}
+                onClose={() => hideOverlayBackground()}>
+                <ModifyCalendar
+                    accountid={currentUserAccountId}
+                    calendarid={showCalendarID}
+                    onClose={() => {
+                        setCreateCalendarOpen(false)
+                        setMainRefreshTrigger(mainRefreshTrigger + 1)
+                        hideOverlayBackground()
+                    }}
+                    onSave={() => {
+                        setCreateCalendarOpen(false)
+                        setMainRefreshTrigger(mainRefreshTrigger + 1)
+                        hideOverlayBackground()
+                    }}
+                >
+                </ModifyCalendar>
+            </OverlayBlock>
+
+            <OverlayBlock
+                isHidden={!isModifyEventOpen}
+                onClose={() => hideOverlayBackground()}>
+                <ModifyEvent
+                    accountid={currentUserAccountId}
+                    eventid={showEventID}
+                    onClose={() => {
+                        setModifyEventOpen(false)
+                        setMainRefreshTrigger(mainRefreshTrigger + 1)
+                        hideOverlayBackground()
+                    }}
+                    onSave={() => {
+                        setModifyEventOpen(false)
+                        setMainRefreshTrigger(mainRefreshTrigger + 1)
+                        hideOverlayBackground()
+                    }}
+                >
+                </ModifyEvent>
             </OverlayBlock>
 
             <OverlayBlock

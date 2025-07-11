@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import eventService from "../../services/eventService.jsx";
 import calendarService from "../../services/calendarService.jsx";
 
-export const ShowEvent = ({ eventid, setShowCalendarOpen, setShowCalendarID, setShowEventOpen, currentAccountid }) => {
+export const ShowEvent = ({ eventid, setShowCalendarOpen, setShowCalendarID, setShowEventOpen, currentAccountid, onModifyEventClick }) => {
     const [eventData, setEventData] = useState(null);
     const [calendarData, setCalendarData] = useState(null);
     const [error, setError] = useState(null);
@@ -130,7 +130,9 @@ export const ShowEvent = ({ eventid, setShowCalendarOpen, setShowCalendarID, set
                 </div>
             </div>
             {currentAccountid && String(currentAccountid) === String(calendarData.accountid) && (
-                <button>
+                <button
+                onClick={onModifyEventClick}
+                >
                     Modify Event
                 </button>
             )}

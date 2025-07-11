@@ -70,19 +70,19 @@ router.post('/home/createCalendar', async (req, res) => {
     console.log(currentAccountId)
 
     if (calendarName == '') {
-      return res.json({ status: "Input Something!" }) 
+      return res.json({ status: "Input Something!" })
     }
 
-    const checkCalendarInsideDbResult = await pool.query( 
+    const checkCalendarInsideDbResult = await pool.query(
       'SELECT calendarstable FROM calendarstable where calendarname = ($1)', [calendarName]
     );
 
-    if (checkCalendarInsideDbResult.rows.length > 0) { 
-      return res.json({ status: "Calendar already exists" }) 
+    if (checkCalendarInsideDbResult.rows.length > 0) {
+      return res.json({ status: "Calendar already exists" })
     }
 
 
-    const result = await pool.query( 
+    const result = await pool.query(
       'INSERT INTO calendarstable (calendarname,calendardescription, accountid, calendarprivacy, calendarcolour) VALUES ($1, $2, $3, $4, $5)', [calendarName, calendarDescription, currentAccountId, calendarPrivacy, calendarColour]
     );
 
@@ -105,6 +105,17 @@ router.delete('/home/deleteCalendar', async (req, res) => {
     }
 
     // console.log(res)
+    const res1 = await pool.query(
+      'DELETE FROM followedcalendarstable WHERE calendarid = ($1)', [calendarid]
+    )
+
+    const res2 = await pool.query(
+      'DELETE FROM displayedcalendarstable WHERE calendarid = ($1)', [calendarid]
+    )
+
+    const res3 = await pool.query(
+      'DELETE FROM eventstable WHERE calendarid = ($1)', [calendarid]
+    )
 
     const result = await pool.query( // result constant contains db object of any rows that are deleted
       'DELETE FROM calendarstable WHERE calendarid = ($1)', [calendarid]
@@ -391,10 +402,36 @@ router.post('/home/changeCalendarColor', async (req, res) => {
       console.log("Calendar Colour change success!")
       return res.json({ status: true })
     }
-
   }
   catch (e) {
     console.log("Trouble changing calendar color!")
+    console.log(e)
+    return res.status(500).json({ error: "Server error!" })
+  }
+})
+
+router.post('/home/modifyCalendar', async (req, res) => {
+  try {
+    const { calendarid, calendarname, calendardescription, calendarprivacy, calendarcolour } = req.body;
+    if (!calendarid || !calendarname || !calendardescription || !calendarprivacy || !calendarcolour) {
+      return res.status(400).json({ error: "data missing!" })
+    }
+
+    console.log("modifyCalendar: Connected!")
+    const result = await pool.query(
+      'UPDATE calendarstable SET calendarname = $2, calendardescription = $3, calendarprivacy = $4, calendarcolour = $5 WHERE calendarid = $1', [calendarid, calendarname, calendardescription, calendarprivacy, calendarcolour]
+    )
+    if (result.rowCount === 0) {
+      console.log("Calendar change failed!")
+      return res.json({ status: false })
+    }
+    else {
+      console.log("Calendar change success!")
+      return res.json({ status: true })
+    }
+  }
+  catch (e) {
+    console.log("Trouble changing calendar!")
     console.log(e)
     return res.status(500).json({ error: "Server error!" })
   }
