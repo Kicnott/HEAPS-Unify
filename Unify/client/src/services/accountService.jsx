@@ -23,9 +23,14 @@ const getAccount = (accountid) => {
     return http.get('/home/getAccount', { params: { accountid: accountid } });
 }
 
+const searchAccounts = (search) => {
+    return http.get('/home/searchAccounts', { params: { search: search} })
+}
+
 export default {
     showAllAccounts,
     createAccount,
     deleteAccount,
-    getAccount
+    getAccount,
+    searchAccounts
 }

@@ -35,7 +35,9 @@ const deleteEvent = (eventid) => {
     return http.delete(`/home/deleteEvent/${eventid}`);
 }
 
-// add delete and modify routes
+const modifyEvent = (data) => {
+    return http.post('/home/modifyEvent', data)
+}
 
 export default {
     createEvent,
@@ -43,5 +45,6 @@ export default {
     getMyEvents,
     getEvent,
     updateEvent,
-    deleteEvent
+    deleteEvent,
+    modifyEvent
 }

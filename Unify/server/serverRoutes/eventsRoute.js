@@ -142,4 +142,24 @@ router.delete('/home/deleteEvent/:id', async(req, res) => {
   }
 })
 
+router.post('/home/modifyEvent', async (req, res) => {
+  try {
+
+    const startdt = req.body.startdt;
+    const enddt = req.body.enddt;
+    const eventid = req.body.eventid;
+    const eventname = req.body.eventname
+    const eventdescription = req.body.eventdescription
+    const eventlocation = req.body.eventlocation
+
+    const result = await pool.query( 
+      'UPDATE eventstable SET eventname = $2, eventdescription = $3, eventlocation = $4, startdt = $5, enddt = $6 WHERE eventid = $1', [eventid, eventname, eventdescription, eventlocation, startdt, enddt]
+    );
+    return res.json(true);
+  } catch (e) {
+    console.log("modifyEvent: Server Error");
+    console.log(e);
+    return res.json(false);}
+})
+
 export default router
