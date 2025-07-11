@@ -28,7 +28,7 @@ import monthEventsService from '../services/monthEventsService.jsx'
 import calendarService from '../services/calendarService.jsx'
 import { EventDisplay } from '../components/EventDisplay.jsx'
 import { CreateCalendar } from '../components/LeftPanel/CreateCalendar.jsx'
-import { ExtraEventsPopUp } from '../components/blocks/ExtraEventsPopUp.jsx'
+import { ExtraEventsPopUp } from '../components/blocks/extraEventsPopUp.jsx'
 import { EventsOverlayBackground } from '../components/overlay/EventsOverlayBackground.jsx'
 import { drawerStyle, rightDrawerButtonTop, rightDrawerButtonBottom } from '../styles/rightDrawerStyles.jsx'
 
@@ -802,4 +802,4 @@ function HomePage() {
     )
 }
 
-export default HomePage // Means that home.jsx only exports HomePage
+export default HomePage // Means that home.jsx only exports HomePage.

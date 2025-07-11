@@ -3,7 +3,7 @@ import { CalendarDateHeader } from './CalendarDateBox.jsx'
 import { useRef, useState, useEffect } from 'react'
 import calenderEventsType from './monthEventsDisplay.jsx'
 import getBaseDate from './getBaseDate.jsx'
-import '../../styles/MainCalendar.css'
+import '../../styles/mainCalendar.css'
 
 
 // MainCalendar component used to display the big calendar in the Home page.
