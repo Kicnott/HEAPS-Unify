@@ -50,7 +50,7 @@ router.get('/home/getMyEvents', async (req, res) => {
     console.log("GetMyEvents: Connected!");
 
     const result = await pool.query(
-      'SELECT * FROM eventstable WHERE calendarid = $1', [calendarid])
+      'SELECT * FROM eventstable WHERE calendarid = $1 ORDER BY startdt ASC', [calendarid])
 
     return res.json({ rows: result.rows });
   } catch (e) {
@@ -83,34 +83,18 @@ router.get('/home/getEvent', async (req, res) => {
     console.log("GetEvent: Server Error");
     console.log(e);
     return res.status(500).json({ error: 'Server error' })}});
-//get events for the month calendar grid
 
 
+// get only the events for the month
 router.get('/home/getMonthEvents', async (req, res) => {
   try {
     // console.log("getMonthEvents: Connected!");
-    const currMonth = Number(req.query.currMonth);
 
     const result = await pool.query( 
-      'SELECT * FROM eventstable'
+      'SELECT * FROM eventstable, calendarstable where eventstable.calendarid = calendarstable.calendarid'
     );
-    const filterEvents = result.rows.filter((event)=>{
-      let filtered = false
-      const eventDate = new Date(event.startdt);
-      const startDayValue = eventDate.getDate();
 
-      if (eventDate.getMonth() === currMonth){
-        filtered = true;
-      } else if ((eventDate.getMonth() === (currMonth - 1)) && startDayValue > 23){ // get events from the previous month
-        filtered = true;
-      } else if ((eventDate.getMonth() === (currMonth + 1)) && startDayValue < 7){ // get events from the next month
-        filtered = true;
-      }
-
-      return filtered;
-  })
-
-    return res.json(filterEvents);
+    return res.json(result.rows);
   } catch (e) {
     console.log("getMonthEvents: Server Error");
     console.log(e);

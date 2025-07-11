@@ -54,6 +54,7 @@ function LoginPage() {
 return (
     <div>
         <h1 className='toptext'>Unify</h1>
+        <strong style={{fontSize: '0.8rem', color: '#5C4033', fontStyle: 'italic'}}>~The only social calendar you need~</strong>
         <SimpleBlock>
             <br></br>
             <form onSubmit={handleSubmit}>
@@ -79,6 +80,7 @@ return (
                         id='password'
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        style={{marginLeft: '5px'}}
                     />
                     <br /><br />
 

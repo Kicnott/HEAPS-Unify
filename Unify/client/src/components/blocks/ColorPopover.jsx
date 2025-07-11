@@ -1,33 +1,38 @@
 import * as Popover from '@radix-ui/react-popover';
 import React from 'react';
 import { SliderPicker } from 'react-color';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
-const ColorCircle = React.forwardRef(({ size = 24, color = "#3498db", ...rest }, ref) => {
+const ColorCircle = React.forwardRef(({ size = 24, color = "#3498db", borderRadius = '50%', ...rest }, ref) => {
     // console.log("ColorCircle color: " + color)
-    return(
-    <span
-        ref={ref}
-        style={{
-            display: "inline-block",
-            width: size,
-            height: size,
-            borderRadius: "50%",
-            background: color,
-        }}
-        {...rest}
-    />)
+    return (
+        <span
+            ref={ref}
+            style={{
+                display: "inline-block",
+                width: size,
+                height: size,
+                borderRadius: borderRadius,
+                background: color,
+            }}
+            {...rest}
+        />)
 });
 
-export function ColorPopover({ children, content, side = "right", color, setColor, colorChangeComplete, calendarid, ...props }) {
+export function ColorPopover({ children, content, side = "right", color, setColor, colorChangeComplete, calendarid, iconSize = 24, iconBorderRadius = '50%', refreshTrigger, ...props }) {
     // const [color, setColor] = useState("#3498db");
     const circleRef = useRef(null)
+    const [localColor, setLocalColor] = useState(color);
+
+    useEffect(() => {
+        setLocalColor(color); // Sync with parent if color changes externally
+    }, [color]);
 
     return (
         <Popover.Root>
             <Popover.Trigger asChild>
                 <span ref={circleRef} style={{ cursor: "pointer" }} data-colorcircle="true">
-                    <ColorCircle color={color} />
+                    <ColorCircle color={color} size={iconSize} borderRadius={iconBorderRadius} />
                 </span>
             </Popover.Trigger>
             <Popover.Portal>
@@ -46,11 +51,11 @@ export function ColorPopover({ children, content, side = "right", color, setColo
                     }}
                 >
                     <SliderPicker
-                        color={color}
-                        onChange={c => setColor(c.hex)}
-                        onChangeComplete={(c) => {
-                            colorChangeComplete(c.hex, calendarid)
-                            console.log("Updating calendar color in database!")
+                        color={localColor}
+                        onChange={c => setLocalColor(c.hex)} // Only update local state
+                        onChangeComplete={c => {
+                            setColor(c.hex, calendarid);      // Update parent state and backend
+                            colorChangeComplete(c.hex, calendarid);
                         }}
                     />
                     {content}
