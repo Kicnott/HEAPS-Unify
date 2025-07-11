@@ -802,4 +802,4 @@ function HomePage() {
     )
 }
 
-export default HomePage // Means that home.jsx only exports HomePage
+export default HomePage // Means that home.jsx only exports HomePage.
