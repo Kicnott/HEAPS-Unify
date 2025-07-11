@@ -183,7 +183,7 @@ function HomePage() {
 
     }, [isEventHidden, isExtraEventsPopUpOpen, isRightDrawerOpen, isEventFormOpen, isEditCalendarsFormOpen, isEditAccountsFormOpen, isShowCalendarOpen, isShowAccountsOpen, isShowEventOpen, isCreateCalendarOpen]);
 
-    // refreshes month events; display updated events on month calender
+    // refreshes month events; display updated events on month calender !!
     useEffect(() => { 
         const fetchMonthEvents = async () => {
             try {
