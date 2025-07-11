@@ -2,7 +2,7 @@
 import { EventDisplay } from "../EventDisplay";
 
 const dragStart = (e, event) => {
-    e.dataTransfer.setData('text/plain', JSON.stringify(event));
+  e.dataTransfer.setData('text/plain', JSON.stringify(event));
 };
 
 // Case 1: Single day Event
@@ -23,7 +23,7 @@ const case1Event = (event) => {
         textOverflow: 'ellipsis',
         }}  
         draggable
-        onDragStart = {(e, event) => dragStart(e, event)}
+        onDragStart = {(e) => {dragStart(e, event)}}
         onDrop={(e) => e.preventDefault()}    
         onDragOver={(e) => e.preventDefault()} 
         key={event.eventid + " Case1"}>
