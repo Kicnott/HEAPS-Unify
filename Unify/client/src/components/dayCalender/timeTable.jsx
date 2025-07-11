@@ -10,6 +10,9 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
     const [timedEvents, setTimedEvents] = useState([]);
     const [allDayEvents, setAllDayEvents] = useState([]);
     const [eventsWithLanes, setEventsWithLanes] = useState([]);
+    const [hoverRange, setHoverRange] = useState({ start: null, end: null, lane: null });
+
+
 
     const dayStart = DateTime.fromJSDate(chosenDate).startOf('day');
     const dayEnd = dayStart.plus({ days: 1 });
@@ -389,6 +392,8 @@ function isSingleDayEvent(event, dayStart, dayEnd) {
 
                             return !overlap;
                             }}
+                            hoverRange={hoverRange}
+                            setHoverRange={setHoverRange}  
                         />
                     ))
                 ))}
@@ -427,8 +432,10 @@ function isSingleDayEvent(event, dayStart, dayEnd) {
                     >
                     {e.eventname}
                     </div>
-  )
-)}            </div>
+                    )
+                )}            
+
+            </div>
         </div>
     );
 };

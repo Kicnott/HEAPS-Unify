@@ -5,18 +5,28 @@ import '../../styles/timetable.css';
 
 export function DragEventBlock({ event, gridRow, gridColumn, children, onClick }) {
   const dragStarted = useRef(false);
+  const nodeRef = useRef();
 
   const [{ isDragging }, dragRef] = useDrag({
     type: DND_ITEM_TYPE,
-item: () => {
-  dragStarted.current = true;
-  return { eventid: event.eventid, ...event };
-},
+    item: (monitor) => {
+      dragStarted.current = true;
+      // Calculate the offset from the top of the event block to the mouse
+      const node = nodeRef.current;
+      let initialOffsetY = 0;
+      if (node && monitor) {
+        const boundingRect = node.getBoundingClientRect();
+        const clientOffset = monitor.getInitialClientOffset();
+        if (clientOffset) {
+          initialOffsetY = clientOffset.y - boundingRect.top;
+        }
+      }
+      return { eventid: event.eventid, ...event, initialOffsetY };
+    },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
     end: () => {
-      // Reset drag flag after drag ends
       setTimeout(() => {
         dragStarted.current = false;
       }, 0);
@@ -29,9 +39,15 @@ item: () => {
     }
   };
 
+  // Attach both refs to the div
+  const setRefs = (node) => {
+    nodeRef.current = node;
+    dragRef(node);
+  };
+
   return (
     <div
-      ref={dragRef}
+      ref={setRefs}
       className="event-block"
       onClick={handleClick}
       style={{
