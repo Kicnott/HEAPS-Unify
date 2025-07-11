@@ -61,14 +61,14 @@ export async function getFollowedCalendars(accountid) {
 }
 
 export async function getMyDisplayedCalendars(accountid) {
-    const res = await calendarService.getMyDisplayedCalendars(accountid)
-    const myDisplayedCalendars = res.data.rows
+    const res = await calendarService.getMyDisplayedCalendars(accountid);
+    const myDisplayedCalendars = res.data.rows;
+
 
     if (!myDisplayedCalendars || myDisplayedCalendars.length === 0) {
         return []
     }
     else {
-         
         return myDisplayedCalendars.map(calendar => calendar.calendarid);
     }
 }

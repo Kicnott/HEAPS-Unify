@@ -1,4 +1,6 @@
 
+import { EventDisplay } from "../EventDisplay";
+
 const dragStart = (e, event) => {
   e.dataTransfer.setData('text/plain', JSON.stringify(event));
 };
@@ -8,7 +10,8 @@ const case1Event = (event) => {
     return <div style={{
         fontSize: '0.9rem',
         color: 'black', 
-        backgroundColor: '#f6d8ac', 
+        borderRadius: '5px',
+        backgroundColor: event.calendarcolour, 
         borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
@@ -18,7 +21,7 @@ const case1Event = (event) => {
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
-        }} 
+        }}  
         draggable
         onDragStart = {(e) => {dragStart(e, event)}}
         onDrop={(e) => e.preventDefault()}    
@@ -34,7 +37,8 @@ const case2Event = (event, diffInDays) => {
     return <div style={{
         fontSize: '0.9rem',
         color: 'black', 
-        backgroundColor: '#f6d8ac', 
+        borderRadius: '5px',
+        backgroundColor: event.calendarcolour, 
         borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
@@ -58,11 +62,13 @@ const case2Event = (event, diffInDays) => {
 // Case 3: Multiple day Event, crosses week edge
 const case3Event = (event, diffInDays) => {
     let eventOverflowCount = diffInDays;
-    let eventOffset = eventOverflowCount * 143 + 10;
+    let eventOffset = eventOverflowCount * 143 + 12;
     return <div style={{
         fontSize: '0.9rem',
         color: 'black', 
-        backgroundColor: '#f6d8ac', 
+        borderTopLeftRadius: '5px',
+        borderBottomLeftRadius: '5px',
+        backgroundColor: event.calendarcolour, 
         borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
@@ -90,7 +96,9 @@ const case4Event = (event, diffInDays) => {
     return <div style={{
         fontSize: '0.9rem',
         color: 'black', 
-        backgroundColor: '#f6d8ac', 
+        borderTopRightRadius: '5px',
+        borderBottomRightRadius: '5px',
+        backgroundColor: event.calendarcolour, 
         borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
@@ -118,7 +126,7 @@ const case5Event = (event) => {
     return <div style={{
         fontSize: '0.9rem',
         color: 'black', 
-        backgroundColor: '#f6d8ac', 
+        backgroundColor: event.calendarcolour, 
         borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',
@@ -147,7 +155,7 @@ const case6Event = (event) => {
         color: 'black', 
         display: 'fixed',
         width: '140px',
-        backgroundColor: '#f6d8ac', 
+        backgroundColor: event.calendarcolour, 
         borderColor: 'grey',
         borderStyle: 'solid',
         borderWidth: '1px',

@@ -79,7 +79,7 @@ function displayExtraEvents(extraEvents, calenderEventsType){
         paddingLeft: '8px',
         paddingRight: '8px',
         }}>
-      {displayedExtraEvents}
+      <strong>{displayedExtraEvents}</strong>
       </div>
     )
   } catch(e){

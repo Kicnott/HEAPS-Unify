@@ -21,6 +21,7 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
   const [startTime, setStartTime] = useState("")
   const [endTime, setEndTime] = useState("")
   const [repeat, setRepeat] = useState("None")
+  const [repeatEndDate, setRepeatEndDate] = useState("")
   const [errors, setErrors] = useState([])
   const [calendarID, setCalendarID] = useState(calendarid || "")
   const [myCalendars, setMyCalendars] = useState([])
@@ -93,7 +94,7 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
         location,
         startdt: startDateTime.toISOString(),  // UTC format
         enddt: endDateTime.toISOString(),      // UTC format  
-        calendarID,
+      calendarID,
       })
 
       setName("");
@@ -101,6 +102,7 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
       setLocation("");
       setStartTime("");
       setEndTime("");
+      setRepeatInstance("")
       setCalendarID("")
       setErrors([]);
 
@@ -178,6 +180,19 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
           <option>Every month</option>
         </select>
       </div>
+
+      {repeat != 'None' && repeat != 'Every day' && (
+        <div style={{ marginTop: '12px' }}>
+          <label>Repeat until</label>
+          <input
+            type="date"
+            value={eventEndDate}
+            min={DateTime.fromJSDate(chosenDate).toFormat('yyyy-MM-dd')}
+            onChange={e => setRepeatEndDate(e.target.value)}
+            style={inputStyle}
+          />
+          </div>
+      )}
 
       <div style={{ marginTop: '12px' }}>
         <label>Calendar</label>

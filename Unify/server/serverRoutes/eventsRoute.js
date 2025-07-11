@@ -89,30 +89,12 @@ router.get('/home/getEvent', async (req, res) => {
 router.get('/home/getMonthEvents', async (req, res) => {
   try {
     // console.log("getMonthEvents: Connected!");
-    console.log("req: ", req.query)
-    const currMonth = Number(req.query.currMonth);
-
-    console.log(currMonth)
 
     const result = await pool.query( 
-      'SELECT * FROM eventstable'
+      'SELECT * FROM eventstable, calendarstable where eventstable.calendarid = calendarstable.calendarid'
     );
-    const filterEvents = result.rows.filter((event)=>{
-      let filtered = false
-      const eventDate = new Date(event.startdt);
-      const startDayValue = eventDate.getDate();
 
-      if (eventDate.getMonth() === currMonth){
-        filtered = true;
-      } else if ((eventDate.getMonth() === (currMonth - 1)) && startDayValue > 23){ // get events from the previous month
-        filtered = true;
-      } else if ((eventDate.getMonth() === (currMonth + 1)) && startDayValue < 7){ // get events from the next month
-        filtered = true;
-      }
-      return filtered;
-  })
-
-    return res.json(filterEvents);
+    return res.json(result.rows);
   } catch (e) {
     console.log("getMonthEvents: Server Error");
     console.log(e);

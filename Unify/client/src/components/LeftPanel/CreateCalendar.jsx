@@ -6,7 +6,7 @@ export const CreateCalendar = ({ accountid, onClose, onSave }) => {
     const [calendarName, setCalendarName] = useState("")
     const [calendarDescription, setCalendarDescription] = useState("")
     const [calendarPrivacy, setCalendarPrivacy] = useState("public")
-    const [calendarColour, setCalendarColour] = useState("#90D5FF")
+    const [calendarColour, setCalendarColour] = useState("#f6d8ac")
     const [errors, setErrors] = useState([])
 
     function colourChangeComplete(colour, calendarid) {

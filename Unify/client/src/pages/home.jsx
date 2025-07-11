@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
 import { Link } from 'react-router-dom'
 import '../styles/App.css'
 import { monthOptionsArray, yearOptionsArray } from '../constants/calendarConstants.jsx'
@@ -28,7 +30,7 @@ import monthEventsService from '../services/monthEventsService.jsx'
 import calendarService from '../services/calendarService.jsx'
 import { EventDisplay } from '../components/EventDisplay.jsx'
 import { CreateCalendar } from '../components/LeftPanel/CreateCalendar.jsx'
-import { ExtraEventsPopUp } from '../components/blocks/ExtraEventsPopUp.jsx'
+import { ExtraEventsPopUp } from '../components/blocks/extraEventsPopUp.jsx'
 import { EventsOverlayBackground } from '../components/overlay/EventsOverlayBackground.jsx'
 import { drawerStyle, rightDrawerButtonTop, rightDrawerButtonBottom } from '../styles/rightDrawerStyles.jsx'
 import accountService from '../services/accountService.jsx'
@@ -50,7 +52,6 @@ function HomePage() {
     const [isEventFormOpen, setEventFormOpen] = useState(false)
     const [isEditAccountsFormOpen, setEditAccountsFormOpen] = useState(false)
     const [isEditCalendarsFormOpen, setEditCalendarsFormOpen] = useState(false)
-    const [calendarDisplay, changeCalendarDisplay] = useState(new Date())
     const [chosenDate, setChosenDate] = useState(new Date())
     const [eventRefreshTrigger, seteventRefreshTrigger] = useState(0)
 
@@ -71,6 +72,9 @@ function HomePage() {
 
     const [myDisplayedCalendarIds, setMyDisplayedCalendarIds] = useState([])
 
+    // If sessionStorage for currMonth and currYear are not defined, assign calendarDisplay to current time. Important to retain session currMonth and currYear after each refresh.
+    const [calendarDisplay, changeCalendarDisplay] = useState((sessionStorage.getItem("currYear") && sessionStorage.getItem("currMonth")) ? new Date(sessionStorage.getItem("currYear"), sessionStorage.getItem("currMonth"), 1) : new Date())
+
     const [isExtraEventsPopUpOpen, setExtraEventsPopUp] = useState(false);
 
     const [refreshMonthEvents, setRefreshMonthEvents] = useState(0)
@@ -83,8 +87,6 @@ function HomePage() {
     const [popUpPosition, setPopUpPosition] = useState({ x: 0, y: 0 });
 
     const [isOverlayBackgroundHidden, setOverlayBackgroundHidden] = useState(true);
-    // const isOverlayBackgroundHidden = isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen && !isShowCalendarOpen && !isShowAccountsOpen && !isShowEventOpen;
-
     const [isExtraOverlayBackgroundHidden, setExtraOverlayBackgroundHidden] = useState(true);
 
     const [myCalendars, setMyCalendars] = useState([]);
@@ -124,8 +126,61 @@ function HomePage() {
     }, [debouncedSearchTerm]);
 
 
-    useEffect(() => {
+    // Function to update displayed calendar year
+    const handleOnYearChange = (event) => {
+        const newDate = new Date(
+            Number(event),
+            calendarDisplay.getMonth(),
+            calendarDisplay.getDate()
+        )
+        changeCalendarDisplay(newDate);
+        sessionStorage.setItem("currYear", newDate.getFullYear());
+        setRefreshMonthEvents(refreshMonthEvents + 1);
+        // console.log("Events Refreshed!");
+    }
 
+    // Function to update displayed calendar year
+    const handleOnMonthChange = (event) => {
+        const newDate = new Date(
+            calendarDisplay.getFullYear(),
+            Number(event),
+            calendarDisplay.getDate()
+        )
+        changeCalendarDisplay(newDate); 
+        sessionStorage.setItem("currMonth", newDate.getMonth());
+        setRefreshMonthEvents(refreshMonthEvents + 1);
+        // console.log("Events Refreshed!");
+    }
+
+    // populate currMonth and currYear session data
+    useEffect(() => {
+        if (sessionStorage.getItem("currMonth") || sessionStorage.getItem("currYear")){
+            handleOnMonthChange(calendarDisplay.getMonth());
+            handleOnYearChange(calendarDisplay.getFullYear());            
+        }
+    }, [])
+
+    // UseState for clicked calendars to display
+/*     useEffect(() => {
+        if (Object.keys(displayCalendarBasedOnIDAndColour).length !== 0) {
+            console.log("AHHHHHHHHHHHHHHHHHHHHHHH")
+            let filteredEvents = [];
+            for (const [id, colour] of Object.entries(displayCalendarBasedOnIDAndColour)) {
+                const matchedEvents = monthEvents
+                    .filter(event => event.calendarid === id)
+                    .map(event => ({
+                        ...event,
+                        eventcolour: colour
+                    }));
+                filteredEvents = filteredEvents.concat(matchedEvents);
+            }
+            setMonthEvents(filteredEvents);
+            setRefreshMonthEvents(prev => prev + 1);
+        }
+    }, [displayCalendarBasedOnIDAndColour]); */
+
+
+    useEffect(() => {
         if (currentUserAccountId) {
             getMyCalendars(currentUserAccountId).then((calendars) => {
                 setMyCalendars(calendars);
@@ -176,39 +231,23 @@ function HomePage() {
 
     }, [isEventHidden, isExtraEventsPopUpOpen, isRightDrawerOpen, isEventFormOpen, isEditCalendarsFormOpen, isEditAccountsFormOpen, isShowCalendarOpen, isShowAccountsOpen, isShowEventOpen, isCreateCalendarOpen, isEventDetailsOpen, isModifyCalendarOpen, isModifyEventOpen]);
 
-
-    // console.log("Displayed Calendar IDs: ", myDisplayedCalendarIds)
-    // console.log("Followed Calendars: ", followedCalendars);
-    // console.log("My Events: ", myEvents);
-    // console.log("My Calendars: ", myCalendars);
-    // console.log("All Accounts: ", allAccounts);
-
-    // console.log("Chosen Date: ", chosenDate);
-
-    useEffect(() => { // refreshes month events; display updated events on month calender
+    // refreshes month events; display updated events on month calender
+    useEffect(() => { 
         const fetchMonthEvents = async () => {
             try {
-                // Check if sessionStorage already has values
-                const existingMonth = sessionStorage.getItem("currMonth");
-                const existingYear = sessionStorage.getItem("currYear");
+                const currMonth = calendarDisplay.getMonth();
+                const monthEvents = await monthEventsService.getMonthEvents({currMonth: currMonth});
+                const matchedIdEvents = monthEvents.data.filter((event) => {
+                    return myDisplayedCalendarIds.includes(event.calendarid)
+                })
 
-                if (!existingMonth || !existingYear) {
-                    const currMonth = calendarDisplay.getMonth();
-                    const currYear = calendarDisplay.getFullYear();
-                    sessionStorage.setItem("currMonth", currMonth.toString());
-                    sessionStorage.setItem("currYear", currYear.toString());
-                }
-
-                const sessionCurrMonth = sessionStorage.getItem("currMonth");
-                const monthEvents = await monthEventsService.getMonthEvents({ currMonth: sessionCurrMonth });
-                setMonthEvents(monthEvents.data);
-
+                setMonthEvents(matchedIdEvents);
             } catch (err) {
                 console.error("Error fetching month events: ", err);
             }
         }
         fetchMonthEvents();
-    }, [refreshMonthEvents])
+    }, [refreshMonthEvents, myDisplayedCalendarIds])
 
     // When the user exits an overlay, the following code turns off all overlays
     const hideOverlayBackground = () => {
@@ -287,6 +326,7 @@ function HomePage() {
                 </ExtraEventsPopUp>
             )
             }
+
             <EventsOverlayBackground
                 isHidden={isExtraOverlayBackgroundHidden}
                 onClick={() => hideExtraOverlayBackground()}>
@@ -851,33 +891,13 @@ function HomePage() {
                         <div className='main-content-centered'>
                             <DropdownList
                                 optionArray={monthOptionsArray} // Assigns the options to the month dropdown list
-                                value={calendarDisplay.getMonth()} // Assigns the default value of the list to the current month
-                                onChange={(event) => {
-                                    sessionStorage.setItem("currentMonth", Number(event.target.value))
-                                    changeCalendarDisplay(
-                                        new Date(
-                                            calendarDisplay.getFullYear(),
-                                            Number(event.target.value),
-                                            calendarDisplay.getDate()
-                                        )) // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
-                                    setRefreshMonthEvents(refreshMonthEvents + 1);
-                                    console.log("Events Refreshed!");
-                                }}
+                                value={String(calendarDisplay.getMonth())} // Assigns the default value of the list to the current month
+                                onChange={(event) => {handleOnMonthChange(event.target.value);}}
                             />
                             <DropdownList
                                 optionArray={yearOptionsArray} // Assigns the options to the year dropdown list
-                                value={calendarDisplay.getFullYear()} // Assigns the default value of the list to the current year
-                                onChange={(event) => {
-                                    changeCalendarDisplay(
-                                        new Date(
-                                            Number(event.target.value),
-                                            calendarDisplay.getMonth(),
-                                            calendarDisplay.getDate()
-
-                                        )); // Whenever a user changes the list, the calendar display (a uCalendarDisplay object) will update and the components that use it will re-render, updating main calendar
-                                    setRefreshMonthEvents(refreshMonthEvents + 1);
-                                    console.log("Events Refreshed!");
-                                }}
+                                value={String(calendarDisplay.getFullYear())} // Assigns the default value of the list to the current year
+                                onChange={(event) => {handleOnYearChange(event.target.value);}}
                             />
 
                             <MainCalendar
@@ -892,10 +912,6 @@ function HomePage() {
                                 refreshMonthEvents={refreshMonthEvents}
                                 setRefreshMonthEvents={setRefreshMonthEvents}
                                 monthEvents={monthEvents}
-                                setMonthEvents={setMonthEvents}
-                                setChosenDate={setChosenDate}
-                                isOverlayBackgroundHidden={isOverlayBackgroundHidden}
-                                hideOverlayBackground={hideOverlayBackground}
                                 setExtraEventsPopUp={setExtraEventsPopUp}
                                 setExtraEvents={setExtraEvents}
                                 setPopUpPosition={setPopUpPosition}
@@ -1022,6 +1038,10 @@ function HomePage() {
                 isHidden={isEventHidden} // Assigns isEventHidden function
                 onClose={() => hideOverlayBackground()} // Assigns toggleEventHidden function
             >
+                <DndProvider backend={HTML5Backend}>
+                    < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setSelectedEvent} setEventDetailsOpen={setEventDetailsOpen}>
+                    </TimeTable>
+                </DndProvider>
                 <button
                     onClick={() => setEventFormOpen(true)}
                     style={{
@@ -1038,10 +1058,6 @@ function HomePage() {
                         boxShadow: '0 1px 4px rgba(0,0,0,0.10)'
                     }}
                 >+ Add Event</button>
-                <div style={{ paddingBottom: '20px' }}>
-                    < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setShowEventID} setEventDetailsOpen={setShowEventOpen} closeOthers={hideOverlayBackground}>
-                    </TimeTable>
-                </div>
             </OverlayBlock>
 
             {isEventDetailsOpen && selectedEvent && (
@@ -1092,4 +1108,4 @@ function HomePage() {
     )
 }
 
-export default HomePage // Means that home.jsx only exports HomePage
+export default HomePage // Means that home.jsx only exports HomePage.
