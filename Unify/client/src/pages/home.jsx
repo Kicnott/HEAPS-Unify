@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
 import { Link } from 'react-router-dom'
 import '../styles/App.css'
 import { monthOptionsArray, yearOptionsArray } from '../constants/calendarConstants.jsx'
@@ -732,6 +734,14 @@ function HomePage() {
                 isHidden={isEventHidden} // Assigns isEventHidden function
                 onClose={() => hideOverlayBackground()} // Assigns toggleEventHidden function
             >
+                <DndProvider backend={HTML5Backend}>
+                    < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setSelectedEvent} setEventDetailsOpen={setEventDetailsOpen}>
+                    </TimeTable>
+                </DndProvider>
+                {/* <button onClick={() => {
+                    setEventFormOpen(true)
+                }}>+ Add Event</button>
+ */}
                 <button
                     onClick={() => setEventFormOpen(true)}
                     style={{
@@ -748,10 +758,10 @@ function HomePage() {
                         boxShadow: '0 1px 4px rgba(0,0,0,0.10)'
                     }}
                 >+ Add Event</button>
-                <div style={{ paddingBottom: '20px' }}>
+                {/* <div style={{ paddingBottom: '20px' }}>
                     <TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setSelectedEvent} setEventDetailsOpen={setEventDetailsOpen}>
                     </TimeTable>
-                </div>
+                </div> */}
             </OverlayBlock>
 
             {isEventDetailsOpen && selectedEvent && (

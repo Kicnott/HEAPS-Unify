@@ -1,0 +1,1 @@
+export const DND_ITEM_TYPE = 'SINGLE_DAY_EVENT';
