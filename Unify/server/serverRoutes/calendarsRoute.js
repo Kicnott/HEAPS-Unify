@@ -5,8 +5,15 @@ const router = express.Router()
 //Display Calendars
 router.get('/home/showAllCalendars', async (req, res) => {
   try {
-    const result = await pool.query( // searches for all calendarstable in the database
-      'SELECT * FROM calendarstable'
+    const result = await pool.query(
+      `SELECT c.*,
+          (
+            SELECT COUNT(DISTINCT followid)
+            FROM followedcalendarstable f
+            WHERE f.calendarid = c.calendarid
+          ) AS followercount
+     FROM calendarstable c
+     ORDER BY followercount DESC, c.calendarid ASC`
     );
 
     return res.json(result)
@@ -28,7 +35,16 @@ router.get('/home/getMyCalendars', async (req, res) => {
     console.log("GetMyCalendars: Connected!");
 
     const result = await pool.query(
-      'SELECT * FROM calendarstable WHERE accountid = $1', [accountid]
+      `SELECT c.*,
+          (
+            SELECT COUNT(DISTINCT followid)
+            FROM followedcalendarstable f
+            WHERE f.calendarid = c.calendarid
+          ) AS followercount
+     FROM calendarstable c
+     WHERE c.accountid = $1
+     ORDER BY followercount DESC, c.calendarid ASC`,
+      [accountid]
     );
 
     // console.log(result)
@@ -54,24 +70,19 @@ router.post('/home/createCalendar', async (req, res) => {
     console.log(currentAccountId)
 
     if (calendarName == '') {
-      return res.json({ status: "Input Something!" }) // returns error message if username or password is empty
+      return res.json({ status: "Input Something!" })
     }
 
-    const checkCalendarInsideDbResult = await pool.query( // Gets the db object of the calendar name if it's already there
+    const checkCalendarInsideDbResult = await pool.query(
       'SELECT calendarstable FROM calendarstable where calendarname = ($1)', [calendarName]
     );
 
-    if (checkCalendarInsideDbResult.rows.length > 0) { // Checks inside the db object if any rows are returned from db
-      return res.json({ status: "Calendar already exists" }) // If rows > 0, the calendar already exists in db 
+    if (checkCalendarInsideDbResult.rows.length > 0) {
+      return res.json({ status: "Calendar already exists" })
     }
 
-    // const latestResult = await pool.query( // searches the highest calendar id in the db
-    //   'SELECT calendarid FROM calendarstable ORDER BY calendarid::int DESC LIMIT 1'
-    // );
 
-    // const newCalendarId = parseInt(latestResult.rows[0].calendarid, 10) + 1;
-
-    const result = await pool.query( // Inserts the oncoming created calendar into db
+    const result = await pool.query(
       'INSERT INTO calendarstable (calendarname,calendardescription, accountid, calendarprivacy, calendarcolour) VALUES ($1, $2, $3, $4, $5)', [calendarName, calendarDescription, currentAccountId, calendarPrivacy, calendarColour]
     );
 
@@ -94,6 +105,17 @@ router.delete('/home/deleteCalendar', async (req, res) => {
     }
 
     // console.log(res)
+    const res1 = await pool.query(
+      'DELETE FROM followedcalendarstable WHERE calendarid = ($1)', [calendarid]
+    )
+
+    const res2 = await pool.query(
+      'DELETE FROM displayedcalendarstable WHERE calendarid = ($1)', [calendarid]
+    )
+
+    const res3 = await pool.query(
+      'DELETE FROM eventstable WHERE calendarid = ($1)', [calendarid]
+    )
 
     const result = await pool.query( // result constant contains db object of any rows that are deleted
       'DELETE FROM calendarstable WHERE calendarid = ($1)', [calendarid]
@@ -122,7 +144,16 @@ router.get('/home/getCalendar', async (req, res) => {
     // console.log("GetCalendar: Connected!");
 
     const result = await pool.query(
-      'SELECT * FROM calendarstable WHERE calendarid = $1', [calendarid]
+      `SELECT c.*,
+          (
+            SELECT COUNT(DISTINCT followid)
+            FROM followedcalendarstable f
+            WHERE f.calendarid = c.calendarid
+          ) AS followercount
+     FROM calendarstable c
+     WHERE c.calendarid = $1
+     ORDER BY followercount DESC, c.calendarid ASC`,
+      [calendarid]
     );
 
     if (result.rows.length === 0) {
@@ -373,7 +404,6 @@ router.post('/home/changeCalendarColor', async (req, res) => {
       console.log("Calendar Colour change success!")
       return res.json({ status: true })
     }
-
   }
   catch (e) {
     console.log("Trouble changing calendar color!")
@@ -381,5 +411,51 @@ router.post('/home/changeCalendarColor', async (req, res) => {
     return res.status(500).json({ error: "Server error!" })
   }
 })
+
+router.post('/home/modifyCalendar', async (req, res) => {
+  try {
+    const { calendarid, calendarname, calendardescription, calendarprivacy, calendarcolour } = req.body;
+    if (!calendarid || !calendarname || !calendardescription || !calendarprivacy || !calendarcolour) {
+      return res.status(400).json({ error: "data missing!" })
+    }
+
+    console.log("modifyCalendar: Connected!")
+    const result = await pool.query(
+      'UPDATE calendarstable SET calendarname = $2, calendardescription = $3, calendarprivacy = $4, calendarcolour = $5 WHERE calendarid = $1', [calendarid, calendarname, calendardescription, calendarprivacy, calendarcolour]
+    )
+    if (result.rowCount === 0) {
+      console.log("Calendar change failed!")
+      return res.json({ status: false })
+    }
+    else {
+      console.log("Calendar change success!")
+      return res.json({ status: true })
+    }
+  }
+  catch (e) {
+    console.log("Trouble changing calendar!")
+    console.log(e)
+    return res.status(500).json({ error: "Server error!" })
+  }
+})
+
+router.get('/home/calendarFollowerCount', async (req, res) => {
+  try {
+    const calendarid = req.query.calendarid
+
+    const result = await pool.query(
+      "SELECT COUNT(DISTINCT followerid) FROM followedcalendarstable WHERE calendarid = $1",
+      [calendarid]
+    )
+
+    return res.json(result)
+  }
+  catch (e) {
+    console.log("calendarFollowerCount: Server error")
+    console.log(e)
+    return res.json(e)
+  }
+})
+
 
 export default router
