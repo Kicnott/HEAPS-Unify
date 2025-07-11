@@ -657,10 +657,6 @@ function HomePage() {
                                 refreshMonthEvents={refreshMonthEvents}
                                 setRefreshMonthEvents={setRefreshMonthEvents}
                                 monthEvents={monthEvents}
-                                setMonthEvents={setMonthEvents}
-                                setChosenDate={setChosenDate}
-                                isOverlayBackgroundHidden={isOverlayBackgroundHidden}
-                                hideOverlayBackground={hideOverlayBackground}
                                 setExtraEventsPopUp={setExtraEventsPopUp}
                                 setExtraEvents={setExtraEvents}
                                 setPopUpPosition={setPopUpPosition}

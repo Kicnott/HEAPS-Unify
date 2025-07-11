@@ -1,10 +1,10 @@
 
 import eventService from '../../services/eventService.jsx';
-import { forwardRef } from 'react';
+import { forwardRef, useState, useRef } from 'react';
 
 
 // CalendarDateBox is a component used by MainCalendar to create the boxes in the Calendar.
-export const CalendarDateBox = forwardRef(({ onClick, children, baseMonth, displayDate, setChosenDate, refreshEvents, setrefreshEvents, refreshMonthEvents, setRefreshMonthEvents }, ref) => {
+export const CalendarDateBox = forwardRef(({ onClick, children, baseMonth, displayDate, refreshMonthEvents, setRefreshMonthEvents}, ref) => {
   // onClick: A function that runs when the DateBox is clicked.
   // children: Any additional labels to be stored on each DateBox.
   // baseMonth: The current month being displayed - to determine the font color
@@ -12,6 +12,10 @@ export const CalendarDateBox = forwardRef(({ onClick, children, baseMonth, displ
   let date = displayDate.getDate() // Converts the displayDate to the day number
   let displayCurrentDayIndicator = '' // If the day matches current day, displays a circle on that date
   const now = new Date(); // the current time, day and month
+
+  // colour dragging functionality
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
+  const dragCounter = useRef(0);
 
   if (now.getDate() === displayDate.getDate() && now.getMonth() === displayDate.getMonth()){
     displayCurrentDayIndicator = '#D3B683'
@@ -28,6 +32,7 @@ export const CalendarDateBox = forwardRef(({ onClick, children, baseMonth, displ
   let calendarStyle = {
     // date number 
     color: isBaseMonth ? '#5E503F' : '#A78E72', // If the date is part of the base month, the font color is black; otherwise, it is grey.
+    backgroundColor: isDraggingOver ? '#EBE6D6' : 'white',
     height: '8rem', 
     width: '100%',
     margin: '0px',
@@ -37,11 +42,17 @@ export const CalendarDateBox = forwardRef(({ onClick, children, baseMonth, displ
   }
 
 const dragOver = (e) => {
-  e.preventDefault(); // allow drop
+    setIsDraggingOver(true);
+
+    e.preventDefault(); // allow drop
 };
 
 const drop = (e, displayDate) => {
   e.preventDefault();
+
+  dragCounter.current = 0
+  setIsDraggingOver(false);
+
   const data = e.dataTransfer.getData('text/plain');
   const draggedEvent = JSON.parse(data);
   let newStartDateValue = 0;
@@ -114,6 +125,19 @@ const drop = (e, displayDate) => {
     console.log("Error Updating dragged draggedEvent: ", err)
   }
 }
+
+const handleDragLeave = (e) => {
+  dragCounter.current -= 1;
+  if (dragCounter.current === 0) {
+    setIsDraggingOver(false);
+  }
+};
+
+const handleDragEnter = (e) => {
+  e.preventDefault();
+  dragCounter.current += 1;
+  setIsDraggingOver(true);
+};
           
   return (
   <button 
@@ -122,6 +146,8 @@ const drop = (e, displayDate) => {
     style={calendarStyle}       
     onDragOver={(e)=>dragOver(e)}
     onDrop={(e) => drop(e, displayDate)}
+    onDragLeave={handleDragLeave} 
+    onDragEnter={handleDragEnter} 
     onClick={() => {
       onClick(displayDate);
     }}
