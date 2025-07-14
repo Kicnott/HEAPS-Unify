@@ -13,7 +13,7 @@ import { TopNavbar } from "../components/blocks/TopNavbar.jsx"
 import { RightDrawer } from "../components/rightDrawer/RightDrawer.jsx"
 import { MainCalendar } from '../components/monthCalendar/MainCalendar.jsx'
 import { OverlayBlock } from '../components/blocks/OverlayBlock.jsx'
-import { DropdownList } from '../components/monthCalendar/DropdownList.jsx'
+import { ArrowSelector } from '../components/monthCalendar/ArrowSelector.jsx'
 import { TimeTable } from '../components/dayCalender/timeTable.jsx'
 import { CreateEvent } from '../components/dayCalender/CreateNewEvent.jsx'
 import { EditAccountForm } from '../components/rightDrawer/EditAccounts.jsx'
@@ -890,14 +890,14 @@ function HomePage() {
                 mainContent={
                     <div className='calendar-wrapper'>
                         <div className='main-content-centered'>
-                            <DropdownList
-                                optionArray={monthOptionsArray} // Assigns the options to the month dropdown list
-                                value={String(calendarDisplay.getMonth())} // Assigns the default value of the list to the current month
+                            <ArrowSelector
+                                optionArray={monthOptionsArray} 
+                                value={String(calendarDisplay.getMonth())} 
                                 onChange={(event) => { handleOnMonthChange(event.target.value); }}
                             />
-                            <DropdownList
-                                optionArray={yearOptionsArray} // Assigns the options to the year dropdown list
-                                value={String(calendarDisplay.getFullYear())} // Assigns the default value of the list to the current year
+                            <ArrowSelector
+                                optionArray={yearOptionsArray} 
+                                value={String(calendarDisplay.getFullYear())} 
                                 onChange={(event) => { handleOnYearChange(event.target.value); }}
                             />
 
