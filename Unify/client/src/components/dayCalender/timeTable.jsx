@@ -355,8 +355,8 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                             backgroundColor: e.calendarcolour
                         }}
                         onClick={() => {
-                            eventselector(e.originalEvent.eventid || e.eventid);
-                            closeOthers()
+                            eventselector(e.originalEvent || e);
+                            // closeOthers()
                             setTimeout(() => {
                                 setEventDetailsOpen(true)
                             }, 100)
