@@ -37,6 +37,7 @@ import accountService from '../services/accountService.jsx'
 import { ColorCircle } from '../components/blocks/ColorPopover.jsx'
 import { ModifyCalendar } from '../components/LeftPanel/ModifyCalendar.jsx'
 import { ModifyEvent } from '../components/LeftPanel/ModifyEvent.jsx'
+import { MthYrArrow } from '../components/monthCalendar/MthYrArrow.jsx'
 
 
 function HomePage() {
@@ -152,6 +153,27 @@ function HomePage() {
         // console.log("Events Refreshed!");
     }
 
+    const backOneMonth = () => {
+        const newMonth = calendarDisplay.getMonth() - 1;
+        handleOnMonthChange(newMonth)
+    }
+
+    const frontOneMonth = () => {
+        const newMonth = calendarDisplay.getMonth() + 1;
+        handleOnMonthChange(newMonth)
+    }
+
+    const backOneYear = () => {
+        const newYear = calendarDisplay.getFullYear() - 1;
+        handleOnYearChange(newYear)
+    }
+
+    const frontOneYear = () => {
+        const newYear = calendarDisplay.getFullYear() + 1;
+        handleOnYearChange(newYear)
+    }
+
+
     // populate currMonth and currYear session data
     useEffect(() => {
         if (sessionStorage.getItem("currMonth") || sessionStorage.getItem("currYear")){
@@ -233,7 +255,7 @@ function HomePage() {
 
     // refreshes month events; display updated events on month calender !! 
     // myDisplayedcalendarids is a list of all selected calendars to display events
-    // monthevents is a list of event objects? so i just make duplicate but modify for date? or i filter it by date
+    // monthevents is a list of event objects
     useEffect(() => { 
         const fetchMonthEvents = async () => {
             try {
@@ -891,17 +913,21 @@ function HomePage() {
                 mainContent={
                     <div className='calendar-wrapper'>
                         <div className='main-content-centered'>
-                            <DropdownList
-                                optionArray={monthOptionsArray} // Assigns the options to the month dropdown list
-                                value={String(calendarDisplay.getMonth())} // Assigns the default value of the list to the current month
-                                onChange={(event) => {handleOnMonthChange(event.target.value);}}
-                            />
-                            <DropdownList
-                                optionArray={yearOptionsArray} // Assigns the options to the year dropdown list
-                                value={String(calendarDisplay.getFullYear())} // Assigns the default value of the list to the current year
-                                onChange={(event) => {handleOnYearChange(event.target.value);}}
-                            />
+                            <MthYrArrow backOne = {backOneMonth} frontOne = {frontOneMonth}>
+                                <DropdownList
+                                    optionArray={monthOptionsArray} // Assigns the options to the month dropdown list
+                                    value={String(calendarDisplay.getMonth())} // Assigns the default value of the list to the current month
+                                    onChange={(event) => {handleOnMonthChange(event.target.value);}}
+                                />
+                            </MthYrArrow>
 
+                            <MthYrArrow backOne = {backOneYear} frontOne = {frontOneYear}>
+                                <DropdownList
+                                    optionArray={yearOptionsArray} // Assigns the options to the year dropdown list
+                                    value={String(calendarDisplay.getFullYear())} // Assigns the default value of the list to the current year
+                                    onChange={(event) => {handleOnYearChange(event.target.value);}}
+                                    />
+                            </MthYrArrow>
                             <MainCalendar
                                 displayDate={calendarDisplay} // Assigns the date to display (in month format) as the date in the calendarDisplay state
                                 onDateBoxClick={(date) => {

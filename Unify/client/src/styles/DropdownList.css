@@ -3,7 +3,7 @@
   max-width: 300px;
   width: 100%;
   margin: 0.1rem auto;
-  transform: translate(65px, -48px);
+  /* transform: translate(65px, -48px); */
 }
 
 .dropdown-container select {
