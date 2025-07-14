@@ -142,16 +142,29 @@ export const ShowAccount = ({ currentAccountid, accountid, setShowCalendarID, se
                     <div style={{ fontWeight: 600, marginBottom: 8, fontSize: 16 }}>
                         {accountData.accountusername}'s Calendars
                     </div>
-                    {accountCalendars.length === 0 ? (
-                        <ScrollBlock>
-                            <div style={{ color: "#888" }}>No calendars</div>
-                        </ScrollBlock>
+                    {(() => {
+                        // Are we viewing our own account?
+                        const isOwner = String(accountid) === String(currentAccountid);
 
-                    ) : (
-                        <div style={{ maxHeight: "240px", overflowY: "auto" }}>
-                            <ScrollBlock
-                                buttonData={accountCalendars .filter(calendar => calendar.privacy !== 'private').map(calendar => (
-                                    {
+                        // If not owner, filter out private calendars
+                        const visibleCalendars = isOwner
+                            ? accountCalendars
+                            : accountCalendars.filter(cal => cal.calendarprivacy !== "private");
+
+                        // If not owner and no visible calendars, show "No calendars"
+                        if (visibleCalendars.length === 0) {
+                            return (
+                                <ScrollBlock>
+                                    <div style={{ color: "#888" }}>No calendars</div>
+                                </ScrollBlock>
+                            );
+                        }
+
+                        // Otherwise, show the visible calendars
+                        return (
+                            <div style={{ maxHeight: "240px", overflowY: "auto" }}>
+                                <ScrollBlock
+                                    buttonData={visibleCalendars.map(calendar => ({
                                         label: (
                                             <span
                                                 style={{
@@ -162,95 +175,88 @@ export const ShowAccount = ({ currentAccountid, accountid, setShowCalendarID, se
                                                     overflow: 'hidden',
                                                 }}
                                             >
-
-                                                <span
-                                                    style={{
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        marginRight: 8
-                                                    }}
-                                                >
+                                                <span style={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    marginRight: 8
+                                                }}>
                                                     <ColorCircle color={calendar.calendarcolour} />
                                                 </span>
-
-                                                <span
-                                                    style={{
-                                                        whiteSpace: 'nowrap',
-                                                        overflow: 'hidden',
-                                                        textOverflow: 'ellipsis',
-                                                        flex: 1,
-                                                        minWidth: 0,
-                                                        textAlign: "left",
-                                                    }}
-                                                >
+                                                <span style={{
+                                                    whiteSpace: 'nowrap',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    flex: 1,
+                                                    minWidth: 0,
+                                                    textAlign: "left",
+                                                }}>
                                                     {calendar.calendarname}
+                                                    {calendar.calendarprivacy === "private" ? " 🔒" : ""}
                                                 </span>
-
-                                                <span
-                                                    style={{
-                                                        color: '#a3a3a3',
-                                                        marginLeft: '12px',
-                                                        fontSize: '0.95em',
-                                                        flexShrink: 0,
-                                                    }}
+                                                <span style={{
+                                                    color: '#a3a3a3',
+                                                    marginLeft: '12px',
+                                                    fontSize: '0.95em',
+                                                    flexShrink: 0,
+                                                }}
                                                     title={calendar.followercount + ' follower' + (calendar.followercount == 1 ? '' : 's')}
                                                 >
                                                     👥 {formatFollowerCount(calendar.followercount)}
                                                 </span>
-                                                {(accountid != currentAccountid) && (<button
-                                                    key={calendar.calendarid}
-                                                    style={{
-                                                        marginLeft: 16,
-                                                        padding: '4px 14px',
-                                                        borderRadius: 16,
-                                                        border: 'none',
-                                                        background: followStates[calendar.calendarid] ? calendar.calendarcolour : '#A78E72',
-                                                        color: followStates[calendar.calendarid] ? '#fff' : '#fff',
-                                                        fontWeight: 600,
-                                                        fontSize: 14,
-                                                        cursor: 'pointer',
-                                                        transition: 'background 0.2s, color 0.2s',
-                                                        outline: 'none',
-                                                        boxShadow: followStates[calendar.calendarid] ? 'none' : '0 2px 8px rgba(99,102,241,0.07)',
-                                                    }}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation()
-                                                        if (followStates[calendar.calendarid]) {
-                                                            calendarService.unfollowCalendar(calendar.calendarid, currentAccountid)
-                                                                .then(() => {
-                                                                    setFollowStates(prev => ({
-                                                                        ...prev,
-                                                                        [calendar.calendarid]: false
-                                                                    }));
-                                                                    setTimeout(() => {
-                                                                        if (refreshTrigger) { refreshTrigger(prev => (prev + 1)) };
-                                                                    }, 100);
+                                                {(accountid != currentAccountid) && (
+                                                    <button
+                                                        key={calendar.calendarid}
+                                                        style={{
+                                                            marginLeft: 16,
+                                                            padding: '4px 14px',
+                                                            borderRadius: 16,
+                                                            border: 'none',
+                                                            background: followStates[calendar.calendarid] ? calendar.calendarcolour : '#A78E72',
+                                                            color: followStates[calendar.calendarid] ? '#fff' : '#fff',
+                                                            fontWeight: 600,
+                                                            fontSize: 14,
+                                                            cursor: 'pointer',
+                                                            transition: 'background 0.2s, color 0.2s',
+                                                            outline: 'none',
+                                                            boxShadow: followStates[calendar.calendarid] ? 'none' : '0 2px 8px rgba(99,102,241,0.07)',
+                                                        }}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation()
+                                                            if (followStates[calendar.calendarid]) {
+                                                                calendarService.unfollowCalendar(calendar.calendarid, currentAccountid)
+                                                                    .then(() => {
+                                                                        setFollowStates(prev => ({
+                                                                            ...prev,
+                                                                            [calendar.calendarid]: false
+                                                                        }));
+                                                                        setTimeout(() => {
+                                                                            if (refreshTrigger) { refreshTrigger(prev => (prev + 1)) };
+                                                                        }, 100);
 
-                                                                })
-                                                                .catch(err => setError("Error unfollowing calendar."));
-                                                        }
-                                                        else {
-                                                            calendarService.followCalendar(calendar.calendarid, currentAccountid)
-                                                                .then(() => {
-                                                                    setFollowStates(prev => ({
-                                                                        ...prev,
-                                                                        [calendar.calendarid]: true
-                                                                    }));
-                                                                    setTimeout(() => {
-                                                                        if (refreshTrigger) { refreshTrigger(prev => (prev + 1)) };
-                                                                    }, 100);
+                                                                    })
+                                                                    .catch(err => setError("Error unfollowing calendar."));
+                                                            }
+                                                            else {
+                                                                calendarService.followCalendar(calendar.calendarid, currentAccountid)
+                                                                    .then(() => {
+                                                                        setFollowStates(prev => ({
+                                                                            ...prev,
+                                                                            [calendar.calendarid]: true
+                                                                        }));
+                                                                        setTimeout(() => {
+                                                                            if (refreshTrigger) { refreshTrigger(prev => (prev + 1)) };
+                                                                        }, 100);
 
-                                                                })
-                                                                .catch(err => setError("Error following calendar."));
-                                                        }
-                                                    }}
-                                                    aria-label={followStates[calendar.calendarid] ? "Unfollow calendar" : "Follow calendar"}
-                                                    title={followStates[calendar.calendarid] ? "Unfollow" : "Follow"}
-                                                >
-                                                    {followStates[calendar.calendarid] ? 'Unfollow' : 'Follow'}
-                                                </button>)
-                                                }
-
+                                                                    })
+                                                                    .catch(err => setError("Error following calendar."));
+                                                            }
+                                                        }}
+                                                        aria-label={followStates[calendar.calendarid] ? "Unfollow calendar" : "Follow calendar"}
+                                                        title={followStates[calendar.calendarid] ? "Unfollow" : "Follow"}
+                                                    >
+                                                        {followStates[calendar.calendarid] ? 'Unfollow' : 'Follow'}
+                                                    </button>
+                                                )}
                                                 {(accountid == currentAccountid) && (
                                                     <button
                                                         key={calendar.calendarid}
@@ -274,7 +280,6 @@ export const ShowAccount = ({ currentAccountid, accountid, setShowCalendarID, se
                                                         Modify
                                                     </button>
                                                 )}
-
                                             </span>
                                         ),
                                         onClick: () => {
@@ -285,9 +290,10 @@ export const ShowAccount = ({ currentAccountid, accountid, setShowCalendarID, se
                                             }, 100);
                                         }
                                     }))}
-                            />
-                        </div>
-                    )}
+                                />
+                            </div>
+                        );
+                    })()}
                 </div>
             </div>
         </div >
