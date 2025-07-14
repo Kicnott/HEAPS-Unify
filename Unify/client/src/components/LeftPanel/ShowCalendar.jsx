@@ -58,160 +58,174 @@ export const ShowCalendar = ({ accountid, calendarid, setShowEventOpen, setShowC
     if (!calendarData || !accountData || !eventData) return <div>Loading...</div>;
 
     // console.log("Event Data:", eventData);
-
-    return (
-        <div>
-
-            <div>
-                <h2
-                    style={{
-                        marginBottom: 16,
-                        borderBottom: '2px solid black',
-                        fontSize: 28,
-                        fontWeight: 700,
-                        letterSpacing: '0.5px',
-                    }}
-                >
-                    {calendarData.calendarname}
+    if (calendarData.calendarprivacy === "private" && calendarData.accountid != accountid) {
+        return (
+            <>
+                <div style={{ fontSize: 72, marginBottom: 24 }}>🔒</div>
+                <h2 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8 }}>
+                    This calendar is private
                 </h2>
-
-                {calendarData.calendardescription && (
-                    <div
-                        style={{
-                            background: "#f9fafb",
-                            borderLeft: "4px solid " + calendarData.calendarcolour,
-                            borderRadius: 8,
-                            padding: "16px 20px",
-                            marginBottom: 24,
-                            fontStyle: "italic",
-                            color: "#374151",
-                            fontSize: 18,
-                        }}
-                    >
-                        {calendarData.calendardescription}
-                    </div>
-                )}
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginBottom: 24,
-                        gap: 16,
-                    }}
-                >
-                    <button
-                        style={{
-                            background: "#f3f4f6",
-                            color: "#111",
-                            border: "none",
-                            borderRadius: 16,
-                            padding: "6px 14px",
-                            fontWeight: 500,
-                            fontSize: 15,
-                            cursor: "pointer",
-                            transition: "background 0.2s",
-                        }}
-                        onClick={() => {
-                            setShowAccountID(accountData.accountid);
-                            setTimeout(() => {
-                                setShowAccountOpen(true);
-                                setShowCalendarOpen(false);
-                            }, 100);
-                        }}
-                        title="View owner profile"
-                    >
-                        Owned By: 👤 {accountData.accountusername}
-                    </button>
-
-                    <span
-                        style={{
-                            background: "#eef2ff",
-                            color: "#6366f1",
-                            borderRadius: 16,
-                            padding: "6px 14px",
-                            fontWeight: 500,
-                            fontSize: 15,
-                            display: "inline-block",
-                        }}
-                        title={calendarData.followercount + ' follower' + (calendarData.followercount == 1 ? '' : 's')}
-                    >
-                        👥 {formatFollowerCount(calendarData.followercount)}
-                    </span>
+                <div style={{ fontSize: 18 }}>
+                    You do not have permission to view this calendar.
                 </div>
+            </>)
+
+    }
+    else {
+        return (
+            <div>
 
                 <div>
-                    <div style={{ fontWeight: 600, marginBottom: 8, fontSize: 16 }}>Events</div>
-                    {eventData.length === 0 ? (
-                        <div style={{ maxHeight: "200px", overflowY: "auto", marginBottom: "10px" }}>
-                            <ScrollBlock>
-                                <div style={{ color: "#888" }}>No events</div>
-                            </ScrollBlock>
-                        </div>
+                    <h2
+                        style={{
+                            marginBottom: 16,
+                            borderBottom: '2px solid black',
+                            fontSize: 28,
+                            fontWeight: 700,
+                            letterSpacing: '0.5px',
+                        }}
+                    >
+                        {calendarData.calendarname}
+                    </h2>
 
-
-                    ) : (
-                        <div style={{ maxHeight: "200px", overflowY: "auto", marginBottom: "10px" }}>
-                            <ScrollBlock
-                                buttonData={eventData.map(event => ({
-                                    label: event.eventname + " - " + new Date(event.startdt).toLocaleString(),
-                                    onClick: () => {
-                                        setShowEventID(event.eventid);
-                                        setShowEventOpen(true);
-                                        setShowCalendarOpen(false);
-                                    }
-                                }))}
-                            />
-
+                    {calendarData.calendardescription && (
+                        <div
+                            style={{
+                                background: "#f9fafb",
+                                borderLeft: "4px solid " + calendarData.calendarcolour,
+                                borderRadius: 8,
+                                padding: "16px 20px",
+                                marginBottom: 24,
+                                fontStyle: "italic",
+                                color: "#374151",
+                                fontSize: 18,
+                            }}
+                        >
+                            {calendarData.calendardescription}
                         </div>
                     )}
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            marginBottom: 24,
+                            gap: 16,
+                        }}
+                    >
+                        <button
+                            style={{
+                                background: "#f3f4f6",
+                                color: "#111",
+                                border: "none",
+                                borderRadius: 16,
+                                padding: "6px 14px",
+                                fontWeight: 500,
+                                fontSize: 15,
+                                cursor: "pointer",
+                                transition: "background 0.2s",
+                            }}
+                            onClick={() => {
+                                setShowAccountID(accountData.accountid);
+                                setTimeout(() => {
+                                    setShowAccountOpen(true);
+                                    setShowCalendarOpen(false);
+                                }, 100);
+                            }}
+                            title="View owner profile"
+                        >
+                            Owned By: 👤 {accountData.accountusername}
+                        </button>
+
+                        <span
+                            style={{
+                                background: "#eef2ff",
+                                color: "#6366f1",
+                                borderRadius: 16,
+                                padding: "6px 14px",
+                                fontWeight: 500,
+                                fontSize: 15,
+                                display: "inline-block",
+                            }}
+                            title={calendarData.followercount + ' follower' + (calendarData.followercount == 1 ? '' : 's')}
+                        >
+                            👥 {formatFollowerCount(calendarData.followercount)}
+                        </span>
+                    </div>
+
+                    <div>
+                        <div style={{ fontWeight: 600, marginBottom: 8, fontSize: 16 }}>Events</div>
+                        {eventData.length === 0 ? (
+                            <div style={{ maxHeight: "200px", overflowY: "auto", marginBottom: "10px" }}>
+                                <ScrollBlock>
+                                    <div style={{ color: "#888" }}>No events</div>
+                                </ScrollBlock>
+                            </div>
+
+
+                        ) : (
+                            <div style={{ maxHeight: "200px", overflowY: "auto", marginBottom: "10px" }}>
+                                <ScrollBlock
+                                    buttonData={eventData.map(event => ({
+                                        label: event.eventname + " - " + new Date(event.startdt).toLocaleString(),
+                                        onClick: () => {
+                                            setShowEventID(event.eventid);
+                                            setShowEventOpen(true);
+                                            setShowCalendarOpen(false);
+                                        }
+                                    }))}
+                                />
+
+                            </div>
+                        )}
+                    </div>
                 </div>
+
+                {accountid && String(accountid) === String(calendarData.accountid) && (
+                    <button
+                        onClick={
+                            modifyCalendarOnClick
+                        }
+                    >
+                        Modify Calendar
+                    </button>
+                )}
+
+                {isFollowing !== null && isFollowing && String(accountid) !== String(calendarData.accountid) && (
+                    <button
+                        onClick={() => {
+                            calendarService.unfollowCalendar(calendarData.calendarid, accountid)
+                                .then(() => {
+                                    setIsFollowing(false);
+                                    setTimeout(() => {
+                                        if (refreshTrigger) refreshTrigger((prev) => prev + 1);
+                                    }, 100);
+
+                                })
+                                .catch(err => setError("Error unfollowing calendar."));
+                        }}
+                    >
+                        Unfollow Calendar
+                    </button>
+                )}
+                {isFollowing !== null && !isFollowing && String(accountid) !== String(calendarData.accountid) && (
+                    <button
+                        onClick={() => {
+                            calendarService.followCalendar(calendarData.calendarid, accountid)
+                                .then(() => {
+                                    setIsFollowing(true);
+                                    setTimeout(() => {
+                                        if (refreshTrigger) refreshTrigger((prev) => prev + 1);
+                                    }, 100);
+
+                                })
+                                .catch(err => setError("Error following calendar."));
+                        }}
+                    >
+                        Follow Calendar
+                    </button>
+                )}
             </div>
-
-            {accountid && String(accountid) === String(calendarData.accountid) && (
-                <button
-                onClick={
-                    modifyCalendarOnClick
-                }
-                >
-                    Modify Calendar
-                </button>
-            )}
-
-            {isFollowing !== null && isFollowing && String(accountid) !== String(calendarData.accountid) && (
-                <button
-                    onClick={() => {
-                        calendarService.unfollowCalendar(calendarData.calendarid, accountid)
-                            .then(() => {
-                                setIsFollowing(false);
-                                setTimeout(() => {
-                                    if (refreshTrigger) refreshTrigger((prev) => prev + 1);
-                                }, 100);
-
-                            })
-                            .catch(err => setError("Error unfollowing calendar."));
-                    }}
-                >
-                    Unfollow Calendar
-                </button>
-            )}
-            {isFollowing !== null && !isFollowing && String(accountid) !== String(calendarData.accountid) && (
-                <button
-                    onClick={() => {
-                        calendarService.followCalendar(calendarData.calendarid, accountid)
-                            .then(() => {
-                                setIsFollowing(true);
-                                setTimeout(() => {
-                                    if (refreshTrigger) refreshTrigger((prev) => prev + 1);
-                                }, 100);
-
-                            })
-                            .catch(err => setError("Error following calendar."));
-                    }}
-                >
-                    Follow Calendar
-                </button>
-            )}
-        </div>
-    );
+        );
+    }
 }

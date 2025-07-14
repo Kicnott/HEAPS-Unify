@@ -150,7 +150,7 @@ export const ShowAccount = ({ currentAccountid, accountid, setShowCalendarID, se
                     ) : (
                         <div style={{ maxHeight: "240px", overflowY: "auto" }}>
                             <ScrollBlock
-                                buttonData={accountCalendars.map(calendar => (
+                                buttonData={accountCalendars .filter(calendar => calendar.privacy !== 'private').map(calendar => (
                                     {
                                         label: (
                                             <span
