@@ -458,6 +458,7 @@ function HomePage() {
                                                         }}
                                                     >
                                                         {calendar.calendarname}
+                                                        {calendar.calendarprivacy === "private" ? " 🔒" : ""}
                                                     </span>
                                                     <span
                                                         style={{
@@ -544,6 +545,7 @@ function HomePage() {
                                                         }}
                                                     >
                                                         {calendar.calendarname}
+                                                        {calendar.calendarprivacy === "private" ? " 🔒" : ""}
                                                     </span>
                                                     <span
                                                         style={{
@@ -751,6 +753,7 @@ function HomePage() {
                                                         title={calendar.calendarname}
                                                     >
                                                         {calendar.calendarname}
+                                                        {calendar.calendarprivacy === "private" ? " 🔒" : ""}
                                                     </h3>
                                                     <button
                                                         style={{
@@ -822,7 +825,7 @@ function HomePage() {
                                     <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>Followed Events</h2>
                                     <ScrollBlock
                                         height='30vh'
-                                        >
+                                    >
                                         {followedCalendars.map((calendar) => (
                                             <div
                                                 key={calendar.calendarid}
@@ -853,6 +856,7 @@ function HomePage() {
                                                         title={calendar.calendarname}
                                                     >
                                                         {calendar.calendarname}
+                                                        {calendar.calendarprivacy === "private" ? " 🔒" : ""}
                                                     </h3>
                                                 </div>
                                                 <ScrollBlock
@@ -891,13 +895,13 @@ function HomePage() {
                     <div className='calendar-wrapper'>
                         <div className='main-content-centered'>
                             <ArrowSelector
-                                optionArray={monthOptionsArray} 
-                                value={String(calendarDisplay.getMonth())} 
+                                optionArray={monthOptionsArray}
+                                value={String(calendarDisplay.getMonth())}
                                 onChange={(event) => { handleOnMonthChange(event.target.value); }}
                             />
                             <ArrowSelector
-                                optionArray={yearOptionsArray} 
-                                value={String(calendarDisplay.getFullYear())} 
+                                optionArray={yearOptionsArray}
+                                value={String(calendarDisplay.getFullYear())}
                                 onChange={(event) => { handleOnYearChange(event.target.value); }}
                             />
 
