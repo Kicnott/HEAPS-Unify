@@ -5,7 +5,7 @@ import { DropGridCell } from './DropGridCell.jsx';
 import eventService from '../../services/eventService.jsx';
 import '../../styles/timetable.css';
 
-export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector, setEventDetailsOpen }) => {
+export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector, setEventDetailsOpen, monthEvents, setRefreshMonthEvents }) => {
     const [maxLanes, setMaxLanes] = useState(1);
     const [timedEvents, setTimedEvents] = useState([]);
     const [allDayEvents, setAllDayEvents] = useState([]);
@@ -26,11 +26,11 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
             const dayStart = DateTime.fromJSDate(chosenDate).startOf('day');
             const dayEnd = dayStart.plus({ days: 1 });
             
-            try {
-                const response = await eventService.getEvents();
-                const eventRows = response.data.rows;
-                eventRows.forEach(e => { if (!e.eventid && e.id) e.eventid = e.id; });
-                const { timed, allDay } = processEvents(eventRows, dayStart, dayEnd);
+            // try {
+            //     const response = await eventService.getEvents();
+            //     const eventRows = response.data.rows;
+                monthEvents.forEach(e => { if (!e.eventid && e.id) e.eventid = e.id; });
+                const { timed, allDay } = processEvents(monthEvents, dayStart, dayEnd);
                 const newMaxLanes = calculateMaxLanes(timed);
                 
                 setMaxLanes(newMaxLanes);
@@ -40,12 +40,12 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                 const initialAssignedEvents = assignLanes(timed, newMaxLanes);
                 setEventsWithLanes(initialAssignedEvents);
 
-            } catch (e) {
-                console.error('error fetching events:', e);
-                setTimedEvents([]);
-                setAllDayEvents([]);
-                setEventsWithLanes([]);
-            }
+            // } catch (e) {
+            //     console.error('error fetching events:', e);
+            //     setTimedEvents([]);
+            //     setAllDayEvents([]);
+            //     setEventsWithLanes([]);
+            // }
         };
         
         getEvents();
@@ -285,13 +285,14 @@ function isSingleDayEvent(event, dayStart, dayEnd) {
             });
             
             // Refresh events after update
-            const response = await eventService.getEvents();
-            const eventRows = response.data.rows;
-            eventRows.forEach(e => { if (!e.eventid && e.id) e.eventid = e.id; });
-            const dayStart = DateTime.fromJSDate(chosenDate).startOf('day');
-            const dayEnd = dayStart.plus({ days: 1 });
-            
-            const { timed, allDay } = processEvents(eventRows, dayStart, dayEnd);
+            // const response = await eventService.getEvents();
+            // const eventRows = response.data.rows;
+            const updatedMonthEvents = monthEvents.map(e =>
+            e.eventid === item.eventid
+                ? { ...e, startdt: newStartdt, enddt: newEnddt }
+                : e
+            );            
+            const { timed, allDay } = processEvents(updatedMonthEvents, dayStart, dayEnd);
             const newMaxLanes = calculateMaxLanes(timed);
             
             setMaxLanes(newMaxLanes);
@@ -300,6 +301,8 @@ function isSingleDayEvent(event, dayStart, dayEnd) {
             
             const updatedAssignedEvents = assignLanes(timed, newMaxLanes);
             setEventsWithLanes(updatedAssignedEvents);
+
+            setRefreshMonthEvents(prev => prev + 1)
 
         } catch (e) {
             console.error("Error updating event:", e);
@@ -331,8 +334,8 @@ function isSingleDayEvent(event, dayStart, dayEnd) {
                 ...gridContainerStyle,
                 gridTemplateColumns: gridCols,
                 gridTemplateRows: gridTemplateRows,
-                overflowX: 'auto'
-            }}>
+                width: 'fit-content',
+                minWidth: '100%'}}>
                 <div style={{ ...hourLabelStyle, gridRow: '1', gridColumn: '1' }}>
                     All Day
                 </div>
@@ -345,6 +348,7 @@ function isSingleDayEvent(event, dayStart, dayEnd) {
                         style={{
                             gridRow: 1,
                             gridColumn: e.lane + 2,
+                            backgroundColor: e.calendarcolour
                         }}
                         onClick={() => {
                             eventselector(e.originalEvent || e);
@@ -424,6 +428,7 @@ function isSingleDayEvent(event, dayStart, dayEnd) {
                         pointerEvents: 'auto',
                         cursor: 'default',
                         userSelect: 'none',
+                        backgroundColor: e.calendarcolour
                     }}
                     onClick={() => {
                         eventselector(e.originalEvent || e);

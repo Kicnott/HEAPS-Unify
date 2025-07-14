@@ -183,7 +183,9 @@ function HomePage() {
 
     }, [isEventHidden, isExtraEventsPopUpOpen, isRightDrawerOpen, isEventFormOpen, isEditCalendarsFormOpen, isEditAccountsFormOpen, isShowCalendarOpen, isShowAccountsOpen, isShowEventOpen, isCreateCalendarOpen]);
 
-    // refreshes month events; display updated events on month calender !!
+    // refreshes month events; display updated events on month calender !! 
+    // myDisplayedcalendarids is a list of all selected calendars to display events
+    // monthevents is a list of event objects? so i just make duplicate but modify for date? or i filter it by date
     useEffect(() => { 
         const fetchMonthEvents = async () => {
             try {
@@ -735,7 +737,7 @@ function HomePage() {
                 onClose={() => hideOverlayBackground()} // Assigns toggleEventHidden function
             >
                 <DndProvider backend={HTML5Backend}>
-                    < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setSelectedEvent} setEventDetailsOpen={setEventDetailsOpen}>
+                    < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setSelectedEvent} setEventDetailsOpen={setEventDetailsOpen} monthEvents={monthEvents} setRefreshMonthEvents={setRefreshMonthEvents}>
                     </TimeTable>
                 </DndProvider>
                 {/* <button onClick={() => {
