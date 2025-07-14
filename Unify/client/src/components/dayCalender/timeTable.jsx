@@ -5,7 +5,7 @@ import { DropGridCell } from './DropGridCell.jsx';
 import eventService from '../../services/eventService.jsx';
 import '../../styles/timetable.css';
 
-export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector, setEventDetailsOpen, monthEvents, setRefreshMonthEvents }) => {
+export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector, setEventDetailsOpen, monthEvents, setRefreshMonthEvents, closeOthers }) => {
     const [maxLanes, setMaxLanes] = useState(1);
     const [timedEvents, setTimedEvents] = useState([]);
     const [allDayEvents, setAllDayEvents] = useState([]);
@@ -32,11 +32,12 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                 monthEvents.forEach(e => { if (!e.eventid && e.id) e.eventid = e.id; });
                 const { timed, allDay } = processEvents(monthEvents, dayStart, dayEnd);
                 const newMaxLanes = calculateMaxLanes(timed);
-                
+
                 setMaxLanes(newMaxLanes);
                 setTimedEvents(timed);
                 setAllDayEvents(allDay);
-                
+
+                // Assign events to lanes (use your assignLanes function if you have one)
                 const initialAssignedEvents = assignLanes(timed, newMaxLanes);
                 setEventsWithLanes(initialAssignedEvents);
 
@@ -47,9 +48,12 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
             //     setEventsWithLanes([]);
             // }
         };
-        
-        getEvents();
+
+        getEvents(); // <-- Don't forget to call the async function!
+
     }, [chosenDate, refreshTrigger]);
+
+
 
     const processEvents = (events, dayStart, dayEnd) => {
         const timed = [];
@@ -160,7 +164,7 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
     };
 
     const assignLanes = (events, maxLanes) => {
-        const sortedEvents = [...events].sort((a, b) => 
+        const sortedEvents = [...events].sort((a, b) =>
             DateTime.fromISO(a.startdt) - DateTime.fromISO(b.startdt)
         );
 
@@ -228,23 +232,23 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
         return hours;
     };
 
-function isSingleDayEvent(event, dayStart, dayEnd) {
-  const start = DateTime.fromISO(event.startdt);
-  const end = DateTime.fromISO(event.enddt);
-  const originalStart = DateTime.fromISO(event.originalStart);
-  const originalEnd = DateTime.fromISO(event.originalEnd);
+    function isSingleDayEvent(event, dayStart, dayEnd) {
+        const start = DateTime.fromISO(event.startdt);
+        const end = DateTime.fromISO(event.enddt);
+        const originalStart = DateTime.fromISO(event.originalStart);
+        const originalEnd = DateTime.fromISO(event.originalEnd);
 
-  // Only allow if the event is not a fragment (its true start and end are both within the day)
-  return (
-    start.hasSame(end, 'day') &&
-    start >= dayStart &&
-    end <= dayEnd &&
-    originalStart.hasSame(originalEnd, 'day') && // true event is single day
-    originalStart >= dayStart &&
-    originalEnd <= dayEnd &&
-    !(start.hour === 0 && start.minute === 0 && end.hour === 23 && end.minute === 45)
-  );
-}
+        // Only allow if the event is not a fragment (its true start and end are both within the day)
+        return (
+            start.hasSame(end, 'day') &&
+            start >= dayStart &&
+            end <= dayEnd &&
+            originalStart.hasSame(originalEnd, 'day') && // true event is single day
+            originalStart >= dayStart &&
+            originalEnd <= dayEnd &&
+            !(start.hour === 0 && start.minute === 0 && end.hour === 23 && end.minute === 45)
+        );
+    }
 
 
     const handleEventDrop = async (item, dropIdx, dropLaneIdx) => {
@@ -256,8 +260,8 @@ function isSingleDayEvent(event, dayStart, dayEnd) {
 
         if (newStartIdx < 0 || newEndIdx > 96) return;
 
-        const hasOverlap = eventsWithLanes.some(e => 
-            e.lane === dropLaneIdx && 
+        const hasOverlap = eventsWithLanes.some(e =>
+            e.lane === dropLaneIdx &&
             e.eventid !== item.eventid &&
             Math.max(e.startIdx, newStartIdx) < Math.min(e.endIdx, newEndIdx)
         );
@@ -269,9 +273,9 @@ function isSingleDayEvent(event, dayStart, dayEnd) {
         const newEnddt = dayStart.plus({ minutes: newEndIdx * 15 }).toISO();
 
         // Optimistically update UI (optional)
-        setEventsWithLanes(prev => 
-            prev.map(e => 
-                e.eventid === item.eventid 
+        setEventsWithLanes(prev =>
+            prev.map(e =>
+                e.eventid === item.eventid
                     ? { ...e, startIdx: newStartIdx, endIdx: newEndIdx }
                     : e
             )
@@ -283,7 +287,7 @@ function isSingleDayEvent(event, dayStart, dayEnd) {
                 newEndDt: newEnddt,
                 eventId: item.eventid
             });
-            
+
             // Refresh events after update
             // const response = await eventService.getEvents();
             // const eventRows = response.data.rows;
@@ -294,11 +298,11 @@ function isSingleDayEvent(event, dayStart, dayEnd) {
             );            
             const { timed, allDay } = processEvents(updatedMonthEvents, dayStart, dayEnd);
             const newMaxLanes = calculateMaxLanes(timed);
-            
+
             setMaxLanes(newMaxLanes);
             setTimedEvents(timed);
             setAllDayEvents(allDay);
-            
+
             const updatedAssignedEvents = assignLanes(timed, newMaxLanes);
             setEventsWithLanes(updatedAssignedEvents);
 
@@ -351,20 +355,23 @@ function isSingleDayEvent(event, dayStart, dayEnd) {
                             backgroundColor: e.calendarcolour
                         }}
                         onClick={() => {
-                            eventselector(e.originalEvent || e);
-                            setEventDetailsOpen(true);
-                        }}>
-                        {e.eventname}
-                    </div>
+                            eventselector(e.originalEvent.eventid || e.eventid);
+                            closeOthers()
+                            setTimeout(() => {
+                                setEventDetailsOpen(true)
+                            }, 100)
+                        }}
+                    >
+                        {e.eventname}</div>
                 ))}
-                
+
                 {hoursCreator().map((hourData, hourIdx) => (
                     <div key={`hour-${hourIdx}`}
                         style={{
                             ...hourLabelStyle,
                             gridRow: `${hourIdx * 4 + 2} / span 4`,
                             gridColumn: '1'
-                        }}>     
+                        }}>
                         {hourData.hourLabel}
                     </div>
                 ))}
@@ -382,28 +389,28 @@ function isSingleDayEvent(event, dayStart, dayEnd) {
                             }}
                             onDrop={handleEventDrop}
                             canDropEvent={(item, cellIdx, cellLaneIdx) => {
-                            // if (item.lane !== cellLaneIdx) return false;
-                            const duration = item.endIdx - item.startIdx;
-                            const newStartIdx = cellIdx;
-                            const newEndIdx = cellIdx + duration;
-                            if (newEndIdx > 95) return false;
-                            
-                            const overlap = eventsWithLanes.some(e =>
-                                e.lane === cellLaneIdx &&
-                                e.eventid !== item.eventid &&
-                                Math.max(e.startIdx, newStartIdx) < Math.min(e.endIdx, newEndIdx)
-                            );
+                                // if (item.lane !== cellLaneIdx) return false;
+                                const duration = item.endIdx - item.startIdx;
+                                const newStartIdx = cellIdx;
+                                const newEndIdx = cellIdx + duration;
+                                if (newEndIdx > 95) return false;
 
-                            return !overlap;
+                                const overlap = eventsWithLanes.some(e =>
+                                    e.lane === cellLaneIdx &&
+                                    e.eventid !== item.eventid &&
+                                    Math.max(e.startIdx, newStartIdx) < Math.min(e.endIdx, newEndIdx)
+                                );
+
+                                return !overlap;
                             }}
                             hoverRange={hoverRange}
-                            setHoverRange={setHoverRange}  
+                            setHoverRange={setHoverRange}
                         />
                     ))
                 ))}
-                
 
-                
+
+
                 {eventsWithLanes.map((e, eIdx) =>
                 isSingleDayEvent(e, dayStart, dayEnd) ? (
                     <DragEventBlock
@@ -438,7 +445,7 @@ function isSingleDayEvent(event, dayStart, dayEnd) {
                     {e.eventname}
                     </div>
                     )
-                )}            
+                )}
 
             </div>
         </div>

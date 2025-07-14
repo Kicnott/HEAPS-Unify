@@ -1,16 +1,17 @@
 /* Container for the dropdown */
 .dropdown-container {
-  width: 100%;
   max-width: 300px;
-  margin: 0rem auto; /* auto left and right = centered horizontally */
+  width: 100%;
+  margin: 0.1rem auto;
+  transform: translate(65px, -48px);
 }
 
-/* Native <select> styling */
 .dropdown-container select {
-  width: 100%;
+  font-family: 'Times New Roman', Times, serif;
+  width: 150%;
   padding: 0.5rem 0.75rem;
   font-size: 1rem;
-  border: 1.5px solid #ccc;
+  border: 1.5px solid #A78E72;
   border-radius: 6px;
   background-color: #ffffff;
   color: #333;
