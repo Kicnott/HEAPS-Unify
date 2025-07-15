@@ -5,7 +5,7 @@ import { DropGridCell } from './DropGridCell.jsx';
 import eventService from '../../services/eventService.jsx';
 import '../../styles/timetable.css';
 
-export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector, setEventDetailsOpen, monthEvents, setRefreshMonthEvents, closeOthers }) => {
+export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector, setEventDetailsOpen, monthEvents, setRefreshMonthEvents, closeOthers, followedEvents }) => {
     const [maxLanes, setMaxLanes] = useState(1);
     const [timedEvents, setTimedEvents] = useState([]);
     const [allDayEvents, setAllDayEvents] = useState([]);
@@ -250,7 +250,14 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
         );
     }
 
+    const flattenedFollowedEvents = useMemo(() => {
+        return Object.values(followedEvents).flat();
+    }, [followedEvents]);
 
+    function isEventFollowed(event) {
+        return flattenedFollowedEvents.some(f => String(f.eventid) === String(event.eventid));
+    }
+    
     const handleEventDrop = async (item, dropIdx, dropLaneIdx) => {
         // if (item.lane !== dropLaneIdx) return;
 
@@ -413,7 +420,7 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
 
 
                 {eventsWithLanes.map((e, eIdx) =>
-                    isSingleDayEvent(e, dayStart, dayEnd) ? (
+                    isSingleDayEvent(e, dayStart, dayEnd) && !isEventFollowed(e) ? (
                         <DragEventBlock
                             key={`event-${eIdx}`}
                             event={e}
