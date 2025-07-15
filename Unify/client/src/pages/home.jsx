@@ -948,6 +948,13 @@ function HomePage() {
                                 setExtraEvents={setExtraEvents}
                                 setPopUpPosition={setPopUpPosition}
                                 extraEvents={extraEvents}
+                                onMonthEventClick={(eventid) => {
+                                    hideOverlayBackground()
+                                    setShowEventID(eventid)
+                                    setTimeout(() => {
+                                        setShowEventOpen(true)
+                                    }, 100)
+                                }}
                             />
                         </div>
                     </div>
@@ -1091,7 +1098,7 @@ function HomePage() {
                     }}
                 >+ Add Event</button>
             </OverlayBlock>
-
+{/* 
             {isEventDetailsOpen && selectedEvent && (
                 <OverlayBlock onClose={() => setEventDetailsOpen(false)}>
                     <EventDisplay
@@ -1099,7 +1106,7 @@ function HomePage() {
                         onClose={() => setEventDetailsOpen(false)}
                         onDelete={() => seteventRefreshTrigger(prev => prev + 1)} />
                 </OverlayBlock>
-            )}
+            )} */}
 
             {/* ADD event overlay block */}
             {isEventFormOpen && (
