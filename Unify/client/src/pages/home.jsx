@@ -13,7 +13,7 @@ import { TopNavbar } from "../components/blocks/TopNavbar.jsx"
 import { RightDrawer } from "../components/rightDrawer/RightDrawer.jsx"
 import { MainCalendar } from '../components/monthCalendar/MainCalendar.jsx'
 import { OverlayBlock } from '../components/blocks/OverlayBlock.jsx'
-import { ArrowSelector } from '../components/monthCalendar/ArrowSelector.jsx'
+import { DropdownList } from '../components/monthCalendar/DropdownList.jsx'
 import { TimeTable } from '../components/dayCalender/timeTable.jsx'
 import { CreateEvent } from '../components/dayCalender/CreateNewEvent.jsx'
 import { EditAccountForm } from '../components/rightDrawer/EditAccounts.jsx'
