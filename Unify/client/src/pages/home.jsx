@@ -190,7 +190,6 @@ function HomePage() {
                 const matchedIdEvents = monthEvents.data.filter((event) => {
                     return myDisplayedCalendarIds.includes(event.calendarid)
                 })
-
                 setMonthEvents(matchedIdEvents);
             } catch (err) {
                 console.error("Error fetching month events: ", err);
