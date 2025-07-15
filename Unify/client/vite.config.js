@@ -8,5 +8,9 @@ export default defineConfig({
     proxy: {
       '/api': 'http://localhost:8888'
     }
-  } // Makes Vite forward all requests starting with '/api' to the server
+  }, // Makes Vite forward all requests starting with '/api' to the server
+  build: {
+    outDir: 'dist',
+  },
+  base: './',
 })
