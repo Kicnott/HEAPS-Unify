@@ -1078,7 +1078,7 @@ function HomePage() {
                 onClose={() => hideOverlayBackground()} // Assigns toggleEventHidden function
             >
                 <DndProvider backend={HTML5Backend}>
-                    < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setSelectedEvent} setEventDetailsOpen={setEventDetailsOpen} monthEvents={monthEvents} setRefreshMonthEvents={setRefreshMonthEvents}>
+                    < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setShowEventID} setEventDetailsOpen={setShowEventOpen} monthEvents={monthEvents} setRefreshMonthEvents={setRefreshMonthEvents} closeOthers={hideOverlayBackground}>
                     </TimeTable>
                 </DndProvider>
                 <button
