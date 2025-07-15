@@ -3,13 +3,13 @@
   max-width: 300px;
   width: 100%;
   margin: 0.1rem auto;
-  transform: translate(65px, -48px);
+  transform: translate(100px, -48px);
 }
 
 .dropdown-container select {
   font-family: 'Times New Roman', Times, serif;
-  width: 150%;
-  padding: 0.5rem 0.75rem;
+  width: 110px;
+  padding: 0.3rem 0.7rem;
   font-size: 1rem;
   border: 1.5px solid #A78E72;
   border-radius: 6px;
