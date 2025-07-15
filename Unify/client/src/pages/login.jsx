@@ -25,7 +25,7 @@ function LoginPage() {
         submitAction.preventDefault() // Prevents the form from being submitted through GET or POST normally
         // TODO, send data to server, authentication, all that jazz
         if (action === "login") {
-            const response = await fetch("http://localhost:8888/login", {
+            const response = await fetch("https://heaps-unify-1.onrender.com/login", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
