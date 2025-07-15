@@ -102,7 +102,7 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
       setLocation("");
       setStartTime("");
       setEndTime("");
-      setRepeatInstance("")
+      setRepeat("")
       setCalendarID("")
       setErrors([]);
 

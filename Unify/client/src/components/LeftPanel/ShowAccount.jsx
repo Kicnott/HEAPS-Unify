@@ -143,15 +143,12 @@ export const ShowAccount = ({ currentAccountid, accountid, setShowCalendarID, se
                         {accountData.accountusername}'s Calendars
                     </div>
                     {(() => {
-                        // Are we viewing our own account?
                         const isOwner = String(accountid) === String(currentAccountid);
 
-                        // If not owner, filter out private calendars
                         const visibleCalendars = isOwner
                             ? accountCalendars
                             : accountCalendars.filter(cal => cal.calendarprivacy !== "private");
 
-                        // If not owner and no visible calendars, show "No calendars"
                         if (visibleCalendars.length === 0) {
                             return (
                                 <ScrollBlock>
@@ -160,7 +157,6 @@ export const ShowAccount = ({ currentAccountid, accountid, setShowCalendarID, se
                             );
                         }
 
-                        // Otherwise, show the visible calendars
                         return (
                             <div style={{ maxHeight: "240px", overflowY: "auto" }}>
                                 <ScrollBlock
@@ -191,7 +187,7 @@ export const ShowAccount = ({ currentAccountid, accountid, setShowCalendarID, se
                                                     textAlign: "left",
                                                 }}>
                                                     {calendar.calendarname}
-                                                    {calendar.calendarprivacy === "private" ? " 🔒" : ""}
+                                                    {calendar.calendarprivacy == "private" ? " 🔒" : ""}
                                                 </span>
                                                 <span style={{
                                                     color: '#a3a3a3',
