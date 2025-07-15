@@ -30,15 +30,19 @@ export const CalendarDateBox = forwardRef(({ onClick, children, baseMonth, displ
   }
 
   let calendarStyle = {
-    // date number 
-    color: isBaseMonth ? '#5E503F' : '#A78E72', // If the date is part of the base month, the font color is black; otherwise, it is grey.
+    color: isBaseMonth ? '#5E503F' : '#A78E72',
     backgroundColor: isDraggingOver ? '#EBE6D6' : 'white',
-    height: '8rem', 
+    height: 'calc(9.5vw - 5px)',
+    minHeight: '47px',
+    maxHeight: '115px',
     width: '100%',
     margin: '0px',
-    padding: '20px 10px 0px 10px',
+    padding: '1.1vw 1vw 0 1vw', // wider horizontal padding
     position: 'relative',
     borderRadius: '2px',
+    fontSize: '1.15vw', // slightly larger font
+    boxSizing: 'border-box',
+    transition: 'height 0.2s, padding 0.2s, font-size 0.2s',
   }
 
 const dragOver = (e) => {
