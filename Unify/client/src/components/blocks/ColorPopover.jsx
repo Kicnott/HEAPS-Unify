@@ -3,7 +3,7 @@ import React from 'react';
 import { SliderPicker } from 'react-color';
 import { useRef, useState, useEffect } from 'react';
 
-const ColorCircle = React.forwardRef(({ size = 24, color = "#3498db", borderRadius = '50%', ...rest }, ref) => {
+export const ColorCircle = React.forwardRef(({ size = 24, color = "#3498db", borderRadius = '50%', ...rest }, ref) => {
     // console.log("ColorCircle color: " + color)
     return (
         <span

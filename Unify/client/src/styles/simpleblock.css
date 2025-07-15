@@ -1,7 +1,7 @@
 
 
 body{
-    background-color: light-dark(black, white);}
+    background-color: light-dark(black, black);}
 
 .login-box {
   width: 350px;
@@ -11,4 +11,21 @@ body{
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.login-box input {
+  background-color: white; 
+  color:  #000000; 
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  border-radius: 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+input:-webkit-autofill {
+  -webkit-text-fill-color: black ;
+  box-shadow: 0 0 0 1000px white inset ;
+  background-color: white ;
+  transition: background-color 5000s ease-in-out 0s; /* Prevents flashing */
 }

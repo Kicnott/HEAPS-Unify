@@ -1,5 +1,4 @@
 .event-block {
-    background-color: lightblue;
     border-radius: 4px;
     margin: 1px;
     z-index: 2;
@@ -21,3 +20,4 @@
     border-color: #2196f3; 
     box-shadow: 0 0 8px #90caf9; 
 }
+

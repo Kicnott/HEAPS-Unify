@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
 import { Link } from 'react-router-dom'
 import '../styles/App.css'
 import { monthOptionsArray, yearOptionsArray } from '../constants/calendarConstants.jsx'
 // import getBaseDate from '../functions/getBaseDate.jsx'
 import { uAccount, uCalendar, uCalendarDisplay, uEvent, uTimeslot } from '../classes/'
+import profilePlaceholder from '../assets/placeholder_pfp.jpg';
 
 // Components
 import { TopNavbar } from "../components/blocks/TopNavbar.jsx"
@@ -13,14 +16,13 @@ import { OverlayBlock } from '../components/blocks/OverlayBlock.jsx'
 import { DropdownList } from '../components/monthCalendar/DropdownList.jsx'
 import { TimeTable } from '../components/dayCalender/timeTable.jsx'
 import { CreateEvent } from '../components/dayCalender/CreateNewEvent.jsx'
-import { RightDrawerCloseBackground } from '../components/rightDrawer/rightDrawerCloseBackground.jsx'
 import { EditAccountForm } from '../components/rightDrawer/EditAccounts.jsx'
 import { EditCalendarsForm } from '../components/monthCalendar/EditCalendars.jsx'
 import { OverlayBackground } from '../components/overlay/OverlayBackground.jsx'
 import { LeftTabPanel } from '../components/LeftPanel/LeftTabPanel.jsx'
 import { ScrollBlock } from '../components/blocks/ScrollBlock.jsx'
 import MainLayout from '../components/blocks/MainLayout.jsx'
-import { getMyCalendars, getMyEvents, getAllAccounts, getFollowedCalendars, getMyDisplayedCalendars } from '../components/LeftPanel/LeftPanelFunctions.jsx'
+import { getMyCalendars, getFollowedEvents, getMyEvents, getAllAccounts, getFollowedCalendars, getMyDisplayedCalendars, searchAccounts } from '../components/LeftPanel/LeftPanelFunctions.jsx'
 import { ShowCalendar } from '../components/LeftPanel/ShowCalendar.jsx'
 import { ShowAccount } from '../components/LeftPanel/ShowAccount.jsx'
 import { ShowEvent } from '../components/LeftPanel/ShowEvent.jsx'
@@ -31,6 +33,11 @@ import { CreateCalendar } from '../components/LeftPanel/CreateCalendar.jsx'
 import { ExtraEventsPopUp } from '../components/blocks/extraEventsPopUp.jsx'
 import { EventsOverlayBackground } from '../components/overlay/EventsOverlayBackground.jsx'
 import { drawerStyle, rightDrawerButtonTop, rightDrawerButtonBottom } from '../styles/rightDrawerStyles.jsx'
+import accountService from '../services/accountService.jsx'
+import { ColorCircle } from '../components/blocks/ColorPopover.jsx'
+import { ModifyCalendar } from '../components/LeftPanel/ModifyCalendar.jsx'
+import { ModifyEvent } from '../components/LeftPanel/ModifyEvent.jsx'
+import { MthYrArrow } from '../components/monthCalendar/MthYrArrow.jsx'
 
 
 function HomePage() {
@@ -74,6 +81,9 @@ function HomePage() {
     const [refreshMonthEvents, setRefreshMonthEvents] = useState(0)
     const [monthEvents, setMonthEvents] = useState([])
 
+    const [isModifyCalendarOpen, setModifyCalendarOpen] = useState(false)
+    const [isModifyEventOpen, setModifyEventOpen] = useState(false)
+
     const [extraEvents, setExtraEvents] = useState([]);
     const [popUpPosition, setPopUpPosition] = useState({ x: 0, y: 0 });
 
@@ -81,16 +91,41 @@ function HomePage() {
     const [isExtraOverlayBackgroundHidden, setExtraOverlayBackgroundHidden] = useState(true);
 
     const [myCalendars, setMyCalendars] = useState([]);
-    
     const [followedCalendars, setFollowedCalendars] = useState([])
-    const refreshFollowedCalendars = () => {
-        getFollowedCalendars(currentUserAccountId).then(setFollowedCalendars);
-    };
-
     const [allAccounts, setAllAccounts] = useState([])
-
-    // for left panel display
     const [myEvents, setMyEvents] = useState([]);
+    const [followedEvents, setFollowedEvents] = useState([])
+    const [searchAccountTerm, setSearchAccountTerm] = useState('')
+    const [searchedAccounts, setSearchedAccounts] = useState([])
+
+    function useDebounce(value, delay) {
+        const [debouncedValue, setDebouncedValue] = useState(value);
+
+        useEffect(() => {
+            const handler = setTimeout(() => {
+                setDebouncedValue(value);
+            }, delay);
+
+            return () => {
+                clearTimeout(handler);
+            };
+        }, [value, delay]);
+
+        return debouncedValue;
+    }
+
+    const debouncedSearchTerm = useDebounce(searchAccountTerm, 500);
+
+    useEffect(() => {
+        if (debouncedSearchTerm !== "") {
+            searchAccounts(debouncedSearchTerm).then((accounts) => {
+                setSearchedAccounts(accounts);
+            });
+        } else {
+            setSearchedAccounts([]);
+        }
+    }, [debouncedSearchTerm]);
+
 
     // Function to update displayed calendar year
     const handleOnYearChange = (event) => {
@@ -117,6 +152,27 @@ function HomePage() {
         setRefreshMonthEvents(refreshMonthEvents + 1);
         // console.log("Events Refreshed!");
     }
+
+    const backOneMonth = () => {
+        const newMonth = calendarDisplay.getMonth() - 1;
+        handleOnMonthChange(newMonth)
+    }
+
+    const frontOneMonth = () => {
+        const newMonth = calendarDisplay.getMonth() + 1;
+        handleOnMonthChange(newMonth)
+    }
+
+    const backOneYear = () => {
+        const newYear = calendarDisplay.getFullYear() - 1;
+        handleOnYearChange(newYear)
+    }
+
+    const frontOneYear = () => {
+        const newYear = calendarDisplay.getFullYear() + 1;
+        handleOnYearChange(newYear)
+    }
+
 
     // populate currMonth and currYear session data
     useEffect(() => {
@@ -149,19 +205,19 @@ function HomePage() {
     useEffect(() => {
         if (currentUserAccountId) {
             getMyCalendars(currentUserAccountId).then((calendars) => {
-                const sortedCalendars = calendars.sort((a, b) => a.calendarid - b.calendarid);
-                setMyCalendars(sortedCalendars);
+                setMyCalendars(calendars);
             });
 
             getAllAccounts(currentUserAccountId).then((accounts) => {
-                const sortedAccounts = accounts.sort((a, b) => a.accountid - b.accountid);
-                setAllAccounts(sortedAccounts);
+                setAllAccounts(accounts);
             });
 
             getFollowedCalendars(currentUserAccountId).then((calendars) => {
                 const sortedCalendars = calendars.sort((a, b) => a.calendarid - b.calendarid);
                 setFollowedCalendars(sortedCalendars);
             });
+
+            getFollowedEvents(currentUserAccountId).then(setFollowedEvents)
 
             getMyEvents(currentUserAccountId).then(setMyEvents);
 
@@ -170,18 +226,36 @@ function HomePage() {
         }
     }, [currentUserAccountId, mainRefreshTrigger]);
 
+    useEffect(() => {
+        if (debouncedSearchTerm != "") {
+            searchAccounts(debouncedSearchTerm).then((accounts) => {
+                setSearchedAccounts(accounts)
+            })
+        }
+        else {
+            setSearchedAccounts([])
+        }
+
+    }, [debouncedSearchTerm])
+
+    useEffect(() => {
+        console.log(searchedAccounts)
+    }, [searchedAccounts])
+
     // hides background when overlay is hidden
     useEffect(() => {
         setOverlayBackgroundHidden(() => {
-            return isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen && !isShowCalendarOpen && !isShowAccountsOpen && !isShowEventOpen && !isCreateCalendarOpen;
+            return isEventHidden && !isRightDrawerOpen && !isEventFormOpen && !isEditCalendarsFormOpen && !isEditAccountsFormOpen && !isShowCalendarOpen && !isShowAccountsOpen && !isShowEventOpen && !isCreateCalendarOpen && !isEventDetailsOpen && !isModifyCalendarOpen && !isModifyEventOpen;
         });
         setExtraOverlayBackgroundHidden(() => {
             return !isExtraEventsPopUpOpen;
         });
 
-    }, [isEventHidden, isExtraEventsPopUpOpen, isRightDrawerOpen, isEventFormOpen, isEditCalendarsFormOpen, isEditAccountsFormOpen, isShowCalendarOpen, isShowAccountsOpen, isShowEventOpen, isCreateCalendarOpen]);
+    }, [isEventHidden, isExtraEventsPopUpOpen, isRightDrawerOpen, isEventFormOpen, isEditCalendarsFormOpen, isEditAccountsFormOpen, isShowCalendarOpen, isShowAccountsOpen, isShowEventOpen, isCreateCalendarOpen, isEventDetailsOpen, isModifyCalendarOpen, isModifyEventOpen]);
 
-    // refreshes month events; display updated events on month calender
+    // refreshes month events; display updated events on month calender !! 
+    // myDisplayedcalendarids is a list of all selected calendars to display events
+    // monthevents is a list of event objects
     useEffect(() => { 
         const fetchMonthEvents = async () => {
             try {
@@ -211,6 +285,8 @@ function HomePage() {
         setEventDetailsOpen(false)
         setCreateCalendarOpen(false)
         setExtraEventsPopUp(false)
+        setModifyCalendarOpen(false)
+        setModifyEventOpen(false)
     }
 
     const hideExtraOverlayBackground = () => {
@@ -224,6 +300,8 @@ function HomePage() {
         setShowEventOpen(false)
         setEventDetailsOpen(false)
         setExtraEventsPopUp(false)
+        setModifyCalendarOpen(false)
+        setModifyEventOpen(false)
     }
 
     async function onCalendarCheckboxChange(calendarid, accountid) {
@@ -254,8 +332,12 @@ function HomePage() {
         }
     }
 
-    // Defining the uCalendarDisplay object that the page will use to update the Main Calendar.
-    // the date object is the current time
+    function formatFollowerCount(num) {
+        if (num >= 1e9) return (num / 1e9).toFixed(1).replace(/\.0$/, '') + 'b';
+        if (num >= 1e6) return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'm';
+        if (num >= 1e3) return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'k';
+        return num.toString();
+    }
 
     return (
         <div>
@@ -315,8 +397,6 @@ function HomePage() {
                     </div>
                 </div>
             </RightDrawer>
-
-
 
             <MainLayout
                 leftPanel={<LeftTabPanel
@@ -379,11 +459,45 @@ function HomePage() {
                                         </button>
                                     </div>
                                     <ScrollBlock
-                                        height='40.5%'
+                                        height='40%'
                                         buttonData={myCalendars.map((calendar) => ({
-                                            label: calendar.calendarname,
+                                            label: (
+                                                <span
+                                                    style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'space-between',
+                                                        width: '100%',
+                                                        overflow: 'hidden',
+                                                    }}
+                                                >
+                                                    <span
+                                                        style={{
+                                                            whiteSpace: 'nowrap',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                            flex: 1,
+                                                            minWidth: 0,
+                                                        }}
+                                                    >
+                                                        {calendar.calendarname}
+                                                    </span>
+                                                    <span
+                                                        style={{
+                                                            color: '#a3a3a3',
+                                                            marginLeft: '12px',
+                                                            fontSize: '0.95em',
+                                                            flexShrink: 0,
+                                                        }}
+                                                        title={calendar.followercount + ' follower' + (calendar.followercount == 1 ? '' : 's')}
+                                                    >
+                                                        👥 {formatFollowerCount(calendar.followercount)}
+                                                    </span>
+                                                </span>
+                                            ),
                                             id: calendar.calendarid,
                                             color: calendar.calendarcolour,
+                                            title: calendar.calendarname,
                                             onClick: () => {
                                                 setShowCalendarID(calendar.calendarid)
                                                 setTimeout(() => {
@@ -419,11 +533,57 @@ function HomePage() {
                                             Followed Calendars
                                         </h2>
                                     </div>
-                                    <ScrollBlock height='40.5%'
+                                    <ScrollBlock height='40%'
                                         buttonData={followedCalendars.map((calendar) => ({
-                                            label: calendar.calendarname,
+                                            label: (
+                                                <span
+                                                    style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'space-between',
+                                                        width: '100%',
+                                                        overflow: 'hidden',
+                                                    }}
+                                                >
+                                                    <span
+                                                        style={{
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                            marginRight: 8
+                                                        }}
+                                                    >
+                                                        <ColorCircle
+                                                            color={calendar.calendarcolour}
+                                                        />
+                                                    </span>
+                                                    <span
+                                                        style={{
+                                                            whiteSpace: 'nowrap',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                            flex: 1,
+                                                            minWidth: 0,
+                                                            textAlign: "left",
+                                                        }}
+                                                    >
+                                                        {calendar.calendarname}
+                                                    </span>
+                                                    <span
+                                                        style={{
+                                                            color: '#a3a3a3',
+                                                            marginLeft: '12px',
+                                                            fontSize: '0.95em',
+                                                            flexShrink: 0,
+                                                        }}
+                                                        title={calendar.followercount + ' follower' + (calendar.followercount == 1 ? '' : 's')}
+                                                    >
+                                                        👥 {formatFollowerCount(calendar.followercount)}
+                                                    </span>
+                                                </span>
+                                            ),
                                             id: calendar.calendarid,
                                             color: calendar.calendarcolour,
+                                            title: calendar.calendarname,
                                             onClick: () => {
                                                 setShowCalendarID(calendar.calendarid)
                                                 setTimeout(() => {
@@ -432,7 +592,7 @@ function HomePage() {
                                             }
                                         }))}
                                         checkboxButton={true}
-                                        gotColour={true}
+                                        // gotColour={true}
                                         colorChangeComplete={colorChangeComplete}
                                         checkboxName='myCalendars'
                                         accountid={currentUserAccountId}
@@ -443,9 +603,63 @@ function HomePage() {
                                 </>
                             ,
                             2:
+
+
                                 <ScrollBlock
-                                    buttonData={allAccounts.map((account) => ({
-                                        label: account.accountusername,
+
+
+                                    buttonData={(searchAccountTerm ? searchedAccounts : allAccounts).map((account) => ({
+                                        label: (
+                                            <span
+                                                style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'space-between',
+                                                    width: '100%',
+                                                    overflow: 'hidden',
+                                                }}
+                                            >
+                                                <img
+                                                    src={profilePlaceholder}
+                                                    alt={account.accountusername + " profile"}
+                                                    style={{
+                                                        width: 28,
+                                                        height: 28,
+                                                        borderRadius: '50%',
+                                                        objectFit: 'cover',
+                                                        marginRight: 10,
+                                                        flexShrink: 0,
+                                                        background: '#e5e7eb',
+                                                    }}
+                                                />
+                                                <span
+                                                    style={{
+                                                        whiteSpace: 'nowrap',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        flex: 1,
+                                                        minWidth: 0,
+                                                    }}
+                                                >
+                                                    {account.accountusername}
+                                                </span>
+                                                <span
+                                                    style={{
+                                                        color: '#a3a3a3',
+                                                        marginLeft: '12px',
+                                                        fontSize: '0.95em',
+                                                        flexShrink: 0,
+                                                    }}
+                                                    title={
+                                                        account.followercount +
+                                                        ' follower' +
+                                                        (account.followercount === 1 ? '' : 's')
+                                                    }
+                                                >
+                                                    👥 {formatFollowerCount(account.followercount)}
+                                                </span>
+                                            </span>
+                                        ),
                                         onClick: () => {
                                             setShowAccountID(account.accountid)
                                             setTimeout(() => {
@@ -456,6 +670,71 @@ function HomePage() {
                                     height='100%'
                                 >
                                     <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>Accounts</h2>
+                                    <div style={{ position: 'relative', width: '80%', maxWidth: '100%', marginBottom: '20px' }}>
+                                        <input
+                                            type="text"
+                                            placeholder="Find an account..."
+                                            style={{
+                                                width: '100%',
+                                                padding: '10px 40px 10px 14px',
+                                                borderRadius: '24px',
+                                                border: '1.5px solid #d1d5db',
+                                                fontSize: '16px',
+                                                outline: 'none',
+                                                background: '#fafbfc',
+                                                color: '#222',
+                                                boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                                                transition: 'border 0.2s, box-shadow 0.2s',
+                                            }}
+                                            value={searchAccountTerm}
+                                            onChange={(e) => setSearchAccountTerm(e.target.value)}
+                                        />
+                                        <svg
+                                            width="18"
+                                            height="18"
+                                            viewBox="0 0 20 20"
+                                            fill="none"
+                                            style={{
+                                                position: 'absolute',
+                                                right: '-35px',
+                                                top: '50%',
+                                                transform: 'translateY(-50%)',
+                                                color: '#a3a3a3',
+                                                cursor: 'pointer',
+                                                pointerEvents: 'auto',
+                                            }}
+                                            aria-hidden="true"
+                                            onClick={() => {
+
+                                            }}
+                                        >
+                                            <circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="2" />
+                                            <line x1="15" y1="15" x2="19" y2="19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                                        </svg>
+                                    </div>
+
+                                    {!searchAccountTerm && (
+                                        <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginTop: '10px' }}>
+                                            Suggested Accounts
+                                        </h3>
+
+                                    )}
+
+                                    {searchAccountTerm && searchedAccounts.length >= 1 && (
+                                        <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginTop: '10px' }}>
+                                            Results
+                                        </h3>
+
+                                    )}
+
+                                    {searchAccountTerm && searchedAccounts.length == 0 && (
+                                        <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginTop: '10px' }}>
+                                            No Result Found
+                                        </h3>
+
+                                    )}
+
+
 
                                 </ScrollBlock>
                             ,
@@ -485,7 +764,7 @@ function HomePage() {
                                                             fontSize: '24px',
                                                             fontWeight: 'bold',
                                                             margin: 0,
-                                                            flex: 1, // This makes the heading take all available space
+                                                            flex: 1,
                                                             lineHeight: 'normal',
                                                             whiteSpace: 'nowrap',
                                                             overflow: 'hidden',
@@ -586,7 +865,7 @@ function HomePage() {
                                                             fontSize: '24px',
                                                             fontWeight: 'bold',
                                                             margin: 0,
-                                                            flex: 1, // This makes the heading take all available space
+                                                            flex: 1,
                                                             lineHeight: 'normal',
                                                             whiteSpace: 'nowrap',
                                                             overflow: 'hidden',
@@ -603,8 +882,8 @@ function HomePage() {
                                                     height='auto'
                                                     key={calendar.calendarid}
                                                     buttonData={
-                                                        myEvents[calendar.calendarid] && myEvents[calendar.calendarid].length > 0
-                                                            ? myEvents[calendar.calendarid].map((event) => ({
+                                                        followedEvents[calendar.calendarid] && followedEvents[calendar.calendarid].length > 0
+                                                            ? followedEvents[calendar.calendarid].map((event) => ({
                                                                 label: event.eventname + " - " + new Date(event.startdt).toLocaleString(),
                                                                 onClick: () => {
                                                                     setShowEventID(event.eventid);
@@ -633,17 +912,21 @@ function HomePage() {
                 mainContent={
                     <div className='calendar-wrapper'>
                         <div className='main-content-centered'>
-                            <DropdownList
-                                optionArray={monthOptionsArray} // Assigns the options to the month dropdown list
-                                value={String(calendarDisplay.getMonth())} // Assigns the default value of the list to the current month
-                                onChange={(event) => {handleOnMonthChange(event.target.value);}}
-                            />
-                            <DropdownList
-                                optionArray={yearOptionsArray} // Assigns the options to the year dropdown list
-                                value={String(calendarDisplay.getFullYear())} // Assigns the default value of the list to the current year
-                                onChange={(event) => {handleOnYearChange(event.target.value);}}
-                            />
+                            <MthYrArrow backOne = {backOneMonth} frontOne = {frontOneMonth}>
+                                <DropdownList
+                                    optionArray={monthOptionsArray} // Assigns the options to the month dropdown list
+                                    value={String(calendarDisplay.getMonth())} // Assigns the default value of the list to the current month
+                                    onChange={(event) => {handleOnMonthChange(event.target.value);}}
+                                />
+                            </MthYrArrow>
 
+                            <MthYrArrow backOne = {backOneYear} frontOne = {frontOneYear}>
+                                <DropdownList
+                                    optionArray={yearOptionsArray} // Assigns the options to the year dropdown list
+                                    value={String(calendarDisplay.getFullYear())} // Assigns the default value of the list to the current year
+                                    onChange={(event) => {handleOnYearChange(event.target.value);}}
+                                    />
+                            </MthYrArrow>
                             <MainCalendar
                                 displayDate={calendarDisplay} // Assigns the date to display (in month format) as the date in the calendarDisplay state
                                 onDateBoxClick={(date) => {
@@ -673,9 +956,14 @@ function HomePage() {
                 onClose={() => hideOverlayBackground()}>
                 <ShowEvent
                     eventid={showEventID}
+                    onModifyEventClick={() => {
+                      hideOverlayBackground()
+                        setModifyEventOpen(true)
+                    }}
                     setShowCalendarID={setShowCalendarID}
                     setShowCalendarOpen={setShowCalendarOpen}
                     setShowEventOpen={setShowEventOpen}
+                    currentAccountid={currentUserAccountId}
                 >
                 </ShowEvent>
             </OverlayBlock>
@@ -691,7 +979,11 @@ function HomePage() {
                     setShowAccountOpen={setShowAccountsOpen}
                     setShowEventID={setShowEventID}
                     setShowEventOpen={setShowEventOpen}
-                    refreshFollowedCalendars={refreshFollowedCalendars}>
+                    modifyCalendarOnClick={(e) => {
+                        hideOverlayBackground()
+                        setModifyCalendarOpen(true)
+                    }}
+                    refreshTrigger={setMainRefreshTrigger}>
                 </ShowCalendar>
             </OverlayBlock>
 
@@ -700,11 +992,53 @@ function HomePage() {
                 onClose={() => hideOverlayBackground()}>
                 <ShowAccount
                     accountid={showAccountID}
+                    currentAccountid={currentUserAccountId}
                     setShowCalendarID={setShowCalendarID}
                     setShowCalendarOpen={setShowCalendarOpen}
                     setShowAccountOpen={setShowAccountsOpen}
+                    refreshTrigger={setMainRefreshTrigger}
                 >
                 </ShowAccount>
+            </OverlayBlock>
+
+            <OverlayBlock
+                isHidden={!isModifyCalendarOpen}
+                onClose={() => hideOverlayBackground()}>
+                <ModifyCalendar
+                    accountid={currentUserAccountId}
+                    calendarid={showCalendarID}
+                    onClose={() => {
+                        setCreateCalendarOpen(false)
+                        setMainRefreshTrigger(mainRefreshTrigger + 1)
+                        hideOverlayBackground()
+                    }}
+                    onSave={() => {
+                        setCreateCalendarOpen(false)
+                        setMainRefreshTrigger(mainRefreshTrigger + 1)
+                        hideOverlayBackground()
+                    }}
+                >
+                </ModifyCalendar>
+            </OverlayBlock>
+
+            <OverlayBlock
+                isHidden={!isModifyEventOpen}
+                onClose={() => hideOverlayBackground()}>
+                <ModifyEvent
+                    accountid={currentUserAccountId}
+                    eventid={showEventID}
+                    onClose={() => {
+                        setModifyEventOpen(false)
+                        setMainRefreshTrigger(mainRefreshTrigger + 1)
+                        hideOverlayBackground()
+                    }}
+                    onSave={() => {
+                        setModifyEventOpen(false)
+                        setMainRefreshTrigger(mainRefreshTrigger + 1)
+                        hideOverlayBackground()
+                    }}
+                >
+                </ModifyEvent>
             </OverlayBlock>
 
             <OverlayBlock
@@ -731,6 +1065,10 @@ function HomePage() {
                 isHidden={isEventHidden} // Assigns isEventHidden function
                 onClose={() => hideOverlayBackground()} // Assigns toggleEventHidden function
             >
+                <DndProvider backend={HTML5Backend}>
+                    < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setSelectedEvent} setEventDetailsOpen={setEventDetailsOpen} monthEvents={monthEvents} setRefreshMonthEvents={setRefreshMonthEvents}>
+                    </TimeTable>
+                </DndProvider>
                 <button
                     onClick={() => setEventFormOpen(true)}
                     style={{
@@ -747,10 +1085,6 @@ function HomePage() {
                         boxShadow: '0 1px 4px rgba(0,0,0,0.10)'
                     }}
                 >+ Add Event</button>
-                <div style={{ paddingBottom: '20px' }}>
-                    <TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setSelectedEvent} setEventDetailsOpen={setEventDetailsOpen}>
-                    </TimeTable>
-                </div>
             </OverlayBlock>
 
             {isEventDetailsOpen && selectedEvent && (

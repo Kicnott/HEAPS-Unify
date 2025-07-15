@@ -3,7 +3,7 @@ import eventService from '../../services/eventService.jsx'
 import { getMyCalendars } from '../LeftPanel/LeftPanelFunctions.jsx'
 import { DateTime } from 'luxon'
 
-export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid }) => {
+export const ModifyEvent = ({ onClose, chosenDate, onSave, accountid, calendarid, eventid }) => {
 
   function formatDateForInput(date) {
     const year = date.getFullYear();
@@ -11,9 +11,7 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
-
-  //have multiple day event option now. check how its stored in db, then bring logic over to timetable.jsx
-  //find out if i want all day row or just make a full column
+  const [eventData, setEventData] = useState([])
 
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
@@ -21,12 +19,51 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
   const [startTime, setStartTime] = useState("")
   const [endTime, setEndTime] = useState("")
   const [repeat, setRepeat] = useState("None")
-  const [repeatEndDate, setRepeatEndDate] = useState("")
   const [errors, setErrors] = useState([])
   const [calendarID, setCalendarID] = useState(calendarid || "")
   const [myCalendars, setMyCalendars] = useState([])
   const [eventStartDate, setEventStartDate] = useState(formatDateForInput(new Date()))
   const [eventEndDate, setEventEndDate] = useState(formatDateForInput(new Date()))
+
+  useEffect(() => {
+    if (eventid) {
+      eventService.getEvent(eventid)
+        .then(res => setEventData(res.data))
+        .catch(err => setErrors("Event not found or error loading calendar."));
+    }
+  }, [eventid])
+
+  useEffect(() => {
+    if (eventData) {
+      setName(eventData.eventname || "");
+      setDescription(eventData.eventdescription || "");
+      setLocation(eventData.eventlocation || "");
+
+      // Only parse dates if they exist
+      let startdateStr = "";
+      let starttimeStr = "";
+      let enddateStr = "";
+      let endtimeStr = "";
+
+      if (eventData.startdt) {
+        const startdt = DateTime.fromISO(eventData.startdt, { zone: 'utc' }).toLocal();
+        startdateStr = startdt.toFormat('yyyy-MM-dd');
+        starttimeStr = startdt.toFormat('HH:mm');
+      }
+      if (eventData.enddt) {
+        const enddt = DateTime.fromISO(eventData.enddt, { zone: 'utc' }).toLocal();
+        enddateStr = enddt.toFormat('yyyy-MM-dd');
+        endtimeStr = enddt.toFormat('HH:mm');
+      }
+
+      setStartTime(starttimeStr);
+      setEndTime(endtimeStr);
+      setEventStartDate(startdateStr);
+      setEventEndDate(enddateStr);
+      setCalendarID(eventData.calendarid)
+    }
+  }, [eventData]);
+
 
   useEffect(() => {
     getMyCalendars(accountid).then(setMyCalendars);
@@ -39,6 +76,19 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
     }
   }, [chosenDate])
   // console.log("myCalendars State:", myCalendars)
+
+  const handleDelete = async (e) => {
+    try{
+      const res = await eventService.deleteEvent(eventid)
+
+      if (onClose){
+        onClose()
+      }
+    }
+    catch (err){
+      console.error("Error deleting calendar", err)
+    }
+  }
 
   const handleSave = async (e) => {
     setErrors([]);
@@ -88,13 +138,14 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
 
 
     try {
-      const res = await eventService.createEvent({
-        name,
-        description,
-        location,
+      const res = await eventService.modifyEvent({
+        eventid: eventid,
+        eventname: name,
+        eventdescription: description,
+        eventlocation: location,
         startdt: startDateTime.toISOString(),  // UTC format
         enddt: endDateTime.toISOString(),      // UTC format  
-      calendarID,
+        calendarid: calendarID
       })
 
       setName("");
@@ -102,15 +153,14 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
       setLocation("");
       setStartTime("");
       setEndTime("");
-      setRepeat("")
       setCalendarID("")
       setErrors([]);
 
-      console.log('Event insertion status:', res.data.status)
+      console.log('Event modify status:', res.data.status)
       if (onSave) onSave();
     } catch (err) {
-      console.error("Error creating event", err);
-      setErrors(["Failed to create event. Please try again."]);
+      console.error("Error modifying event", err);
+      setErrors(["Failed to modify event. Please try again."]);
     }
   }
 
@@ -132,7 +182,7 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
   return (
     <div style={{ width: '100%' }}>
       <h2>
-        New Event
+        Modify Event
       </h2>
       <hr></hr>
 
@@ -164,35 +214,12 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
           type="date"
           value={eventEndDate}
           min={DateTime.fromJSDate(chosenDate).toFormat('yyyy-MM-dd')}
-          onChange={e => setEndDate(e.target.value)}
+          onChange={e => setEventEndDate(e.target.value)}
           style={inputStyle}
         />
 
         <input type="time" step='900' value={endTime} onChange={round15Minute(setEndTime)} style={inputStyle} />
       </div>
-
-      <div style={{ marginTop: '12px' }}>
-        <label>Repeat</label>
-        <select value={repeat} onChange={e => setRepeat(e.target.value)} style={inputStyle}>
-          <option>None</option>
-          <option>Every day</option>
-          <option>Every week</option>
-          <option>Every month</option>
-        </select>
-      </div>
-
-      {repeat != 'None' && repeat != 'Every day' && (
-        <div style={{ marginTop: '12px' }}>
-          <label>Repeat until</label>
-          <input
-            type="date"
-            value={eventEndDate}
-            min={DateTime.fromJSDate(chosenDate).toFormat('yyyy-MM-dd')}
-            onChange={e => setRepeatEndDate(e.target.value)}
-            style={inputStyle}
-          />
-          </div>
-      )}
 
       <div style={{ marginTop: '12px' }}>
         <label>Calendar</label>
@@ -215,7 +242,7 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
       )}
 
       <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
-        <button style={discardBtnStyle} onClick={onClose}>Discard</button>
+        <button style={discardBtnStyle} onClick={handleDelete}>Delete</button>
         <button style={saveBtnStyle} onClick={handleSave}>Save</button>
       </div>
     </div>
