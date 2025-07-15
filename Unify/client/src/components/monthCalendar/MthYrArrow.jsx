@@ -9,9 +9,9 @@ export const MthYrArrow = ({children, backOne, frontOne}) => {
             display: 'flex',
             alignItems: 'center',
         }}>
-            <ArrowLeftIcon fontSize="large" onClick={backOne}/>
+            <ArrowLeftIcon fontSize="large" style={{cursor: 'pointer'}} onClick={backOne}/>
             {children}
-            <ArrowRightIcon fontSize="large" style= {{marginLeft: '45px'}} onClick={frontOne}/>
+            <ArrowRightIcon fontSize="large" style={{marginLeft: '45px', cursor: 'pointer'}} onClick={frontOne}/>
         </div>
     )
 }
