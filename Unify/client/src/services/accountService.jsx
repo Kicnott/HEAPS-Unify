@@ -16,7 +16,7 @@ const createAccount = (data) => {
 }
 
 const deleteAccount = (data) => {
-    return http.delete(`/home/deleteAccount`, {data})
+    return http.delete('/home/deleteAccount', { data });
 }
 
 const getAccount = (accountid) => {
