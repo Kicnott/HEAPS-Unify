@@ -47,7 +47,7 @@ const dragOver = (e) => {
     e.preventDefault(); // allow drop
 };
 
-const drop = (e, displayDate) => {
+const drop = async (e, displayDate) => {
   e.preventDefault();
 
   dragCounter.current = 0
@@ -110,7 +110,7 @@ const drop = (e, displayDate) => {
   draggedEvent.enddt.substring(10, 11) + String(endHours).padStart(2, '0') + ':' + String(endMin).padStart(2, '0') + ':' + String(endSec).padStart(2, '0');
 
   try {
-    const result = eventService.updateEvent({
+    const result = await eventService.updateEvent({
       eventId : eventid,
       newStartDt : newStartDt,
       newEndDt : newEndDt

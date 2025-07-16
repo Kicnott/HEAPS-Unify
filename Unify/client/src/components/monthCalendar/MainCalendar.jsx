@@ -209,7 +209,7 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshMont
                             }                        
                         }
                     } else if (isEventAcrossAndEndsThisMonth) { // event started before curr month and ends in this month
-                        let eventPartition = event;
+                        let eventPartition = {...event};
                         eventPartition.startdt = baseStartDate.toISOString()
 
                         const diffInDaysPartition =  Math.ceil((new Date(eventPartition.enddt) - baseStartDate) / (1000 * 60 * 60 * 24));
@@ -223,7 +223,7 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshMont
                             const workingIndexSun = (passedEdge * 7);
                             if ((passedEdge * 7) > cellCount){ break; } // prevents index overflow
                             if (passedEdge == noOfSunPassedPartition){ // case 4: passed edge, final week
-                                monthEventsArray[workingIndexSun][innerArrayIndex] = calenderEventsType.case4Event(eventPartition, diffInDaysToSunEndPartition, onMonthEventClick);
+                                monthEventsArray[workingIndexSun][innerArrayIndex] = calenderEventsType.case4Event(event, diffInDaysToSunEndPartition, onMonthEventClick);
                                 const noOfEmptyDivFinalWeek = diffInDaysPartition - (diffInDaysToSatStartPartition + 1) - ((noOfSunPassedPartition - 1) * 7);
                                 for (let emptyPopulator = 1; emptyPopulator < noOfEmptyDivFinalWeek; emptyPopulator++){
                                     if (workingIndexSun + emptyPopulator == cellCount) { break; } // prevents index overflow
@@ -231,7 +231,7 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshMont
                                     emptyEventSpaceCount += 1; // increments emptyEventSpaceCount to set keys
                                 }
                             } else { // case 5: passed edge, full week
-                                monthEventsArray[workingIndexSun][innerArrayIndex] = calenderEventsType.case5Event(eventPartition, onMonthEventClick);
+                                monthEventsArray[workingIndexSun][innerArrayIndex] = calenderEventsType.case5Event(event, onMonthEventClick);
                                 for (let emptyPopulator = 1; emptyPopulator < diffInDaysToSatStartPartition + 1; emptyPopulator++){
                                     if (workingIndexSun + emptyPopulator == cellCount) { break; } // prevents index overflow
                                     monthEventsArray[workingIndexSun + emptyPopulator][innerArrayIndex] = calenderEventsType.case7Event(emptyEventSpaceCount);
