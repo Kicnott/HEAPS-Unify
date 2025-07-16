@@ -10,9 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@fullcalendar/core": "^6.1.17",
     "@fullcalendar/daygrid": "^6.1.17",
     "@fullcalendar/react": "^6.1.17",
+    "@mui/icons-material": "^7.2.0",
+    "@mui/material": "^7.2.0",
     "@radix-ui/react-popover": "^1.1.14",
     "@uiw/react-color-wheel": "^2.6.0",
     "axios": "^1.10.0",

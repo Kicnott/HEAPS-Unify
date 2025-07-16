@@ -1,6 +1,7 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useDrag } from 'react-dnd';
 import { DND_ITEM_TYPE } from '../../constants/dndTypes.js';
+import { getEmptyImage } from 'react-dnd-html5-backend';
 import '../../styles/timetable.css';
 
 export function DragEventBlock({ event, gridRow, gridColumn, children, onClick }) {
@@ -45,6 +46,10 @@ export function DragEventBlock({ event, gridRow, gridColumn, children, onClick }
     dragRef(node);
   };
 
+  useEffect(() => {
+    dragRef(getEmptyImage(), { captureDraggingState: true });
+  }, [dragRef]);
+
   return (
     <div
       ref={setRefs}
@@ -57,6 +62,7 @@ export function DragEventBlock({ event, gridRow, gridColumn, children, onClick }
         pointerEvents: isDragging ? 'none' : 'auto',
         cursor: 'move',
         userSelect: 'none',
+        backgroundColor: event.calendarcolour
       }}
     >
       {children}

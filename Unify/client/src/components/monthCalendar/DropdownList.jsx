@@ -1,18 +1,16 @@
 import React from 'react'
-import '../../styles/DropdownList.css'; 
+import '../../styles/DropdownList.css';
 
-// DropdownList is a (mostly redundant) component that is almost exactly like <select> in HTML.
-// Created to stay in line with React's format of creating reusable components.
-export const DropdownList = ({optionArray, onChange, value}) => {
+export const DropdownList = ({ optionArray, onChange, value }) => {
   // optionArray: The array of option objects that will be stored in <option> nested in <select>
-  //     - Format is:
-  //        let optionArray = [
-  //            {value: '1', label: 'Option 1'},
-  //            {value: '2', label: 'Option 2'},
-  //            ...
-  //        ]
-  //        - value is the variable to be stored and used for processing
-  //        - label is the string to be displayed in the list for the option
+  // - Format is:
+  // let optionArray = [
+  // {value: '1', label: 'Option 1'},
+  // {value: '2', label: 'Option 2'},
+  // ...
+  // ]
+  // - value is the variable to be stored and used for processing
+  // - label is the string to be displayed in the list for the option
   // onChange: A function to be run whenever the selected option is changed. E.g. updating the calendar displayed.
   // value: The default value that will be selected at the start.
   return (

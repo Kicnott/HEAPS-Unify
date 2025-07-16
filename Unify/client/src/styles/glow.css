@@ -1,0 +1,7 @@
+ .glow-hover {
+    transition: box-shadow 0.2s ease-in-out;
+    cursor: pointer;
+  }
+  .glow-hover:hover {
+    box-shadow: 0 0 8px 2px #8d4f36;
+  }

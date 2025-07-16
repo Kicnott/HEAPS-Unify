@@ -2,6 +2,23 @@ import React, { useEffect, useState } from 'react'
 import eventService from '../../services/eventService.jsx'
 import { getMyCalendars } from '../LeftPanel/LeftPanelFunctions.jsx'
 import { DateTime } from 'luxon'
+import ReactDOM from 'react-dom';
+
+
+
+const ConfirmDelete = ({ eventid, eventname, calendarid, onCloseModal, onConfirm }) => {
+  return (
+    <div style={modalStyle}>
+      <p>Do you want to delete just this event, or all events with the same name in this calendar?</p>
+      <div style={{ marginTop: '12px', display: 'flex', justifyContent: 'space-between' }}>
+        <button onClick={() => onConfirm(false)} style={discardBtnStyle}>Just this one</button>
+        <button onClick={() => onConfirm(true)} style={saveBtnStyle}>All with this name</button>
+        <button onClick={onCloseModal} style={{ ...discardBtnStyle, marginLeft: '10px' }}>Cancel</button>
+      </div>
+    </div>
+  );
+};
+
 
 export const ModifyEvent = ({ onClose, chosenDate, onSave, accountid, calendarid, eventid }) => {
 
@@ -18,12 +35,13 @@ export const ModifyEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
   const [location, setLocation] = useState("")
   const [startTime, setStartTime] = useState("")
   const [endTime, setEndTime] = useState("")
-  const [repeat, setRepeat] = useState("None")
   const [errors, setErrors] = useState([])
   const [calendarID, setCalendarID] = useState(calendarid || "")
   const [myCalendars, setMyCalendars] = useState([])
   const [eventStartDate, setEventStartDate] = useState(formatDateForInput(new Date()))
   const [eventEndDate, setEventEndDate] = useState(formatDateForInput(new Date()))
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+
 
   useEffect(() => {
     if (eventid) {
@@ -78,27 +96,30 @@ export const ModifyEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
   // console.log("myCalendars State:", myCalendars)
 
   const handleDelete = async (e) => {
-    try{
-      const res = await eventService.deleteEvent(eventid)
 
-      if (onClose){
-        onClose()
-      }
-    }
-    catch (err){
-      console.error("Error deleting calendar", err)
-    }
+    setShowConfirmDelete(true);
   }
+
+  const handleConfirmDelete = async (deleteAll) => {
+    try {
+      if (deleteAll) {
+
+        await eventService.deleteDuplicateEvent(eventData.calendarid, eventData.eventname);
+      } else {
+
+        await eventService.deleteEvent(eventid);
+      }
+      setShowConfirmDelete(false);
+      if (onClose) onClose();
+    } catch (err) {
+      setErrors(["Failed to delete event. Please try again."]);
+      setShowConfirmDelete(false);
+    }
+  };
+
 
   const handleSave = async (e) => {
     setErrors([]);
-    // get the chosenDate and change its hours and minutes according to input start/end time
-    // const startDateTime = new Date(chosenDate);
-    // const endDateTime = new Date(chosenDate);
-    // const [startHours, startMinutes] = startTime.split(':').map(Number);
-    // const [endHours, endMinutes] = endTime.split(':').map(Number);
-    // startDateTime.setHours(startHours, startMinutes);
-    // endDateTime.setHours(endHours, endMinutes);
 
     const startDateTime = new Date(`${eventStartDate}T${startTime}`);
     const endDateTime = new Date(`${eventEndDate}T${endTime}`);
@@ -179,6 +200,10 @@ export const ModifyEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
     }
   }
 
+  useEffect(() => {
+    setShowConfirmDelete(false);
+  }, [eventData]);
+
   return (
     <div style={{ width: '100%' }}>
       <h2>
@@ -245,7 +270,29 @@ export const ModifyEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
         <button style={discardBtnStyle} onClick={handleDelete}>Delete</button>
         <button style={saveBtnStyle} onClick={handleSave}>Save</button>
       </div>
+      {showConfirmDelete && ReactDOM.createPortal(
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.35)',
+          zIndex: 9999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <ConfirmDelete
+            eventid={eventid}
+            eventname={name}
+            calendarid={calendarID}
+            onCloseModal={() => setShowConfirmDelete(false)}
+            onConfirm={handleConfirmDelete}
+          />
+        </div>,
+        document.body
+      )}
     </div>
+
+
   )
 }
 
@@ -275,3 +322,12 @@ const saveBtnStyle = {
   padding: '6px 12px',
   cursor: 'pointer'
 }
+
+const modalStyle = {
+  background: '#fff',
+  padding: '20px',
+  borderRadius: '8px',
+  width: '400px',
+  maxWidth: '90%',
+  boxShadow: '0 2px 12px rgba(0,0,0,0.3)'
+};

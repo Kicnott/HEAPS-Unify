@@ -5,14 +5,7 @@ import { DropGridCell } from './DropGridCell.jsx';
 import eventService from '../../services/eventService.jsx';
 import '../../styles/timetable.css';
 
-//add drag and drop & event extension
-//allow div to be created at last block 11pm-12am
-//automatically assigned endidx to be last block if endidx is ever smaller than startidx. dont think this will work for multi day events 
-
-//make all day event block
-
-export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector, setEventDetailsOpen, closeOthers }) => {
-    // const [eventsForDay, setEventsForDay] = useState([]);
+export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector, setEventDetailsOpen, monthEvents, setRefreshMonthEvents, closeOthers, followedEvents }) => {
     const [maxLanes, setMaxLanes] = useState(1);
     const [timedEvents, setTimedEvents] = useState([]);
     const [allDayEvents, setAllDayEvents] = useState([]);
@@ -33,31 +26,27 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
             const dayStart = DateTime.fromJSDate(chosenDate).startOf('day');
             const dayEnd = dayStart.plus({ days: 1 });
 
-            try {
-                const response = await eventService.getEvents();
-                const eventRows = response.data.rows;
-                eventRows.forEach(e => { if (!e.eventid && e.id) e.eventid = e.id; });
+            // try {
+            //     const response = await eventService.getEvents();
+            //     const eventRows = response.data.rows;
+            monthEvents.forEach(e => { if (!e.eventid && e.id) e.eventid = e.id; });
+            const { timed, allDay } = processEvents(monthEvents, dayStart, dayEnd);
+            const newMaxLanes = calculateMaxLanes(timed);
 
-                // Process events (use your processEvents function if you have one)
-                const { timed, allDay } = processEvents(eventRows, dayStart, dayEnd);
+            setMaxLanes(newMaxLanes);
+            setTimedEvents(timed);
+            setAllDayEvents(allDay);
 
-                // Calculate max lanes (use your calculateMaxLanes function if you have one)
-                const newMaxLanes = calculateMaxLanes(timed);
+            // Assign events to lanes (use your assignLanes function if you have one)
+            const initialAssignedEvents = assignLanes(timed, newMaxLanes);
+            setEventsWithLanes(initialAssignedEvents);
 
-                setMaxLanes(newMaxLanes);
-                setTimedEvents(timed);
-                setAllDayEvents(allDay);
-
-                // Assign events to lanes (use your assignLanes function if you have one)
-                const initialAssignedEvents = assignLanes(timed, newMaxLanes);
-                setEventsWithLanes(initialAssignedEvents);
-
-            } catch (e) {
-                console.error('error fetching events:', e);
-                setTimedEvents([]);
-                setAllDayEvents([]);
-                setEventsWithLanes([]);
-            }
+            // } catch (e) {
+            //     console.error('error fetching events:', e);
+            //     setTimedEvents([]);
+            //     setAllDayEvents([]);
+            //     setEventsWithLanes([]);
+            // }
         };
 
         getEvents(); // <-- Don't forget to call the async function!
@@ -261,7 +250,14 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
         );
     }
 
+    const flattenedFollowedEvents = useMemo(() => {
+        return Object.values(followedEvents).flat();
+    }, [followedEvents]);
 
+    function isEventFollowed(event) {
+        return flattenedFollowedEvents.some(f => String(f.eventid) === String(event.eventid));
+    }
+    
     const handleEventDrop = async (item, dropIdx, dropLaneIdx) => {
         // if (item.lane !== dropLaneIdx) return;
 
@@ -300,13 +296,14 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
             });
 
             // Refresh events after update
-            const response = await eventService.getEvents();
-            const eventRows = response.data.rows;
-            eventRows.forEach(e => { if (!e.eventid && e.id) e.eventid = e.id; });
-            const dayStart = DateTime.fromJSDate(chosenDate).startOf('day');
-            const dayEnd = dayStart.plus({ days: 1 });
-
-            const { timed, allDay } = processEvents(eventRows, dayStart, dayEnd);
+            // const response = await eventService.getEvents();
+            // const eventRows = response.data.rows;
+            const updatedMonthEvents = monthEvents.map(e =>
+                e.eventid === item.eventid
+                    ? { ...e, startdt: newStartdt, enddt: newEnddt }
+                    : e
+            );
+            const { timed, allDay } = processEvents(updatedMonthEvents, dayStart, dayEnd);
             const newMaxLanes = calculateMaxLanes(timed);
 
             setMaxLanes(newMaxLanes);
@@ -315,6 +312,8 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
 
             const updatedAssignedEvents = assignLanes(timed, newMaxLanes);
             setEventsWithLanes(updatedAssignedEvents);
+
+            setRefreshMonthEvents(prev => prev + 1)
 
         } catch (e) {
             console.error("Error updating event:", e);
@@ -346,15 +345,9 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                 ...gridContainerStyle,
                 gridTemplateColumns: gridCols,
                 gridTemplateRows: gridTemplateRows,
-                overflowX: 'auto'
+                width: 'fit-content',
+                minWidth: '100%'
             }}>
-                <div
-                    style={{
-                        ...hourLabelStyle,
-                        gridRow: '1',
-                        gridColumn: '1'
-                    }}>
-                    All Day</div>
                 <div style={{ ...hourLabelStyle, gridRow: '1', gridColumn: '1' }}>
                     All Day
                 </div>
@@ -367,16 +360,17 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                         style={{
                             gridRow: 1,
                             gridColumn: e.lane + 2,
+                            backgroundColor: e.calendarcolour
                         }}
                         onClick={() => {
                             eventselector(e.originalEvent.eventid || e.eventid);
                             closeOthers()
                             setTimeout(() => {
                                 setEventDetailsOpen(true)
-                            }, 100)
+                            }, 50)
                         }}
                     >
-                        {e.eventname}</div>
+                        <div className="event-text">{e.eventname}</div></div>
                 ))}
 
                 {hoursCreator().map((hourData, hourIdx) => (
@@ -426,7 +420,7 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
 
 
                 {eventsWithLanes.map((e, eIdx) =>
-                    isSingleDayEvent(e, dayStart, dayEnd) ? (
+                    isSingleDayEvent(e, dayStart, dayEnd) && !isEventFollowed(e) ? (
                         <DragEventBlock
                             key={`event-${eIdx}`}
                             event={e}
@@ -437,9 +431,9 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                                 closeOthers()
                                 setTimeout(() => {
                                     setEventDetailsOpen(true)
-                                }, 100)
+                                }, 50)
                             }}>
-                            {e.eventname}
+                            <div className="event-text">{e.eventname}</div>
                         </DragEventBlock>
                     ) : (
                         <div
@@ -452,13 +446,17 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                                 pointerEvents: 'auto',
                                 cursor: 'default',
                                 userSelect: 'none',
+                                backgroundColor: e.calendarcolour
                             }}
                             onClick={() => {
-                                eventselector(e.originalEvent || e);
-                                setEventDetailsOpen(true);
+                                eventselector(e.originalEvent.eventid || e.eventid);
+                                closeOthers()
+                                setTimeout(() => {
+                                    setEventDetailsOpen(true)
+                                }, 50)
                             }}
                         >
-                            {e.eventname}
+                            <div className="event-text">{e.eventname}</div>
                         </div>
                     )
                 )}
