@@ -10,9 +10,6 @@ const case1Event = (event, onClick) => {
 
     const currUserAccountId = sessionStorage.getItem("currentUserAccountId");
 
-    console.log("currUserAccountId: ", currUserAccountId)
-    console.log("event.accountid: ", event.accountid)
-    console.log("lol")
     return <div
         className="glow-hover"
         style={{
