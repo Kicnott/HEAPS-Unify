@@ -12,8 +12,7 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
     const [eventsWithLanes, setEventsWithLanes] = useState([]);
     const [hoverRange, setHoverRange] = useState({ start: null, end: null, lane: null });
 
-
-
+    //get start and end of the chosen cells date
     const dayStart = DateTime.fromJSDate(chosenDate).startOf('day');
     const dayEnd = dayStart.plus({ days: 1 });
 
@@ -22,39 +21,31 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
         setAllDayEvents([]);
         setMaxLanes(1);
 
+
         const getEvents = async () => {
             const dayStart = DateTime.fromJSDate(chosenDate).startOf('day');
             const dayEnd = dayStart.plus({ days: 1 });
-
-            // try {
-            //     const response = await eventService.getEvents();
-            //     const eventRows = response.data.rows;
             monthEvents.forEach(e => { if (!e.eventid && e.id) e.eventid = e.id; });
-            const { timed, allDay } = processEvents(monthEvents, dayStart, dayEnd);
-            const newMaxLanes = calculateMaxLanes(timed);
 
+            // sort months events to chosen date, and also categorise them
+            const { timed, allDay } = processEvents(monthEvents, dayStart, dayEnd);
+
+            // for timed events, get number of max lanes
+            const newMaxLanes = calculateMaxLanes(timed);
             setMaxLanes(newMaxLanes);
             setTimedEvents(timed);
             setAllDayEvents(allDay);
 
-            // Assign events to lanes (use your assignLanes function if you have one)
+            // Assign events to lanes 
             const initialAssignedEvents = assignLanes(timed, newMaxLanes);
             setEventsWithLanes(initialAssignedEvents);
-
-            // } catch (e) {
-            //     console.error('error fetching events:', e);
-            //     setTimedEvents([]);
-            //     setAllDayEvents([]);
-            //     setEventsWithLanes([]);
-            // }
         };
-
-        getEvents(); // <-- Don't forget to call the async function!
+        getEvents(); 
 
     }, [chosenDate, refreshTrigger]);
 
 
-
+    // filter events and sort it to categories, all-day or timed and multiple day events, all-day or time
     const processEvents = (events, dayStart, dayEnd) => {
         const timed = [];
         const allDay = [];
@@ -63,9 +54,10 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
             const start = DateTime.fromISO(e.startdt);
             const end = DateTime.fromISO(e.enddt);
 
+            // if event was not part of the chosen date, skip
             if (end <= dayStart || start >= dayEnd) return;
 
-            // 1. Single-day all-day event
+            // Filter single-day all-day event 12am - 1145pm
             if (start.equals(dayStart) && end.equals(dayStart.plus({ hours: 23, minutes: 45 }))) {
                 allDay.push({
                     ...e,
@@ -76,7 +68,7 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                 return;
             }
 
-            // 2. In-between days of multi-day event
+            // Filter in-between days of a multi-day event to be treated as an all-day event
             if (start < dayStart && end > dayEnd) {
                 allDay.push({
                     ...e,
@@ -87,7 +79,8 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                 return;
             }
 
-            // 3. First day of multi-day event
+            // Filter for first day of multi-day event to be treated as all-day event
+            // else, treat first day as a timed event (not all-day)
             if (start >= dayStart && start < dayEnd && end > dayEnd) {
                 if (start.hour === 0 && start.minute === 0) {
                     allDay.push({
@@ -109,7 +102,8 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                 return;
             }
 
-            // 4. Last day of multi-day event
+            // Filter for last day of multi-day event to be treated as all-day event
+            // else, treat last day as a timed event (not all-day)
             if (start < dayStart && end > dayStart && end <= dayEnd) {
                 if (end.equals(dayStart.plus({ hours: 23, minutes: 45 }))) {
                     allDay.push({
@@ -131,7 +125,7 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                 return;
             }
 
-            // 5. Single-day timed event
+            // Filter for single-day timed event
             if (start >= dayStart && end <= dayEnd) {
                 timed.push({
                     ...e,
@@ -146,6 +140,7 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
         return { timed, allDay };
     };
 
+    // for timed events, get max lanes for overlapping events, + 1 for space to drag and drop
     const calculateMaxLanes = (events) => {
         const laneCounts = Array(96).fill(0);
         events.forEach(e => {
@@ -163,6 +158,7 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
         return Math.max(1, ...laneCounts) + 1;
     };
 
+    // returns array where each event has its own laning, start and end interval row index
     const assignLanes = (events, maxLanes) => {
         const sortedEvents = [...events].sort((a, b) =>
             DateTime.fromISO(a.startdt) - DateTime.fromISO(b.startdt)
@@ -170,7 +166,6 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
 
         const lanes = Array(96).fill().map(() => Array(maxLanes).fill(null));
         const assignedEvents = [];
-
         sortedEvents.forEach(e => {
             const start = DateTime.fromISO(e.startdt);
             const end = DateTime.fromISO(e.enddt);
@@ -209,6 +204,7 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
         return assignedEvents;
     };
 
+    // get allday events with its laning index, just one row though
     const allDayEventsLanes = useMemo(() => {
         return allDayEvents.map((e, idx) => ({
             ...e,
@@ -216,6 +212,7 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
         }));
     }, [allDayEvents]);
 
+    // get the max lane between timed events and all day events rows
     const maxAllDayLanes = allDayEventsLanes.length;
     const totalMaxLanes = Math.max(maxLanes, maxAllDayLanes);
 
@@ -232,6 +229,7 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
         return hours;
     };
 
+    // filters whether the event is a true single day event, from timed events where it could be timed for single, or start and end of multi day event
     function isSingleDayEvent(event, dayStart, dayEnd) {
         const start = DateTime.fromISO(event.startdt);
         const end = DateTime.fromISO(event.enddt);
@@ -250,6 +248,7 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
         );
     }
 
+    // simplifies followedevents object to make parsing followedevents to not be dragged and dropped easier
     const flattenedFollowedEvents = useMemo(() => {
         return Object.values(followedEvents).flat();
     }, [followedEvents]);
@@ -258,8 +257,8 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
         return flattenedFollowedEvents.some(f => String(f.eventid) === String(event.eventid));
     }
     
+    // stop events from drag and dropped to occupied intervals, or the very last 15 min to 12am cell. also updates the event info upon successful DND
     const handleEventDrop = async (item, dropIdx, dropLaneIdx) => {
-        // if (item.lane !== dropLaneIdx) return;
 
         const duration = item.endIdx - item.startIdx;
         const newStartIdx = dropIdx;
@@ -279,7 +278,6 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
         const newStartdt = dayStart.plus({ minutes: newStartIdx * 15 }).toISO();
         const newEnddt = dayStart.plus({ minutes: newEndIdx * 15 }).toISO();
 
-        // Optimistically update UI (optional)
         setEventsWithLanes(prev =>
             prev.map(e =>
                 e.eventid === item.eventid
@@ -295,9 +293,6 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                 eventId: item.eventid
             });
 
-            // Refresh events after update
-            // const response = await eventService.getEvents();
-            // const eventRows = response.data.rows;
             const updatedMonthEvents = monthEvents.map(e =>
                 e.eventid === item.eventid
                     ? { ...e, startdt: newStartdt, enddt: newEnddt }
@@ -317,10 +312,10 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
 
         } catch (e) {
             console.error("Error updating event:", e);
-            // Optionally revert UI
         }
     };
 
+    // timegrid width calculation for laning
     const MIN_TOTAL_WIDTH = 300;
     const LANE_WIDTH = 82;
     let gridCols = '60px ';
