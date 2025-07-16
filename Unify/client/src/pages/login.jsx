@@ -80,7 +80,6 @@ return (
                         id='password'
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        style={{marginLeft: '5px'}}
                     />
                     <br /><br />
 
