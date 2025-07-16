@@ -12,15 +12,12 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
     return `${year}-${month}-${day}`;
   }
 
-  //have multiple day event option now. check how its stored in db, then bring logic over to timetable.jsx
-  //find out if i want all day row or just make a full column
-
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
   const [location, setLocation] = useState("")
   const [startTime, setStartTime] = useState("")
   const [endTime, setEndTime] = useState("")
-  const [repeat, setRepeat] = useState("None")
+  const [repeat, setRepeat] = useState("none")
   const [repeatEndDate, setRepeatEndDate] = useState("")
   const [errors, setErrors] = useState([])
   const [calendarID, setCalendarID] = useState(calendarid || "")
@@ -42,13 +39,6 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
 
   const handleSave = async (e) => {
     setErrors([]);
-    // get the chosenDate and change its hours and minutes according to input start/end time
-    // const startDateTime = new Date(chosenDate);
-    // const endDateTime = new Date(chosenDate);
-    // const [startHours, startMinutes] = startTime.split(':').map(Number);
-    // const [endHours, endMinutes] = endTime.split(':').map(Number);
-    // startDateTime.setHours(startHours, startMinutes);
-    // endDateTime.setHours(endHours, endMinutes);
 
     const startDateTime = new Date(`${eventStartDate}T${startTime}`);
     const endDateTime = new Date(`${eventEndDate}T${endTime}`);
@@ -94,7 +84,9 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
         location,
         startdt: startDateTime.toISOString(),  // UTC format
         enddt: endDateTime.toISOString(),      // UTC format  
-      calendarID,
+        calendarID,
+        repeat,
+        repeatEndDate
       })
 
       setName("");
@@ -164,7 +156,7 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
           type="date"
           value={eventEndDate}
           min={DateTime.fromJSDate(chosenDate).toFormat('yyyy-MM-dd')}
-          onChange={e => setEndDate(e.target.value)}
+          onChange={e => setEventEndDate(e.target.value)}
           style={inputStyle}
         />
 
@@ -174,24 +166,25 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
       <div style={{ marginTop: '12px' }}>
         <label>Repeat</label>
         <select value={repeat} onChange={e => setRepeat(e.target.value)} style={inputStyle}>
-          <option>None</option>
-          <option>Every day</option>
-          <option>Every week</option>
-          <option>Every month</option>
+          <option value='none'>None</option>
+          <option value='daily'>Every day</option>
+          <option value='weekly'>Every week</option>
+          <option value='monthly'>Every month</option>
+          <option value='yearly'>Every year</option>
         </select>
       </div>
 
-      {repeat != 'None' && repeat != 'Every day' && (
+      {repeat != 'none' && (
         <div style={{ marginTop: '12px' }}>
           <label>Repeat until</label>
           <input
             type="date"
-            value={eventEndDate}
+            value={repeatEndDate}
             min={DateTime.fromJSDate(chosenDate).toFormat('yyyy-MM-dd')}
             onChange={e => setRepeatEndDate(e.target.value)}
             style={inputStyle}
           />
-          </div>
+        </div>
       )}
 
       <div style={{ marginTop: '12px' }}>
