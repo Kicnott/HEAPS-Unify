@@ -2,7 +2,7 @@ import axios from "axios";
 import { CalendarDateBox } from "../components/monthCalendar/CalendarDateBox";
 
 const http = axios.create({
-    baseURL: "https://heaps-unify-1.onrender.com/",
+    baseURL: "http://localhost:8888",
     headers: {
         "Content-Type": "application/json",
     },
