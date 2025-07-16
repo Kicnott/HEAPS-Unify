@@ -28,7 +28,7 @@ const getMyEvents = (calendarid) => {
 }
 
 const getEvent = (eventid) => {
-    return http.get('/home/getEvent', {params: { eventid: eventid }})
+    return http.get('/home/getEvent', { params: { eventid: eventid } })
 }
 
 const deleteEvent = (eventid) => {
@@ -39,6 +39,11 @@ const modifyEvent = (data) => {
     return http.post('/home/modifyEvent', data)
 }
 
+const deleteDuplicateEvent = (calendarid, eventname) => {
+    return http.delete(`/home/deleteDuplicateEvent/${calendarid}/${encodeURIComponent(eventname)}`);
+};
+
+
 export default {
     createEvent,
     getEvents,
@@ -46,5 +51,6 @@ export default {
     getEvent,
     updateEvent,
     deleteEvent,
-    modifyEvent
+    modifyEvent,
+    deleteDuplicateEvent
 }

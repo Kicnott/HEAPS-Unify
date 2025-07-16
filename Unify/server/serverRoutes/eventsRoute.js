@@ -194,7 +194,7 @@ router.delete('/home/deleteEvent/:id', async (req, res) => {
       'DELETE FROM eventstable WHERE eventid = ($1)', [eventid]
     )
 
-    if (result.rowCount === 0) { // if result constant has no rows, it means no rows are deleted
+    if (result.rowCount === 0) { 
       return res.json({ status: "Failed to delete event" });
     } else {
       return res.json({ status: "Event deleted" });
@@ -205,6 +205,29 @@ router.delete('/home/deleteEvent/:id', async (req, res) => {
     return res.json(e);
   }
 })
+
+router.delete('/home/deleteDuplicateEvent/:id/:name', async (req, res) => {
+  try {
+    const calendarid = req.params.id;
+    const eventname = req.params.name;
+
+    const result = await pool.query(
+      'DELETE FROM eventstable WHERE calendarid = $1 AND eventname = $2',
+      [calendarid, eventname]
+    );
+
+    if (result.rowCount === 0) {
+      return res.json({ status: "Failed to delete events" });
+    } else {
+      return res.json({ status: "Event(s) deleted" });
+    }
+  } catch (e) {
+    console.log("deleteDuplicateEvent: Server Error");
+    console.log(e);
+    return res.status(500).json({ status: "Server error deleting duplicate events" });
+  }
+});
+
 
 router.post('/home/modifyEvent', async (req, res) => {
   try {
