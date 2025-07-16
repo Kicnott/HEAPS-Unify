@@ -370,7 +370,7 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                             }, 50)
                         }}
                     >
-                        {e.eventname}</div>
+                        <div className="event-text">{e.eventname}</div></div>
                 ))}
 
                 {hoursCreator().map((hourData, hourIdx) => (
@@ -433,7 +433,7 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                                     setEventDetailsOpen(true)
                                 }, 50)
                             }}>
-                            {e.eventname}
+                            <div className="event-text">{e.eventname}</div>
                         </DragEventBlock>
                     ) : (
                         <div
@@ -456,7 +456,7 @@ export const TimeTable = ({ children, chosenDate, refreshTrigger, eventselector,
                                 }, 50)
                             }}
                         >
-                            {e.eventname}
+                            <div className="event-text">{e.eventname}</div>
                         </div>
                     )
                 )}
