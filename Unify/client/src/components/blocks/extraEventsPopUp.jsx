@@ -1,7 +1,7 @@
 
 import calenderEventsType from '../monthCalendar/monthEventsDisplay.jsx'
 
-export const ExtraEventsPopUp = ({ children, onClose, extraEvents, popUpPosition }) => {
+export const ExtraEventsPopUp = ({ children, onClose, extraEvents, popUpPosition, onMonthEventClick }) => {
   // children: All the text and other elements to be displayed in the Overlay Block.
   // onClose: The function to close the overlay block - should be something that changes isHidden.
   
@@ -52,7 +52,7 @@ export const ExtraEventsPopUp = ({ children, onClose, extraEvents, popUpPosition
               cursor: 'pointer' // Makes the cursor change from the normal cursor to the clicky hand cursor (I think)
               }}>×</strong>
           </div>
-        {displayExtraEvents(extraEvents, calenderEventsType)}
+        {displayExtraEvents(extraEvents, calenderEventsType, onMonthEventClick)}
         {children}
       </div>
     </div>
@@ -62,12 +62,12 @@ export const ExtraEventsPopUp = ({ children, onClose, extraEvents, popUpPosition
   )
 }
 
-function displayExtraEvents(extraEvents, calenderEventsType){
+function displayExtraEvents(extraEvents, calenderEventsType, onMonthEventClick){
   try {
     const displayedExtraEvents = [];
     if (extraEvents.length !== 0){
       extraEvents.forEach((event) => {
-        displayedExtraEvents.push(calenderEventsType.case6Event(event))
+        displayedExtraEvents.push(calenderEventsType.case6Event(event, onMonthEventClick))
       });
     }
 

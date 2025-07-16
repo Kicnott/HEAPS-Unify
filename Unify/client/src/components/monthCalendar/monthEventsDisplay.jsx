@@ -187,8 +187,10 @@ const case5Event = (event, onClick) => {
 }
 
 // Case 6: + more button, display excess events
-const case6Event = (event) => {
-    return <div style={{
+const case6Event = (event, onClick) => {
+    return <div 
+    className="glow-hover"
+    style={{
         fontSize: '0.9rem',
         color: 'black',
         display: 'fixed',
@@ -203,8 +205,14 @@ const case6Event = (event) => {
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
-    }}
-        key={event.eventid + " Case6"}>
+        margin: '5px',
+        }}
+        key={event.eventid + " Case6"}
+        onClick={(e) => {
+            e.stopPropagation()
+
+            onClick(event.eventid)
+        }}>
         {event.eventname}</div>
 }
 
