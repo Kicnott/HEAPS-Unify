@@ -352,7 +352,14 @@ function HomePage() {
                 <ExtraEventsPopUp
                     onClose={() => hideOverlayBackground()}
                     extraEvents={extraEvents}
-                    popUpPosition={popUpPosition}>
+                    popUpPosition={popUpPosition}
+                    onMonthEventClick={(eventid) => {
+                        hideOverlayBackground()
+                        setShowEventID(eventid)
+                        setTimeout(() => {
+                            setShowEventOpen(true)
+                        }, 100)
+                    }}>
                 </ExtraEventsPopUp>
             )
             }
