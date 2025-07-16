@@ -10,9 +10,6 @@ const case1Event = (event, onClick) => {
 
     const currUserAccountId = sessionStorage.getItem("currentUserAccountId");
 
-    console.log("currUserAccountId: ", currUserAccountId)
-    console.log("event.accountid: ", event.accountid)
-    console.log("lol")
     return <div
         className="glow-hover"
         style={{
@@ -49,7 +46,7 @@ const case2Event = (event, diffInDays, onClick) => {
     const currUserAccountId = sessionStorage.getItem("currentUserAccountId");
 
     let eventOverflowCount = diffInDays;
-    let eventOffset = eventOverflowCount * 143;
+    let eventOffset = eventOverflowCount * 8; // Reduced from 143 to 125
     return <div
         className="glow-hover"
         style={{
@@ -60,7 +57,7 @@ const case2Event = (event, diffInDays, onClick) => {
             borderColor: 'grey',
             borderStyle: 'solid',
             borderWidth: '1px',
-            marginRight: `-${eventOffset}px`,
+            marginRight: `-${eventOffset}rem`,
             zIndex: '2',
             paddingLeft: '5px',
             paddingRight: '5px',
@@ -88,7 +85,7 @@ const case3Event = (event, diffInDays, onClick) => {
     const currUserAccountId = sessionStorage.getItem("currentUserAccountId");
 
     let eventOverflowCount = diffInDays;
-    let eventOffset = eventOverflowCount * 143 + 12;
+    let eventOffset = eventOverflowCount * 8 + 0.9; // Reduced from 143 to 125
     return <div
         className="glow-hover"
         style={{
@@ -100,7 +97,7 @@ const case3Event = (event, diffInDays, onClick) => {
             borderColor: 'grey',
             borderStyle: 'solid',
             borderWidth: '1px',
-            marginRight: `-${eventOffset}px`,
+            marginRight: `-${eventOffset}rem`,
             zIndex: '2',
             paddingLeft: '5px',
             paddingRight: '5px',
@@ -128,7 +125,7 @@ const case4Event = (event, diffInDays, onClick) => {
     const currUserAccountId = sessionStorage.getItem("currentUserAccountId");
 
     let eventOverflowCount = diffInDays;
-    let eventOffset = eventOverflowCount * 143;
+    let eventOffset = eventOverflowCount * 8; // Reduced from 143 to 125
     return <div
         className="glow-hover"
         style={{
@@ -140,8 +137,8 @@ const case4Event = (event, diffInDays, onClick) => {
             borderColor: 'grey',
             borderStyle: 'solid',
             borderWidth: '1px',
-            marginLeft: `-10px`,
-            marginRight: `-${eventOffset}px`,
+            marginLeft: `-1rem`,
+            marginRight: `-${eventOffset}rem`,
             zIndex: '2',
             paddingLeft: '5px',
             paddingRight: '5px',
@@ -177,8 +174,8 @@ const case5Event = (event, onClick) => {
             borderColor: 'grey',
             borderStyle: 'solid',
             borderWidth: '1px',
-            marginLeft: `-10px`,
-            marginRight: `-869px`,
+            marginLeft: `-1rem`,
+            marginRight: `-48.9rem`,
             zIndex: '2',
             paddingLeft: '5px',
             paddingRight: '5px',

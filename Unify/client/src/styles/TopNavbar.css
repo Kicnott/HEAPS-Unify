@@ -1,6 +1,10 @@
+
 .topnavbar {
-    height: 7%;
-    max-height: 7%;
+    width: 100vw;
+    min-height: 52px;
+    max-height: 58px;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
     background: light-dark(#5E503F, #5E503F);
     display: flex;
     position: fixed;
@@ -11,13 +15,9 @@
     justify-content: space-between;
     z-index: 100;
     box-sizing: border-box;
+    overflow-x: hidden;
 }
 
-
-@font-face {
-  font-family: 'ShootingStar';
-  src: url('../assets/ShootingStar.ttf') format('truetype');
-}
 
 .topnavbar h1 {
     margin: 0;
@@ -25,26 +25,25 @@
     top: auto;
     font-size: 2.3rem;
     color: white;
-    
     margin-top: -7px;
     flex-shrink: 5;
-    color: white;
     font-family:'ShootingStar';
 }
 
-
 #button {
     display: flex;
-    gap: 0.75rem;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 40px;
+    margin-right: 18px;
 }
-
 #button button {
     background: transparent;
     padding: 0;
     margin: 0;
     right: 2%;
-    position: fixed;
-    top: 0.4rem;
+    position: relative;
+    top: 0.05rem;
     width: 40px;
     height: 40px;
     display: flex;
@@ -56,26 +55,63 @@
 
 
 
+@media (max-width: 900px) {
+  .topnavbar {
+    width: 100vw;
+    min-width: 0;
+    box-sizing: border-box;
+    flex-direction: row;
+    height: auto;
+    padding: 1rem;
+    gap: 0.5rem;
+    align-items: center;
+    overflow-x: hidden;
+  }
+  .topnavbar h1 {
+    font-size: 1.7rem;
+    padding-left: 4px;
+  }
+  #button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 36px;
+    margin-right: 0.5rem;
+  }
+  #button button {
+    padding: 0.5rem 0.8rem;
+    width: 36px;
+    height: 36px;
+    top: 0.05rem;
+  }
+}
 @media (max-width: 600px) {
-    .topnavbar {
-        flex-direction: column;
-        height: auto;
-        padding: 1rem;
-        gap: 0.5rem;
-        align-items: flex-start;
-    }
-
-    #button {
-        width: 100%;
-        justify-content: flex-end;
-    }
-
-    h1 {
-        font-size: 1.5rem;
-    }
-
-    #button button {
-        
-        padding: 0.5rem 0.8rem;
-    }
+  .topnavbar {
+    width: 100vw;
+    min-width: 0;
+    box-sizing: border-box;
+    flex-direction: row;
+    height: auto;
+    padding: 0.7rem;
+    gap: 0.4rem;
+    align-items: center;
+    overflow-x: hidden;
+  }
+  .topnavbar h1 {
+    font-size: 1.2rem;
+    padding-left: 2px;
+  }
+  #button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 32px;
+    margin-right: 0.4rem;
+  }
+  #button button {
+    padding: 0.4rem 0.6rem;
+    width: 32px;
+    height: 32px;
+    top: 0.05rem;
+  }
 }

@@ -27,6 +27,7 @@
   max-width: 80rem;   /* or whatever width you want */
   width: 100%;
   margin: 0 auto;
+  position: relative;
   /* Optionally add padding */
 }
 
