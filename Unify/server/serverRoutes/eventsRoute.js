@@ -12,7 +12,6 @@ function addToDate(date, { days = 0, weeks = 0, months = 0, years = 0 }) {
   return newDate;
 }
 
-// replace local pool with supabase pool if eventstable table is there
 router.post('/home/createEvent', async (req, res) => {
   try {
     const {
@@ -22,8 +21,8 @@ router.post('/home/createEvent', async (req, res) => {
       startdt,
       enddt,
       calendarID: calendarid,
-      repeat = 'none',           // default to non-repeating
-      repeatUntil,               // optional
+      repeat = 'none',
+      repeatUntil,
     } = req.body;
 
     const insertQuery = `
@@ -32,8 +31,12 @@ router.post('/home/createEvent', async (req, res) => {
       VALUES ($1, $2, $3, $4, $5, $6)
     `;
 
-    // If it's a recurring event and repeatUntil is defined
-    if (repeat !== 'none' && repeatUntil) {
+    if (
+      typeof repeat === 'string' &&
+      repeat.toLowerCase() !== 'none' &&
+      repeatUntil &&
+      !isNaN(Date.parse(repeatUntil))
+    ) {
       const freqMap = {
         daily: { days: 1 },
         weekly: { weeks: 1 },
@@ -46,9 +49,11 @@ router.post('/home/createEvent', async (req, res) => {
         return res.status(400).json({ status: 'Invalid repeat value' });
       }
 
+      const untilDate = new Date(repeatUntil);
+      untilDate.setHours(23, 59, 59, 999);
+
       let currentStart = new Date(startdt);
       let currentEnd = new Date(enddt);
-      const untilDate = new Date(repeatUntil);
       let counter = 0;
       const MAX_INSTANCES = 1000;
 
@@ -67,10 +72,14 @@ router.post('/home/createEvent', async (req, res) => {
         counter++;
       }
 
-      return res.json({ status: 'Recurring events created' });
+      if (counter === MAX_INSTANCES) {
+        console.warn('Max repeat limit hit, ending early.');
+      }
+
+      console.log('Recurring events created:', counter);
+      return res.json({ status: 'Recurring events created', count: counter });
     }
 
-    // Single event
     await pool.query(insertQuery, [
       eventname,
       eventdescription,
@@ -80,26 +89,16 @@ router.post('/home/createEvent', async (req, res) => {
       calendarid,
     ]);
 
+    console.log('Single event created');
     return res.json({ status: 'Event created' });
+
   } catch (e) {
-    console.error("createEvent: Server Error", e);
+    console.error('createEvent: Server Error', e);
     return res.status(500).json({ status: 'Failed to create event' });
   }
 });
 
-router.get('/home/showAllEvents', async (req, res) => {
-  try {
-    // console.log("showAllEvents: Connected!");
-    const result = await pool.query(
-      'SELECT * FROM eventstable'
-    );
-    return res.json(result);
-  } catch (e) {
-    console.log("showAllEvents: Server Error");
-    console.log(e);
-    return res.json(e);
-  }
-})
+
 
 router.get('/home/getMyEvents', async (req, res) => {
   try {
@@ -195,7 +194,7 @@ router.delete('/home/deleteEvent/:id', async (req, res) => {
       'DELETE FROM eventstable WHERE eventid = ($1)', [eventid]
     )
 
-    if (result.rowCount === 0) { // if result constant has no rows, it means no rows are deleted
+    if (result.rowCount === 0) { 
       return res.json({ status: "Failed to delete event" });
     } else {
       return res.json({ status: "Event deleted" });
@@ -206,6 +205,29 @@ router.delete('/home/deleteEvent/:id', async (req, res) => {
     return res.json(e);
   }
 })
+
+router.delete('/home/deleteDuplicateEvent/:id/:name', async (req, res) => {
+  try {
+    const calendarid = req.params.id;
+    const eventname = req.params.name;
+
+    const result = await pool.query(
+      'DELETE FROM eventstable WHERE calendarid = $1 AND eventname = $2',
+      [calendarid, eventname]
+    );
+
+    if (result.rowCount === 0) {
+      return res.json({ status: "Failed to delete events" });
+    } else {
+      return res.json({ status: "Event(s) deleted" });
+    }
+  } catch (e) {
+    console.log("deleteDuplicateEvent: Server Error");
+    console.log(e);
+    return res.status(500).json({ status: "Server error deleting duplicate events" });
+  }
+});
+
 
 router.post('/home/modifyEvent', async (req, res) => {
   try {

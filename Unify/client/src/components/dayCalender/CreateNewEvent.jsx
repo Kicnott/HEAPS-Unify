@@ -86,7 +86,7 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
         enddt: endDateTime.toISOString(),      // UTC format  
         calendarID,
         repeat,
-        repeatEndDate
+        repeatUntil: repeatEndDate
       })
 
       setName("");
