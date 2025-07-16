@@ -75,7 +75,6 @@ export const CreateCalendar = ({ accountid, onClose, onSave }) => {
                         style={inputStyle}
                     >
                         <option value={'public'}>Public</option>
-                        <option value={'request'}>Request Only</option>
                         <option value={'private'}>Private</option>
                     </select>
                 </label>

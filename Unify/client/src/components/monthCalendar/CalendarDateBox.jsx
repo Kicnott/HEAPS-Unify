@@ -37,7 +37,7 @@ export const CalendarDateBox = forwardRef(({ onClick, children, baseMonth, displ
     maxHeight: '115px',
     width: '100%',
     margin: '0px',
-    padding: '1.1vw 1vw 0 1vw', // wider horizontal padding
+    padding: '1.8vw 1vw 0 1vw', // Increased top padding from 1.1vw to 1.8vw
     position: 'relative',
     borderRadius: '2px',
     fontSize: '1.15vw', // slightly larger font

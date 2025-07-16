@@ -147,7 +147,7 @@ function HomePage() {
             Number(event),
             calendarDisplay.getDate()
         )
-        changeCalendarDisplay(newDate); 
+        changeCalendarDisplay(newDate);
         sessionStorage.setItem("currMonth", newDate.getMonth());
         setRefreshMonthEvents(refreshMonthEvents + 1);
         // console.log("Events Refreshed!");
@@ -176,30 +176,30 @@ function HomePage() {
 
     // populate currMonth and currYear session data
     useEffect(() => {
-        if (sessionStorage.getItem("currMonth") || sessionStorage.getItem("currYear")){
+        if (sessionStorage.getItem("currMonth") || sessionStorage.getItem("currYear")) {
             handleOnMonthChange(calendarDisplay.getMonth());
-            handleOnYearChange(calendarDisplay.getFullYear());            
+            handleOnYearChange(calendarDisplay.getFullYear());
         }
     }, [])
 
     // UseState for clicked calendars to display
-/*     useEffect(() => {
-        if (Object.keys(displayCalendarBasedOnIDAndColour).length !== 0) {
-            console.log("AHHHHHHHHHHHHHHHHHHHHHHH")
-            let filteredEvents = [];
-            for (const [id, colour] of Object.entries(displayCalendarBasedOnIDAndColour)) {
-                const matchedEvents = monthEvents
-                    .filter(event => event.calendarid === id)
-                    .map(event => ({
-                        ...event,
-                        eventcolour: colour
-                    }));
-                filteredEvents = filteredEvents.concat(matchedEvents);
+    /*     useEffect(() => {
+            if (Object.keys(displayCalendarBasedOnIDAndColour).length !== 0) {
+                console.log("AHHHHHHHHHHHHHHHHHHHHHHH")
+                let filteredEvents = [];
+                for (const [id, colour] of Object.entries(displayCalendarBasedOnIDAndColour)) {
+                    const matchedEvents = monthEvents
+                        .filter(event => event.calendarid === id)
+                        .map(event => ({
+                            ...event,
+                            eventcolour: colour
+                        }));
+                    filteredEvents = filteredEvents.concat(matchedEvents);
+                }
+                setMonthEvents(filteredEvents);
+                setRefreshMonthEvents(prev => prev + 1);
             }
-            setMonthEvents(filteredEvents);
-            setRefreshMonthEvents(prev => prev + 1);
-        }
-    }, [displayCalendarBasedOnIDAndColour]); */
+        }, [displayCalendarBasedOnIDAndColour]); */
 
 
     useEffect(() => {
@@ -260,7 +260,7 @@ function HomePage() {
         const fetchMonthEvents = async () => {
             try {
                 const currMonth = calendarDisplay.getMonth();
-                const monthEvents = await monthEventsService.getMonthEvents({currMonth: currMonth});
+                const monthEvents = await monthEventsService.getMonthEvents({ currMonth: currMonth });
                 const matchedIdEvents = monthEvents.data.filter((event) => {
                     return myDisplayedCalendarIds.includes(event.calendarid)
                 })
@@ -481,6 +481,7 @@ function HomePage() {
                                                         }}
                                                     >
                                                         {calendar.calendarname}
+                                                        {calendar.calendarprivacy === "private" ? " 🔒" : ""}
                                                     </span>
                                                     <span
                                                         style={{
@@ -567,6 +568,7 @@ function HomePage() {
                                                         }}
                                                     >
                                                         {calendar.calendarname}
+                                                        {calendar.calendarprivacy === "private" ? " 🔒" : ""}
                                                     </span>
                                                     <span
                                                         style={{
@@ -742,7 +744,7 @@ function HomePage() {
                                 <>
                                     <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>My Events</h2>
                                     <ScrollBlock
-                                        height='40%'>
+                                        height='30vh'>
                                         {myCalendars.map((calendar) => (
                                             <div
                                                 key={calendar.calendarid}
@@ -774,6 +776,7 @@ function HomePage() {
                                                         title={calendar.calendarname}
                                                     >
                                                         {calendar.calendarname}
+                                                        {calendar.calendarprivacy === "private" ? " 🔒" : ""}
                                                     </h3>
                                                     <button
                                                         style={{
@@ -814,7 +817,7 @@ function HomePage() {
                                                     </button>
                                                 </div>
                                                 <ScrollBlock
-                                                    maxHeight='30%'
+                                                    maxHeight='20vh'
                                                     height='auto'
                                                     key={calendar.calendarid}
                                                     buttonData={
@@ -844,7 +847,8 @@ function HomePage() {
 
                                     <h2 style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid black' }}>Followed Events</h2>
                                     <ScrollBlock
-                                        height='40%'>
+                                        height='30vh'
+                                    >
                                         {followedCalendars.map((calendar) => (
                                             <div
                                                 key={calendar.calendarid}
@@ -875,11 +879,12 @@ function HomePage() {
                                                         title={calendar.calendarname}
                                                     >
                                                         {calendar.calendarname}
+                                                        {calendar.calendarprivacy === "private" ? " 🔒" : ""}
                                                     </h3>
                                                 </div>
                                                 <ScrollBlock
-                                                    maxHeight='30%'
                                                     height='auto'
+                                                    maxHeight='20vh'
                                                     key={calendar.calendarid}
                                                     buttonData={
                                                         followedEvents[calendar.calendarid] && followedEvents[calendar.calendarid].length > 0
@@ -943,6 +948,13 @@ function HomePage() {
                                 setExtraEvents={setExtraEvents}
                                 setPopUpPosition={setPopUpPosition}
                                 extraEvents={extraEvents}
+                                onMonthEventClick={(eventid) => {
+                                    hideOverlayBackground()
+                                    setShowEventID(eventid)
+                                    setTimeout(() => {
+                                        setShowEventOpen(true)
+                                    }, 100)
+                                }}
                             />
                         </div>
                     </div>
@@ -957,7 +969,7 @@ function HomePage() {
                 <ShowEvent
                     eventid={showEventID}
                     onModifyEventClick={() => {
-                      hideOverlayBackground()
+                        hideOverlayBackground()
                         setModifyEventOpen(true)
                     }}
                     setShowCalendarID={setShowCalendarID}
@@ -1066,7 +1078,7 @@ function HomePage() {
                 onClose={() => hideOverlayBackground()} // Assigns toggleEventHidden function
             >
                 <DndProvider backend={HTML5Backend}>
-                    < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setSelectedEvent} setEventDetailsOpen={setEventDetailsOpen} monthEvents={monthEvents} setRefreshMonthEvents={setRefreshMonthEvents}>
+                    < TimeTable chosenDate={chosenDate} refreshTrigger={eventRefreshTrigger} eventselector={setShowEventID} setEventDetailsOpen={setShowEventOpen} monthEvents={monthEvents} setRefreshMonthEvents={setRefreshMonthEvents} closeOthers={hideOverlayBackground} followedEvents={followedEvents}>
                     </TimeTable>
                 </DndProvider>
                 <button
@@ -1086,7 +1098,7 @@ function HomePage() {
                     }}
                 >+ Add Event</button>
             </OverlayBlock>
-
+{/* 
             {isEventDetailsOpen && selectedEvent && (
                 <OverlayBlock onClose={() => setEventDetailsOpen(false)}>
                     <EventDisplay
@@ -1094,7 +1106,7 @@ function HomePage() {
                         onClose={() => setEventDetailsOpen(false)}
                         onDelete={() => seteventRefreshTrigger(prev => prev + 1)} />
                 </OverlayBlock>
-            )}
+            )} */}
 
             {/* ADD event overlay block */}
             {isEventFormOpen && (
