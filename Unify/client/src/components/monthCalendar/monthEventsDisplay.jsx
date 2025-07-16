@@ -1,15 +1,18 @@
 
 import '../../styles/glow.css'
 
-const currUserAccountId = sessionStorage.getItem("currentUserAccountId");
-
-
 const dragStart = (e, event) => {
     e.dataTransfer.setData('text/plain', JSON.stringify(event));
 };
 
 // Case 1: Single day Event
 const case1Event = (event, onClick) => {
+
+    const currUserAccountId = sessionStorage.getItem("currentUserAccountId");
+
+    console.log("currUserAccountId: ", currUserAccountId)
+    console.log("event.accountid: ", event.accountid)
+    console.log("lol")
     return <div
         className="glow-hover"
         style={{
@@ -42,6 +45,9 @@ const case1Event = (event, onClick) => {
 
 // Case 2: Multiple day Event, within same week
 const case2Event = (event, diffInDays, onClick) => {
+
+    const currUserAccountId = sessionStorage.getItem("currentUserAccountId");
+
     let eventOverflowCount = diffInDays;
     let eventOffset = eventOverflowCount * 143;
     return <div
@@ -78,6 +84,9 @@ const case2Event = (event, diffInDays, onClick) => {
 
 // Case 3: Multiple day Event, crosses week edge
 const case3Event = (event, diffInDays, onClick) => {
+
+    const currUserAccountId = sessionStorage.getItem("currentUserAccountId");
+
     let eventOverflowCount = diffInDays;
     let eventOffset = eventOverflowCount * 143 + 12;
     return <div
@@ -115,6 +124,9 @@ const case3Event = (event, diffInDays, onClick) => {
 
 // Case 4: part of an event that crossed week edge, final week
 const case4Event = (event, diffInDays, onClick) => {
+
+    const currUserAccountId = sessionStorage.getItem("currentUserAccountId");
+
     let eventOverflowCount = diffInDays;
     let eventOffset = eventOverflowCount * 143;
     return <div
@@ -153,6 +165,8 @@ const case4Event = (event, diffInDays, onClick) => {
 
 // Case 5: part of an event that crossed week edge, full week
 const case5Event = (event, onClick) => {
+
+    const currUserAccountId = sessionStorage.getItem("currentUserAccountId");
 
     return <div
         className="glow-hover"
