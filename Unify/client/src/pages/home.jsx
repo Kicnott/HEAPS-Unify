@@ -142,6 +142,13 @@ function HomePage() {
 
     // Function to update displayed calendar year
     const handleOnMonthChange = (event) => {
+
+        if (Number(event) == 12){
+            sessionStorage.setItem("currYear", calendarDisplay.getFullYear() + 1);
+        } else if (Number(event) == -1){
+            sessionStorage.setItem("currYear", calendarDisplay.getFullYear() - 1);
+        }
+
         const newDate = new Date(
             calendarDisplay.getFullYear(),
             Number(event),
@@ -176,7 +183,7 @@ function HomePage() {
 
     // populate currMonth and currYear session data
     useEffect(() => {
-        if (sessionStorage.getItem("currMonth") || sessionStorage.getItem("currYear")) {
+        if (!sessionStorage.getItem("currMonth") || !sessionStorage.getItem("currYear")){
             handleOnMonthChange(calendarDisplay.getMonth());
             handleOnYearChange(calendarDisplay.getFullYear());
         }
