@@ -305,7 +305,7 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshMont
                 gap: '3px',
                 padding: '0px',
                 margin: '0px',
-                gridAutoRows: '20px',
+                gridAutoRows: '1em',
                 }}>
                 {displayEvents}
                 {children}
@@ -339,7 +339,6 @@ function extraEventsPopUpCall(dateIndex, currDayExtraEvents, setExtraEvents, set
                 height: `18px`,
                 paddingLeft: '2px',
                 borderRadius: '7px',
-                marginTop: '3px',
             }} 
             onMouseEnter={e => (e.currentTarget.style.backgroundColor = "lightgray")}
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = "")}
