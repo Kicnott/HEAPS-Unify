@@ -1,6 +1,8 @@
 
-import { EventDisplay } from "../EventDisplay";
 import '../../styles/glow.css'
+
+const currUserAccountId = sessionStorage.getItem("currentUserAccountId");
+
 
 const dragStart = (e, event) => {
     e.dataTransfer.setData('text/plain', JSON.stringify(event));
@@ -25,7 +27,7 @@ const case1Event = (event, onClick) => {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
         }}
-        draggable
+        draggable={currUserAccountId===event.accountid}
         onDragStart={(e) => { dragStart(e, event) }}
         onDrop={(e) => e.preventDefault()}
         onDragOver={(e) => e.preventDefault()}
@@ -61,7 +63,7 @@ const case2Event = (event, diffInDays, onClick) => {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
         }}
-        draggable
+        draggable={currUserAccountId===event.accountid}
         onDragStart={(e) => { dragStart(e, event) }}
         onDrop={(e) => e.preventDefault()}
         onDragOver={(e) => e.preventDefault()}
@@ -98,7 +100,7 @@ const case3Event = (event, diffInDays, onClick) => {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
         }}
-        draggable
+        draggable={currUserAccountId===event.accountid}
         onDragStart={(e) => { dragStart(e, event) }}
         onDrop={(e) => e.preventDefault()}
         onDragOver={(e) => e.preventDefault()}
@@ -136,7 +138,7 @@ const case4Event = (event, diffInDays, onClick) => {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
         }}
-        draggable
+        draggable={currUserAccountId===event.accountid}
         onDragStart={(e) => { dragStart(e, event) }}
         onDrop={(e) => e.preventDefault()}
         onDragOver={(e) => e.preventDefault()}
@@ -171,7 +173,7 @@ const case5Event = (event, onClick) => {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
         }}
-        draggable
+        draggable={currUserAccountId===event.accountid}
         onDragStart={(e) => { dragStart(e, event) }}
         onDrop={(e) => e.preventDefault()}
         onDragOver={(e) => e.preventDefault()}

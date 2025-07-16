@@ -154,7 +154,7 @@ router.get('/home/getMonthEvents', async (req, res) => {
     // console.log("getMonthEvents: Connected!");
 
     const result = await pool.query(
-      'SELECT * FROM eventstable, calendarstable where eventstable.calendarid = calendarstable.calendarid'
+      'SELECT * FROM eventstable, calendarstable, accountstable where eventstable.calendarid = calendarstable.calendarid and calendarstable.accountid = accountstable.accountid'
     );
 
     return res.json(result.rows);
