@@ -22,8 +22,8 @@ router.post('/home/createEvent', async (req, res) => {
       startdt,
       enddt,
       calendarID: calendarid,
-      repeat = 'none',           // default to non-repeating
-      repeatUntil,               // optional
+      repeat = 'none',          
+      repeatUntil,               
     } = req.body;
 
     const insertQuery = `
@@ -32,7 +32,6 @@ router.post('/home/createEvent', async (req, res) => {
       VALUES ($1, $2, $3, $4, $5, $6)
     `;
 
-    // If it's a recurring event and repeatUntil is defined
     if (repeat !== 'none' && repeatUntil) {
       const freqMap = {
         daily: { days: 1 },
@@ -70,7 +69,6 @@ router.post('/home/createEvent', async (req, res) => {
       return res.json({ status: 'Recurring events created' });
     }
 
-    // Single event
     await pool.query(insertQuery, [
       eventname,
       eventdescription,
