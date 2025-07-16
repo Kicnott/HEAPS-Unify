@@ -41,7 +41,7 @@ const case1Event = (event, onClick) => {
 // Case 2: Multiple day Event, within same week
 const case2Event = (event, diffInDays, onClick) => {
     let eventOverflowCount = diffInDays;
-    let eventOffset = eventOverflowCount * 143;
+    let eventOffset = eventOverflowCount * 125; // Reduced from 143 to 125
     return <div
         className="glow-hover"
         style={{
@@ -77,7 +77,7 @@ const case2Event = (event, diffInDays, onClick) => {
 // Case 3: Multiple day Event, crosses week edge
 const case3Event = (event, diffInDays, onClick) => {
     let eventOverflowCount = diffInDays;
-    let eventOffset = eventOverflowCount * 143 + 12;
+    let eventOffset = eventOverflowCount * 125 + 12; // Reduced from 143 to 125
     return <div
         className="glow-hover"
         style={{
@@ -114,7 +114,7 @@ const case3Event = (event, diffInDays, onClick) => {
 // Case 4: part of an event that crossed week edge, final week
 const case4Event = (event, diffInDays, onClick) => {
     let eventOverflowCount = diffInDays;
-    let eventOffset = eventOverflowCount * 143;
+    let eventOffset = eventOverflowCount * 125; // Reduced from 143 to 125
     return <div
         className="glow-hover"
         style={{

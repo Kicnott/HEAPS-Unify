@@ -8,10 +8,15 @@ export const MthYrArrow = ({children, backOne, frontOne}) => {
         <div style={{ 
             display: 'flex',
             alignItems: 'center',
+            width: '300px',
+            justifyContent: 'space-between',
+            margin: '0 auto 0 calc(50% - 73px)', /* Move 77px right from center */
         }}>
-            <ArrowLeftIcon fontSize="large" style={{cursor: 'pointer'}} onClick={backOne}/>
-            {children}
-            <ArrowRightIcon fontSize="large" style={{marginLeft: '45px', cursor: 'pointer'}} onClick={frontOne}/>
+            <ArrowLeftIcon fontSize="large" style={{cursor: 'pointer', transform: 'translateY(-47px)'}} onClick={backOne}/>
+            <div style={{flex: '0 0 auto'}}>
+                {children}
+            </div>
+            <ArrowRightIcon fontSize="large" style={{cursor: 'pointer', transform: 'translateY(-47px)'}} onClick={frontOne}/>
         </div>
     )
 }

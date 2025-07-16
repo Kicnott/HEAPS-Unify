@@ -1,7 +1,7 @@
- .calendar {
-  width: 90%;
+.calendar {
+  width: 900px;
   max-width: 900px;
-  min-width: 0;
+  min-width: 900px;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   grid-template-rows: min-content;
@@ -9,36 +9,37 @@
   padding: 0.2vw 0.2vw;
   position: relative;
   margin-left: 160px;
-  margin-top: -30px;
+  margin-top: -40px;
   margin-bottom: 2vw;
   border-style: solid;
   border-width: 1px;
   border-color: #A78E72;
   background-color: #A78E72;
   box-sizing: border-box;
+  overflow: hidden; /* Prevent events from spilling outside calendar */
 }
 
 
 
 @media (max-width: 900px) {
   .calendar {
-    width: 100vw;
-    max-width: 100vw;
-    min-width: 0;
+    width: 900px;
+    max-width: 900px;
+    min-width: 900px;
     height: auto;
     flex: 1 1 0%;
     padding: 0.2vw 0.2vw;
     margin-left: 0;
-    margin-top: 1vw;
+    margin-top: -20px;
     margin-bottom: 1vw;
     border-width: 1px;
   }
 }
 @media (max-width: 600px) {
   .calendar {
-    width: 100vw;
-    max-width: 100vw;
-    min-width: 0;
+    width: 900px;
+    max-width: 900px;
+    min-width: 900px;
     height: auto;
     flex: 1 1 0%;
     padding: 0.1vw 0.1vw;
@@ -49,4 +50,63 @@
     gap: 1px;
   }
 }
+
+/* Calendar cell styling to contain events */
+.calendar > div {
+  overflow: visible; /* Allow events to span across cells */
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* Prevent any child elements from overflowing calendar grid cells */
+.calendar > div:not(:first-child):not(:nth-child(-n+7)) {
+  /* This targets all calendar date cells (excluding headers) */
+  overflow: visible !important; /* Allow multi-day events to span */
+  position: relative !important;
+}
+
+/* Event container within calendar cells */
+.calendar .event-container {
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Ensure all event elements stay within their containers */
+.calendar [style*="marginRight: -"] {
+  /* Allow negative margins for multi-day event spanning */
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* Override negative margins that cause overflow */
+.calendar div[style*="marginRight: -"] {
+  /* Allow spanning but prevent overflow beyond calendar */
+  width: auto !important;
+}
+
+/* Additional containment for multi-day events */
+.calendar .glow-hover {
+  box-sizing: border-box !important;
+}
+
+/* Ensure all event elements respect calendar cell boundaries */
+.calendar .glow-hover,
+.calendar div[draggable="true"] {
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* Allow multi-day events to span but contain within calendar */
+.calendar [style*="margin-right: -"] {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  box-sizing: border-box !important;
+}
+
+
 
