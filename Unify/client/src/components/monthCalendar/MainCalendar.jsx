@@ -24,11 +24,11 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshMont
     let calendarBoxes = [] // used as the final return
     let emptyEventSpaceCount = 0; // give the keys of empty divs an incremental value
 
-    const baseStartDate = new Date(getBaseDate(displayDate)) // baseStartDate; needed to determine all sats in the month and currComparedDate ('1st displayed' day of the month)
-    const baseEndDate = new Date(baseStartDate);
-    baseEndDate.setDate(new Date(baseStartDate).getDate() + cellCount - 1); // last displayed date of the month, e.g. in July 2025, the last displayed date is 2nd July
-    baseEndDate.setHours(24); // Set enddate to first displayed date of next month
-    
+    let baseStartDate = new Date(getBaseDate(displayDate)) // baseStartDate; needed to determine all sats in the month and currComparedDate ('1st displayed' day of the month)
+
+    let baseEndDate = new Date(baseStartDate);
+    baseEndDate = new Date(baseEndDate.setDate(new Date(baseStartDate).getDate() + cellCount)); // last displayed date of the month, e.g. in July 2025, the last displayed date is 2nd July
+
     let currComparedDate = new Date(baseStartDate) // currComparedDate: copy of baseStartDate. Serves an index/pointer that goes thru all displayed days in the chosen month. After getBaseDate and new Date(), it becomes a date of the '1st displayed' day of the month. For eg, in july 2025, the value -> Sun Jun 29 2025 00:00:00 GMT+0800 (Singapore Standard Time)
     let sundaysOfTheMonth = []; // sundaysOfTheMonth; used to store all sun (Digit)
     let currSunDate = new Date(baseStartDate); // currSunDate; copy of baseStartDate. Used to populate sundaysOfTheMonth
@@ -64,6 +64,7 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshMont
         }
     }, [extraEvents]); 
 
+
     // filter events for each day into masterarray and return that day's calendar box display
     for (let dateIndex = 0; dateIndex < cellCount; dateIndex++){ 
 
@@ -73,21 +74,23 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshMont
         // Intial filter of events for that day (currComparedDate)
         const comparedDate = currComparedDate.getDate();
         const comparedMonth = currComparedDate.getMonth();
+        const comparedYear = currComparedDate.getFullYear();
 
         const dayEventsArray = monthEvents.filter((event)=>{
             const eventBegin = new Date(event.startdt);
             const eventStop = new Date(event.enddt);
             const dbComparedEventDate = eventBegin.getDate();
             const dbComparedEventMonth = eventBegin.getMonth();
+            const dbComparedEventYear = eventBegin.getFullYear();
             let dbCheckEventsStartBeforeMonthEndWithin = false
             let dbCheckEventsStartBeforeMonthEndAfter = false
 
             if (dateIndex === 0){
                 dbCheckEventsStartBeforeMonthEndWithin = (eventBegin < baseStartDate.setHours(0)) && (baseStartDate.setHours(0) < eventStop) && (eventStop <= baseEndDate)
-                dbCheckEventsStartBeforeMonthEndAfter = (eventBegin < baseStartDate.setHours(0)) && (baseEndDate.setHours(24) <= eventStop)
+                dbCheckEventsStartBeforeMonthEndAfter = (eventBegin < baseStartDate.setHours(0)) && (baseEndDate.setHours(23) <= eventStop)
             }
 
-            return ((dbComparedEventDate === comparedDate) && (dbComparedEventMonth === comparedMonth)) || dbCheckEventsStartBeforeMonthEndWithin || dbCheckEventsStartBeforeMonthEndAfter;
+            return ((dbComparedEventDate === comparedDate) && (dbComparedEventMonth === comparedMonth)) && (dbComparedEventYear === comparedYear) || dbCheckEventsStartBeforeMonthEndWithin || dbCheckEventsStartBeforeMonthEndAfter;
         })
 
         // sorts the events in the box
@@ -119,23 +122,23 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshMont
 
             // checks if event is across the entire month, first month
             const isEventStartAcrossMonth = (
-                ((baseStartDate.setHours(0) < startdt) && (startdt.setHours(0) < baseEndDate.setHours(24))) 
+                ((baseStartDate.setHours(0) <= startdt) && (startdt.setHours(0) <= new Date(baseEndDate))) 
                 && 
-                (baseEndDate.setHours(24) < enddt)
+                (new Date(baseEndDate) < enddt)
             );
 
             // checks if event is across the entire month, middle months
             const isEventMiddleAcrossMonth = (
-                ((startdt < new Date(baseStartDate.setHours(0)))) 
+                ((startdt <= new Date(baseStartDate.setHours(0)))) 
                 && 
-                (new Date(baseEndDate.setHours(24)) < enddt)
+                (new Date(baseEndDate) < enddt)
             );
-
+3
             // checks if event is across the month and ends this month, ending month
             const isEventAcrossAndEndsThisMonth = (
-                ((startdt < baseStartDate.setHours(0))) 
+                ((startdt <= baseStartDate.setHours(0))) 
                 && 
-                (enddt < baseEndDate.setHours(24))
+                (enddt < new Date(baseEndDate))
             );
 
             // Checks for an index that contains a null (not modified into Case 8 by previous multi day events)
@@ -155,7 +158,7 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshMont
             if (diffInDays == 0){ // case 1: single day event
                 monthEventsArray[dateIndex][innerArrayIndex] = calenderEventsType.case1Event(event);
             } else if (diffInDays != 0){
-                const noSunsPassed = noOfWeekEdgePasses(event, sundaysOfTheMonth, isEventStartAcrossMonth, daysInMonth, baseStartDate);
+                const noSunsPassed = noOfWeekEdgePasses(event, sundaysOfTheMonth);
 
                 if (noSunsPassed == 0){ // case 2: multi day event, within the week
                     monthEventsArray[dateIndex][innerArrayIndex] = calenderEventsType.case2Event(event, diffInDays);
@@ -193,10 +196,11 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshMont
                             }
                         }
                     } else if (isEventMiddleAcrossMonth){
-                        // case 3: multi day event, crosses week, first week
+                        // case 3: multi day event, crosses week, first 
+                        
                         for (let passedEdge = 1; passedEdge < noSunsPassed + 1; passedEdge++){ 
-                            const workingIndexSun = dateIndex - diffInDaysToSunStart + (passedEdge * 7);
-                            if (dateIndex - diffInDaysToSunStart + (passedEdge * 7) >= cellCount){ break; } // prevents index overflow
+                            const workingIndexSun = dateIndex + (passedEdge * 7) - 7;
+                            if (dateIndex + (passedEdge * 7) > cellCount){ break; } // prevents index overflow
                             monthEventsArray[workingIndexSun][innerArrayIndex] = calenderEventsType.case5Event(event); // case 5: passed edge, full week
                             for (let emptyPopulator = 1; emptyPopulator < diffInDaysToSatStart + 1; emptyPopulator++){
                                 if (workingIndexSun + emptyPopulator == cellCount) { break; } // prevents index overflow
@@ -208,14 +212,16 @@ export const MainCalendar = ({children, displayDate, onDateBoxClick, refreshMont
                         let eventPartition = event;
                         eventPartition.startdt = baseStartDate.toISOString()
 
-                        const diffInDaysPartition = ((new Date(eventPartition.enddt) - baseStartDate) / (1000 * 60 * 60 * 24));
-                        const noOfSunPassedPartition = Math.floor(diffInDaysPartition / 7);
+                        const diffInDaysPartition =  Math.ceil((new Date(eventPartition.enddt) - baseStartDate) / (1000 * 60 * 60 * 24));
+                        let noOfSunPassedPartition = Math.floor(diffInDaysPartition / 7);
                         const diffInDaysToSatStartPartition = noOfDaysToNextClosestSat(eventPartition.startdt);
                         const diffInDaysToSunEndPartition = noOfDaysToNextClosestSun(eventPartition.enddt);
 
-                        for (let passedEdge = 1; passedEdge < noOfSunPassedPartition + 1; passedEdge++){ 
-                            const workingIndexSun = dateIndex + (passedEdge * 7);
-                            if (dateIndex + (passedEdge * 7) >= cellCount){ break; } // prevents index overflow
+                        if (diffInDaysPartition % 7 === 0) {noOfSunPassedPartition -= 1};
+
+                        for (let passedEdge = 0; passedEdge < noOfSunPassedPartition + 1; passedEdge++){ 
+                            const workingIndexSun = (passedEdge * 7);
+                            if ((passedEdge * 7) > cellCount){ break; } // prevents index overflow
                             if (passedEdge == noOfSunPassedPartition){ // case 4: passed edge, final week
                                 monthEventsArray[workingIndexSun][innerArrayIndex] = calenderEventsType.case4Event(eventPartition, diffInDaysToSunEndPartition);
                                 const noOfEmptyDivFinalWeek = diffInDaysPartition - (diffInDaysToSatStartPartition + 1) - ((noOfSunPassedPartition - 1) * 7);
@@ -355,7 +361,7 @@ function noOfWeekEdgePasses(event, sundaysOfTheMonth) {
 
     const localEventStart = new Date(event.startdt)
     const localEventEnd = new Date(event.enddt)
-    const year = new Date().getFullYear();
+    const year = sessionStorage.getItem("currYear");
 
     const sundaysOfTheMonthConverted = sundaysOfTheMonth.map((sun) =>{
         return new Date(year, sun[1] - 1, sun[0], 0);
