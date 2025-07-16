@@ -288,7 +288,7 @@ export const ModifyEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
             onConfirm={handleConfirmDelete}
           />
         </div>,
-        document.bod
+        document.body
       )}
     </div>
 
