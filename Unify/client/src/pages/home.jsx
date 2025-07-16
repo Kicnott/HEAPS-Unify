@@ -245,9 +245,10 @@ function HomePage() {
 
     }, [debouncedSearchTerm])
 
+/*     console.log for searched accounts
     useEffect(() => {
         console.log(searchedAccounts)
-    }, [searchedAccounts])
+    }, [searchedAccounts]) */
 
     // hides background when overlay is hidden
     useEffect(() => {
