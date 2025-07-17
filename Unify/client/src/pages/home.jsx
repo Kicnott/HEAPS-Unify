@@ -1083,6 +1083,7 @@ function HomePage() {
                         setMainRefreshTrigger(mainRefreshTrigger + 1)
                         hideOverlayBackground()
                     }}
+                    isOpen={isModifyEventOpen}
                 >
                 </ModifyEvent>
             </OverlayBlock>

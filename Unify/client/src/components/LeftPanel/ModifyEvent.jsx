@@ -20,7 +20,7 @@ const ConfirmDelete = ({ eventid, eventname, calendarid, onCloseModal, onConfirm
 };
 
 
-export const ModifyEvent = ({ onClose, chosenDate, onSave, accountid, calendarid, eventid }) => {
+export const ModifyEvent = ({ onClose, chosenDate, onSave, accountid, calendarid, eventid, isOpen }) => {
 
   function formatDateForInput(date) {
     const year = date.getFullYear();
@@ -49,7 +49,7 @@ export const ModifyEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
         .then(res => setEventData(res.data))
         .catch(err => setErrors("Event not found or error loading calendar."));
     }
-  }, [eventid])
+  }, [eventid, isOpen])
 
   useEffect(() => {
     if (eventData) {
@@ -80,7 +80,7 @@ export const ModifyEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
       setEventEndDate(enddateStr);
       setCalendarID(eventData.calendarid)
     }
-  }, [eventData]);
+  }, [eventData, isOpen]);
 
 
   useEffect(() => {
