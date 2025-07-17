@@ -6,7 +6,8 @@ import '../styles/App.css'
 import { monthOptionsArray, yearOptionsArray } from '../constants/calendarConstants.jsx'
 // import getBaseDate from '../functions/getBaseDate.jsx'
 import { uAccount, uCalendar, uCalendarDisplay, uEvent, uTimeslot } from '../classes/'
-import profilePlaceholder from '../assets/placeholder_pfp.jpg';
+import placeholderPic from '../assets/placeholder_pfp.jpg'; 
+import { AccountDeletionForm } from '../components/rightDrawer/AccountDeletionForm.jsx'; // Adjust path
 
 // Components
 import { TopNavbar } from "../components/blocks/TopNavbar.jsx"
@@ -44,6 +45,7 @@ function HomePage() {
 
     const currentUser = sessionStorage.getItem("currentUser"); //Gets Username in sessionStorage from login
     const currentUserAccountId = sessionStorage.getItem("currentUserAccountId"); //Gets Username in sessionStorage from login
+    const userProfilePic = placeholderPic; 
     // console.log("Current User: " + currentUser + " Account ID: " + currentUserAccountId)
 
     // useState creates variables that are saved even when the page re-renders
@@ -382,14 +384,18 @@ function HomePage() {
             <RightDrawer
                 rightDrawerOpen={isRightDrawerOpen} // assigns isRightDrawer state
                 onClose={() => hideOverlayBackground()} // assigns toggleRightDrawer function
+                profilePic={userProfilePic}
+                accountid={currentUserAccountId}
             >
+                
                 <div style={drawerStyle}>
                     <div style={rightDrawerButtonTop}>
-                        <br></br>
+                        
                         {/*FOR BEV TO EDIT*/}
-                        <h3>Current User: {currentUser} &nbsp;
+                            <h3>
+                            Account ID: 
                             <br></br>
-                            Account ID: {currentUserAccountId}</h3>
+                            {currentUserAccountId}</h3>
 
                         {/*
                         NOT NEEDED ANYMORE 
@@ -397,7 +403,17 @@ function HomePage() {
                         <br></br>
                         <br></br>
                         <button onClick={() => setEditCalendarsFormOpen(!isEditCalendarsFormOpen)}>Edit Calendar</button>
-                        */}
+                        
+                        FAULTY ACC DELETION BUTTON (removed for now)
+                         <AccountDeletionForm
+                        currentUsername={currentUser}
+                        onDeleteSuccess={() => {
+                        // Optionally redirect or sign out user
+                        console.log('User deleted. Redirecting...');
+                        }}
+                        
+                    />
+                    */}
                     </div>
 
                     <div style={rightDrawerButtonBottom}>
@@ -407,7 +423,10 @@ function HomePage() {
                             padding: '10px 20px',
                             border: 'none',
                             borderRadius: '8px',
-                            cursor: 'pointer'
+                            cursor: 'pointer',
+                            width: '10rem',
+                            height: '3rem',
+                            marginBottom:'100%',
                         }}><Link to="/" style={{ color: 'white' }}>Sign Out</Link></button> {/* Button at the bottom to return to login page */}
                     </div>
                 </div>
@@ -637,7 +656,7 @@ function HomePage() {
                                                 }}
                                             >
                                                 <img
-                                                    src={profilePlaceholder}
+                                                    src={account.profilePic || placeholderPic}
                                                     alt={account.accountusername + " profile"}
                                                     style={{
                                                         width: 28,

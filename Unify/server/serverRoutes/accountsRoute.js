@@ -106,7 +106,7 @@ router.delete('/home/deleteAccount', async (req, res) => {
     }
 
     const result = await pool.query( // result constant contains db object of any rows that are deleted
-      'DELETE FROM Accountstable WHERE accountusername = ($1) and accountpassword = ($2)', [req.body.username, req.body.password]
+      'DELETE FROM accountstable WHERE accountusername = ($1) and accountpassword = ($2)', [req.body.username, req.body.password]
     );
 
     if (result.rowCount === 0) { // if result constant has no rows, it means no rows are deleted
