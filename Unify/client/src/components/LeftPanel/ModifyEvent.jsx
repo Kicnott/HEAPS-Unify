@@ -51,6 +51,12 @@ export const ModifyEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
     }
   }, [eventid, isOpen])
 
+    useEffect(() => {
+    if (eventEndDate < eventStartDate) {
+      setEventEndDate(eventStartDate)
+    }
+  }, [eventStartDate])
+
   useEffect(() => {
     if (eventData) {
       setName(eventData.eventname || "");

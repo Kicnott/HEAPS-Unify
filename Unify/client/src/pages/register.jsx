@@ -22,7 +22,7 @@ function RegisterPage() {
         submitAction.preventDefault()
         if (action === 'register') {
             if (password === confirmPassword){
-            const status = await fetch("http://localhost:8888/register", {
+            const status = await fetch("https://heaps-unify-1.onrender.com/register", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

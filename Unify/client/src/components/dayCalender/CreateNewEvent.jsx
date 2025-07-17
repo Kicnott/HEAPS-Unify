@@ -26,6 +26,12 @@ export const CreateEvent = ({ onClose, chosenDate, onSave, accountid, calendarid
   const [eventEndDate, setEventEndDate] = useState(formatDateForInput(new Date()))
 
   useEffect(() => {
+    if (eventEndDate < eventStartDate) {
+      setEventEndDate(eventStartDate)
+    }
+  }, [eventStartDate])
+
+  useEffect(() => {
     getMyCalendars(accountid).then(setMyCalendars);
   }, [accountid])
 
