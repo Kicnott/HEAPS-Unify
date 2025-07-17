@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import calendarService from '../../services/calendarService'
 import { ColorPopover } from '../blocks/ColorPopover'
 
-export const CreateCalendar = ({ accountid, onClose, onSave }) => {
+export const CreateCalendar = ({ accountid, onClose, onSave, isOpen }) => {
     const [calendarName, setCalendarName] = useState("")
     const [calendarDescription, setCalendarDescription] = useState("")
     const [calendarPrivacy, setCalendarPrivacy] = useState("public")
@@ -12,6 +12,16 @@ export const CreateCalendar = ({ accountid, onClose, onSave }) => {
     function colourChangeComplete(colour, calendarid) {
         setCalendarColour(colour)
     }
+    useEffect(() => {
+        if (isOpen) {
+            setCalendarName("")
+            setCalendarDescription("")
+            setCalendarPrivacy("public")
+            setCalendarColour("#f6d8ac")
+            setErrors([])
+        }
+    }, [isOpen])
+
 
     const handleSave = async (e) => {
         setErrors([])
