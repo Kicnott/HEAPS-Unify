@@ -1054,12 +1054,12 @@ function HomePage() {
                     accountid={currentUserAccountId}
                     calendarid={showCalendarID}
                     onClose={() => {
-                        setCreateCalendarOpen(false)
+                        setModifyCalendarOpen(false)
                         setMainRefreshTrigger(mainRefreshTrigger + 1)
                         hideOverlayBackground()
                     }}
                     onSave={() => {
-                        setCreateCalendarOpen(false)
+                        setModifyCalendarOpen(false)
                         setMainRefreshTrigger(mainRefreshTrigger + 1)
                         hideOverlayBackground()
                     }}
@@ -1102,6 +1102,7 @@ function HomePage() {
                         setMainRefreshTrigger(mainRefreshTrigger + 1)
                         hideOverlayBackground()
                     }}
+                    isOpen={isCreateCalendarOpen} 
                 >
 
                 </CreateCalendar>
